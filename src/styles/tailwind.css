@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Global Colors */
+    --global-bg-1: #f7fcf9;
+    --global-bg-2: #ffffff;
+    --global-bg-3: #e8f2ed;
+    --global-bg-4: #0FBD66;
+    --global-text-1: #0c1c14;
+    --global-text-2: #4c9972;
+    --global-text-3: #e5e8ea;
+    --global-text-4: #ffffff;
+
+    /* ChipView Colors */
+    --chipview-bg-1: #e8f2ed;
+
+    /* Border Colors */
+    --border-primary: #e5e8ea;
+  }
+}
+
+@layer utilities {
+  /* Global */
+  .bg-global-1 {
+    background-color: var(--global-bg-1);
+  }
+  .bg-global-2 {
+    background-color: var(--global-bg-2);
+  }
+  .bg-global-3 {
+    background-color: var(--global-bg-3);
+  }
+  .text-global-1 {
+    color: var(--global-text-1);
+  }
+  .text-global-2 {
+    color: var(--global-text-2);
+  }
+  .text-global-3 {
+    color: var(--global-text-3);
+  }
+  .text-global-4 {
+    color: var(--global-text-4);
+  }
+
+  /* ChipView */
+  .bg-chipview-1 {
+    background-color: var(--chipview-bg-1);
+  }
+
+  /* Border */
+  .border-primary {
+    border-color: var(--border-primary);
+  }
+}
