@@ -1,6 +1,4 @@
 'use client';
-
-import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -10,47 +8,50 @@ const Header = () => {
       <div className="max-w-[1200px] h-full mx-auto px-4 flex items-center justify-between">
         {/* Bagian Kiri - Logo dan Menu */}
         <div className="flex items-center gap-6">
-          {/* Logo Merbabook */}
-          <div className="flex items-center gap-2">
+          {/* Logo Munggahwae */}
+          <Link href="/" className="flex items-center gap-2">
             <Image
-              src="/images/img_vector_0.svg"
+              src="/placeholder.svg?height=16&width=16"
               alt="Logo"
               width={16}
               height={16}
               className="w-4 h-4"
             />
             <span className="text-lg font-bold leading-[23px] text-global-1 font-plus-jakarta">
-              Merbabook
+              Munggahwae
             </span>
-          </div>
+          </Link>
 
           {/* Menu Navigasi */}
           <nav className="flex items-center gap-6 ml-6">
             <Link
-              href="/mountain-discovery"
+              href="/"
               className="text-sm font-medium leading-[18px] text-global-1 font-plus-jakarta hover:text-primary transition-colors"
             >
               Beranda
             </Link>
             <Link
-              href="/profile"
+              href="/about"
               className="text-sm font-medium leading-[18px] text-global-1 font-plus-jakarta hover:text-primary transition-colors"
             >
-              Profil
+              Tentang
             </Link>
           </nav>
         </div>
 
-        {/* Bagian Kanan - Foto Profil */}
-        <div className="flex items-center">
-          <Link href="/profile">
-            <Image
-              src="/images/img_depth_4_frame_2.png"
-              alt="Profile"
-              width={40}
-              height={40}
-              className="rounded-full w-10 h-10 object-cover hover:ring-2 hover:ring-primary transition-all"
-            />
+        {/* Bagian Kanan - Login/Register Buttons */}
+        <div className="flex items-center gap-3">
+          <Link
+            href="/login"
+            className="px-4 py-2 text-sm font-medium text-global-1 font-plus-jakarta hover:text-global-2 transition-colors"
+          >
+            Masuk
+          </Link>
+          <Link
+            href="/register"
+            className="px-4 py-2 bg-global-4 text-white text-sm font-medium font-plus-jakarta rounded-lg hover:opacity-90 transition-opacity"
+          >
+            Daftar
           </Link>
         </div>
       </div>

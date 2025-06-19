@@ -2,15 +2,6 @@
 const nextConfig = {
   productionBrowserSourceMaps: true,
   distDir: process.env.DIST_DIR || '.next',
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/mountain-discovery',
-        permanent: true,
-      },
-    ];
-  },
   webpack(config) {
     config.module.rules.push({
       test: /\.(jsx|tsx)$/,

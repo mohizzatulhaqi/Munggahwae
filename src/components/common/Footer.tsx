@@ -1,6 +1,4 @@
 'use client';
-
-import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -40,7 +38,7 @@ const Footer = () => {
         <div className="flex justify-center gap-6 mb-6">
           <a href="#" aria-label="Facebook">
             <Image
-              src="/images/img_vector_0_green_500.svg"
+              src="/placeholder.svg?height=24&width=24"
               alt="Facebook"
               width={24}
               height={24}
@@ -49,7 +47,7 @@ const Footer = () => {
           </a>
           <a href="#" aria-label="Twitter">
             <Image
-              src="/images/img_vector_0_green_500_24x24.svg"
+              src="/placeholder.svg?height=24&width=24"
               alt="Twitter"
               width={24}
               height={24}
@@ -58,7 +56,7 @@ const Footer = () => {
           </a>
           <a href="#" aria-label="Instagram">
             <Image
-              src="/images/img_vector_0_24x24.svg"
+              src="/placeholder.svg?height=24&width=24"
               alt="Instagram"
               width={24}
               height={24}
@@ -69,7 +67,7 @@ const Footer = () => {
 
         {/* Copyright */}
         <p className="text-center text-base font-normal leading-[21px] text-global-2 font-plus-jakarta">
-          © 2025 Merbabook. All rights reserved.
+          © 2025 Munggahwae. All rights reserved.
         </p>
       </div>
     </footer>

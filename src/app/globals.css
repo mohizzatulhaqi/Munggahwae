@@ -8,7 +8,7 @@
     --global-bg-1: #f7fcf9;
     --global-bg-2: #ffffff;
     --global-bg-3: #e8f2ed;
-    --global-bg-4: #0FBD66;
+    --global-bg-4: #0fbd66;
     --global-text-1: #0c1c14;
     --global-text-2: #4c9972;
     --global-text-3: #e5e8ea;
@@ -19,6 +19,19 @@
 
     /* Border Colors */
     --border-primary: #e5e8ea;
+  }
+
+  body {
+    font-family: var(--font-plus-jakarta), sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: inherit;
   }
 }
 
@@ -32,6 +45,9 @@
   }
   .bg-global-3 {
     background-color: var(--global-bg-3);
+  }
+  .bg-global-4 {
+    background-color: var(--global-bg-4);
   }
   .text-global-1 {
     color: var(--global-text-1);
@@ -54,5 +70,10 @@
   /* Border */
   .border-primary {
     border-color: var(--border-primary);
+  }
+
+  /* Font */
+  .font-plus-jakarta {
+    font-family: var(--font-plus-jakarta), sans-serif;
   }
 }
