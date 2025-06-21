@@ -26,10 +26,10 @@ export default function PersonalDataPage() {
       // All bookers completed
       alert("Pendaftaran berhasil!")
       console.log("Final booking data:", getGlobalBookingData())
-      router.push("/confirmation")
+router.push(`/mountain/${params.id}/booking-terms/booking-form/confirmation`);
     } else {
       // Move to next booker
-      router.push(`/personal-data/${bookerIndex + 1}`)
+router.push(`/mountain/${params.id}/booking-terms/booking-form/personal-data/${bookerIndex + 1}`);
     }
   }
 
@@ -39,13 +39,13 @@ export default function PersonalDataPage() {
 
   const handleNextBooker = () => {
     if (bookerIndex < totalBookers - 1) {
-      router.push(`/personal-data/${bookerIndex + 1}`)
+router.push(`/mountain/${params.id}/booking-terms/booking-form/personal-data/${bookerIndex + 1}`);
     }
   }
 
   const handlePreviousBooker = () => {
     if (bookerIndex > 0) {
-      router.push(`/personal-data/${bookerIndex - 1}`)
+router.push(`/mountain/${params.id}/booking-terms/booking-form/personal-data/${bookerIndex - 1}`);
     }
   }
 

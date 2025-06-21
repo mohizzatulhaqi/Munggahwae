@@ -1,7 +1,8 @@
 "use client"
 
 import type React from "react"
-
+import Header from '@/components/common/Header';
+import Footer from '@/components/common/Footer';
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -71,16 +72,8 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Breadcrumb */}
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <span>Pendakian</span>
-          <span>/</span>
-          <span>Gunung</span>
-          <span>/</span>
-          <span className="text-orange-600">{mountain?.name}</span>
-        </div>
-      </div>
+      <Header />
+      
 
       {/* Full-width Mountain Image */}
       <div className="relative h-96 w-full">
@@ -204,7 +197,10 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
             </form>
           </CardContent>
         </Card>
+        <Footer />
       </div>
     </div>
+    
   )
+  
 }
