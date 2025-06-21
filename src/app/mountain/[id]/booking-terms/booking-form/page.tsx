@@ -2,7 +2,7 @@
 
 import React from "react"
 
-import { useRouter } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import DateSelectionForm from "@/components/pages/date-selection-form"
 import {mountainsData, type Mountain } from "@/lib/mountain-data"
 import BookingTermsPage from "@/components/pages/booking-terms-page"
@@ -16,8 +16,7 @@ export interface BookingData {
   exitDate: string
   numberOfBookers: number
   bookers: PersonalData[]
-  mountain: Mountain
-  mountainId: string
+  
 }
 
 export interface PersonalData {
@@ -38,8 +37,6 @@ let globalBookingData: BookingData = {
   exitDate: "",
   numberOfBookers: 1,
   bookers: [],
-  mountain: mountainsData[0], // Default to the first mountain
-  mountainId: ""
 }
 
 export function getGlobalBookingData() {
@@ -52,6 +49,10 @@ export function updateGlobalBookingData(data: Partial<BookingData>) {
 
 export default function BookignForm() {
   const router = useRouter()
+
+  const params = useParams();
+  const mountainId = params?.id as string;
+  const mountain = mountainsData.find((m) => m.id === mountainId);
 
   const handleDateSubmit = (dates: { entryDate: string; exitDate: string; numberOfBookers: number }) => {
     // Initialize empty bookers array based on numberOfBookers
@@ -72,12 +73,12 @@ export default function BookignForm() {
     })
 
     // Navigate to the personal data form page with the first booker
-    router.push("/personal-data/0")
+    router.push(`/mountain/${mountain?.id}/booking-terms/booking-form/personal-data/0`);
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <DateSelectionForm mountain={mountainsData} onSubmit={handleDateSubmit} />
+      <DateSelectionForm onSubmit={handleDateSubmit} />
     </div>
   )
 }
