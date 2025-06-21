@@ -9,11 +9,11 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Calendar, MapPin, Clock, Users } from "lucide-react"
 import Image from "next/image"
-import { Mountain } from "@/lib/mountain-data"
+import { mountainsData } from "@/lib/mountain-data"
+import { useParams } from "next/navigation"
 
 interface DateSelectionFormProps {
   onSubmit: (dates: { entryDate: string; exitDate: string; numberOfBookers: number }) => void
-  mountain : Mountain[]
 }
 
 export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) {
@@ -21,6 +21,10 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
   const [exitDate, setExitDate] = useState("")
   const [numberOfBookers, setNumberOfBookers] = useState(1)
   const [errors, setErrors] = useState<{ entryDate?: string; exitDate?: string; numberOfBookers?: string }>({})
+  
+  const params = useParams();
+  const mountainId = params?.id as string;
+  const mountain = mountainsData.find((m) => m.id === mountainId);
 
   const validateDates = () => {
     const newErrors: { entryDate?: string; exitDate?: string; numberOfBookers?: string } = {}
@@ -74,7 +78,7 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
           <span>/</span>
           <span>Gunung</span>
           <span>/</span>
-          <span className="text-orange-600">Rinjani</span>
+          <span className="text-orange-600">{mountain?.name}</span>
         </div>
       </div>
 
@@ -83,18 +87,19 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
         <Image src="/images/gunung-rinjani.png" alt="Gunung Rinjani" fill className="object-cover" priority />
         <div className="absolute inset-0 bg-black bg-opacity-20"></div>
         <div className="absolute bottom-6 left-6 text-white">
-          <h1 className="text-4xl font-bold mb-2">Gunung Rinjani</h1>
+          <h1 className="text-4xl font-bold mb-2">Gunung {mountain?.name}</h1>
           <div className="flex items-center gap-4 text-lg">
             <div className="flex items-center gap-2">
               <MapPin className="w-5 h-5" />
-              <span>Lombok, NTB</span>
+              <span>{mountain?.location}, {mountain?.province}</span>
             </div>
-            <div className="flex items-center gap-2">
-              <span>3,726 mdpl</span>
-            </div>
+            
           </div>
+          
         </div>
+        
       </div>
+
 
       {/* Content Container */}
       <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -105,38 +110,13 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
           </CardHeader>
           <CardContent className="text-gray-600 leading-relaxed">
             <p>
-              Gunung Rinjani adalah gunung berapi yang berlokasi di Pulau Lombok, Nusa Tenggara Barat. Gunung yang
-              memiliki ketinggian 3.726 meter di atas permukaan laut ini merupakan gunung berapi tertinggi kedua di
-              Indonesia. Gunung Rinjani terkenal dengan keindahan Danau Segara Anak yang berada di kawah gunungnya.
+              {mountain?.description}
             </p>
-            <p className="mt-4">
-              Pendakian Gunung Rinjani menawarkan pengalaman yang tak terlupakan dengan pemandangan yang spektakuler.
-              Danau Segara Anak yang berwarna biru kehijauan dan Gunung Barujari yang masih aktif menjadi daya tarik
-              utama bagi para pendaki. Jalur pendakian yang menantang namun sangat memuaskan membuat Rinjani menjadi
-              salah satu destinasi favorit pendaki Indonesia.
-            </p>
+            
           </CardContent>
         </Card>
 
-        {/* Requirements Info */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
-          <div className="flex items-start gap-4">
-            <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-              <span className="text-white text-sm font-bold">i</span>
-            </div>
-            <div className="text-blue-800">
-              <h3 className="font-semibold text-lg mb-3">Syarat Pendakian Gunung</h3>
-              <ul className="space-y-2 text-sm">
-                <li>• Pendaki wajib membawa surat keterangan sehat dari dokter</li>
-                <li>• Membawa perlengkapan pendakian yang memadai (sleeping bag, jaket tebal, dll)</li>
-                <li>• Wajib menggunakan guide lokal yang bersertifikat</li>
-                <li>• Membawa obat-obatan pribadi dan P3K</li>
-                <li>• Dilarang membawa minuman beralkohol dan narkoba</li>
-                <li>• Wajib menjaga kebersihan dan tidak membuang sampah sembarangan</li>
-              </ul>
-            </div>
-          </div>
-        </div>
+        
 
         {/* Booking Form */}
         <Card className="max-w-2xl mx-auto">
