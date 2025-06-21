@@ -18,9 +18,7 @@ const BookingTermsPage: React.FC<BookingTermsPageProps> = ({ mountain }) => {
 
   const handleContinue = () => {
     if (isAgreed) {
-      // Navigate to booking form or next step
-      alert(`Melanjutkan ke form pemesanan untuk ${mountain.name}...`);
-      // router.push(`/mountain/${mountain.id}/booking-form`)
+       router.push(`/mountain/${mountain.id}/booking-terms/booking-form`); // Adjust the path as needed
     } else {
       alert('Silakan centang persetujuan terlebih dahulu');
     }
