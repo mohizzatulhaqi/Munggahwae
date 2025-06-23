@@ -688,7 +688,48 @@ export const mountainsData: Mountain[] = [
       "Mengikuti jalur yang telah ditentukan dan tidak tersesat.",
     ],
   },
+  {
+    id: "16",
+    name: "Gunung Buthak",
+    location: "Malang",
+    province: "Jawa Timur",
+    image: "/placeholder.svg?height=99&width=176",
+    heroImage: "/placeholder.svg?height=320&width=928",
+    description:
+      "Gunung Butak adalah sebuah gunung berapi kerucut yang terletak di perbatasan Kabupaten Malang dan Kabupaten Blitar dalam wilayah Provinsi Jawa Timur, Indonesia.",
+    quota: "300 pendaki/hari",
+    trails: "2 Jalur",
+    available: "100/300",
+    trailDetails: [
+      {
+        name: "Jalur Panderman",
+        description: "Jalur yang paling populer dengan pemandangan sabana yang indah.",
+        icon: "/placeholder.svg?height=24&width=24",
+      },
+      {
+        name: "Jalur Sirah Kencong",
+        description: "Jalur yang di mulai perkebunan teh sirah kencong.",
+        icon: "/placeholder.svg?height=24&width=24",
+      },
+    ],
+    galleryImages: [
+      "/placeholder.svg?height=169&width=301",
+      "/placeholder.svg?height=169&width=301",
+      "/placeholder.svg?height=169&width=301",
+    ],
+    bookingTerms: [
+      "Pendakian hanya diperbolehkan saat status normal atau waspada level 1.",
+      "Wajib didampingi guide lokal yang berpengalaman.",
+      "Pendakian minimal 4 hari 3 malam dengan persiapan fisik yang baik.",
+      "Membawa perlengkapan camping lengkap dan makanan yang cukup.",
+      "Dilarang mendekati kawah saat aktivitas vulkanik meningkat.",
+      "Tidak mengganggu satwa liar dan menjaga kelestarian hutan.",
+      "Membawa turun semua sampah dan menjaga kebersihan alam.",
+      "Mengikuti jalur yang telah ditentukan dan tidak tersesat.",
+    ],
+  },
 ]
+
 
 export function getMountainById(id: string): Mountain | undefined {
   return mountainsData.find((mountain) => mountain.id === id)

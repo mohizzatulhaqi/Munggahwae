@@ -5,7 +5,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
-import ChipView from '@/components/ui/ChipView';
 import Pagination from '@/components/ui/Pagination';
 import { getAllMountains } from '@/lib/mountain-data';
 import ProvinceFilter from '../ui/ProvinceFilter';
@@ -13,7 +12,6 @@ import ProvinceFilter from '../ui/ProvinceFilter';
 const MountainDiscoveryPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [appliedSearchQuery, setAppliedSearchQuery] = useState<string>(''); // New state for applied search
-  const [activeCategory, setActiveCategory] = useState<string>('Semua');
   const [selectedProvince, setSelectedProvince] = useState<string>('Semua Provinsi');
   const [currentPage, setCurrentPage] = useState<number>(1);
 
@@ -52,12 +50,6 @@ const MountainDiscoveryPage: React.FC = () => {
     if (e.key === 'Enter') {
       handleSearch();
     }
-  };
-
-  const handleCategoryChange = (category: string) => {
-    setActiveCategory(category);
-    setCurrentPage(1); // Reset to first page when changing category
-    console.log('Category changed to:', category);
   };
 
   const handleProvinceChange = (province: string) => {
@@ -141,28 +133,6 @@ const MountainDiscoveryPage: React.FC = () => {
 
           {/* Filter Section */}
           <div className="flex flex-col sm:flex-row gap-4 w-full justify-center mb-8">
-            {/* Category Chips */}
-            <div className="flex flex-row gap-4 justify-center">
-              <ChipView
-                isActive={activeCategory === 'Semua'}
-                onClick={() => handleCategoryChange('Semua')}
-              >
-                Semua
-              </ChipView>
-              <ChipView
-                isActive={activeCategory === 'Populer'}
-                onClick={() => handleCategoryChange('Populer')}
-              >
-                Populer
-              </ChipView>
-              <ChipView
-                isActive={activeCategory === 'Terbaru'}
-                onClick={() => handleCategoryChange('Terbaru')}
-              >
-                Terbaru
-              </ChipView>
-            </div>
-
             {/* Province Filter */}
             <div className="flex justify-center">
               <ProvinceFilter
