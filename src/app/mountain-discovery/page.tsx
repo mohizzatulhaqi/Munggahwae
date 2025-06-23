@@ -15,7 +15,6 @@ interface Mountain {
 
 const MountainDiscoveryPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [activeCategory, setActiveCategory] = useState<string>('Semua');
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const mountains: Mountain[] = [
@@ -81,10 +80,7 @@ const MountainDiscoveryPage: React.FC = () => {
     // Implement search functionality
   };
 
-  const handleCategoryChange = (category: string) => {
-    setActiveCategory(category);
-    console.log('Category changed to:', category);
-  };
+ 
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -138,28 +134,6 @@ const MountainDiscoveryPage: React.FC = () => {
                 </button>
               </div>
             </div>
-          </div>
-
-          {/* Category Chips */}
-          <div className="flex flex-row gap-4 w-full justify-center mb-8">
-            <ChipView
-              isActive={activeCategory === 'Semua'}
-              onClick={() => handleCategoryChange('Semua')}
-            >
-              Semua
-            </ChipView>
-            <ChipView
-              isActive={activeCategory === 'Populer'}
-              onClick={() => handleCategoryChange('Populer')}
-            >
-              Populer
-            </ChipView>
-            <ChipView
-              isActive={activeCategory === 'Terbaru'}
-              onClick={() => handleCategoryChange('Terbaru')}
-            >
-              Terbaru
-            </ChipView>
           </div>
 
           {/* Mountain Grid */}

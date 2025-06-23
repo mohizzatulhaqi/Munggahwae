@@ -21,22 +21,6 @@ const Header = () => {
               Munggahwae
             </span>
           </Link>
-
-          {/* Menu Navigasi */}
-          <nav className="flex items-center gap-6 ml-6">
-            <Link
-              href="/"
-              className="text-sm font-medium leading-[18px] text-global-1 font-plus-jakarta hover:text-primary transition-colors"
-            >
-              Beranda
-            </Link>
-            <Link
-              href="/about"
-              className="text-sm font-medium leading-[18px] text-global-1 font-plus-jakarta hover:text-primary transition-colors"
-            >
-              Tentang
-            </Link>
-          </nav>
         </div>
 
         {/* Bagian Kanan - Login/Register Buttons */}
