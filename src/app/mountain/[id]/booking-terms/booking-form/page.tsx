@@ -1,14 +1,8 @@
-    "use client"
+"use client"
 
-import React from "react"
-
-import { useParams, useRouter } from "next/navigation"
 import DateSelectionForm from "@/components/pages/date-selection-form"
+import { useParams, useRouter } from "next/navigation"
 import {mountainsData, type Mountain } from "@/lib/mountain-data"
-import BookingTermsPage from "@/components/pages/booking-terms-page"
-
-
-
 
 
 export interface BookingData {
@@ -16,7 +10,6 @@ export interface BookingData {
   exitDate: string
   numberOfBookers: number
   bookers: PersonalData[]
-  
 }
 
 export interface PersonalData {
@@ -28,6 +21,8 @@ export interface PersonalData {
   birthDate: string
   birthPlace: string
   idCardFile?: File
+  isCompanion?: boolean // New field for companion role
+  age?: number // Calculated age
 }
 
 // Create a global store to persist data between pages
@@ -47,7 +42,7 @@ export function updateGlobalBookingData(data: Partial<BookingData>) {
   globalBookingData = { ...globalBookingData, ...data }
 }
 
-export default function BookignForm() {
+export default function HomePage() {
   const router = useRouter()
 
   const params = useParams();
@@ -73,7 +68,7 @@ export default function BookignForm() {
     })
 
     // Navigate to the personal data form page with the first booker
-    router.push(`/mountain/${mountain?.id}/booking-terms/booking-form/personal-data/0`);
+    router.push(`/mountain/${mountain?.id}/booking-terms/booking-form/personal-data/0`)
   }
 
   return (
