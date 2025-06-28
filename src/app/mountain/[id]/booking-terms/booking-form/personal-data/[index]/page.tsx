@@ -1,7 +1,7 @@
 "use client"
 import { useRouter, useParams } from "next/navigation"
-import PersonalDataForm from "@/components/pages/personal-data-form"
 import { getGlobalBookingData, PersonalData, updateGlobalBookingData } from "../../page"
+import PersonalDataForm from "@/components/pages/personal-data-form"
 
 export default function PersonalDataPage() {
   const router = useRouter()
@@ -23,6 +23,7 @@ export default function PersonalDataPage() {
       // All bookers completed
       alert("Pendaftaran berhasil!")
       console.log("Final booking data:", getGlobalBookingData())
+<<<<<<< HEAD
       router.push(`/mountain/${params.id}/booking-terms/booking-form/confirmation`);
     } else {
       // Move to next booker
@@ -33,12 +34,32 @@ export default function PersonalDataPage() {
   const handleNextBooker = () => {
     if (bookerIndex < totalBookers - 1) {
       router.push(`/mountain/${params.id}/booking-terms/booking-form/personal-data/${bookerIndex + 1}`);
+=======
+      router.push("/confirmation")
+    } else {
+      // Move to next booker
+      router.push(`/personal-data/${bookerIndex + 1}`)
+    }
+  }
+
+  const handleBack = () => {
+    router.push("/mountain/[id]/booking-terms/booking-form")
+  }
+
+  const handleNextBooker = () => {
+    if (bookerIndex < totalBookers - 1) {
+      router.push(`/personal-data/${bookerIndex + 1}`)
+>>>>>>> faiz
     }
   }
 
   const handlePreviousBooker = () => {
     if (bookerIndex > 0) {
+<<<<<<< HEAD
       router.push(`/mountain/${params.id}/booking-terms/booking-form/personal-data/${bookerIndex - 1}`);
+=======
+      router.push(`/personal-data/${bookerIndex - 1}`)
+>>>>>>> faiz
     }
   }
 
@@ -54,6 +75,7 @@ export default function PersonalDataPage() {
         canGoNext={bookerIndex < totalBookers - 1}
         canGoPrevious={bookerIndex > 0}
         isLastBooker={bookerIndex === totalBookers - 1}
+        allBookersData={bookingData.bookers}
       />
     </div>
   )
