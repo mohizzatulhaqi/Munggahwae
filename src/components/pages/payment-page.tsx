@@ -17,10 +17,12 @@ import {
   ArrowLeft,
   Copy,
   QrCode,
+  
 } from 'lucide-react';
 import Image from 'next/image';
 import type { BookingData } from '@/app/mountain/[id]/booking-terms/booking-form/page';
-
+import { Mountain, mountainsData } from '@/lib/mountain-data';
+import { useParams } from 'next/navigation';
 interface PaymentPageProps {
   bookingData: BookingData;
   onPaymentSuccess: () => void;
@@ -110,9 +112,18 @@ export default function PaymentPage({
       createdDate: new Date(timestamp).toLocaleDateString('id-ID'),
     };
   }, []); // Empty dependency array ensures this only runs once
+  const params = useParams();
+  const mountainId = params?.id as string;
+  const mountain = mountainsData.find((m) => m.id === mountainId) as Mountain | undefined;
+
+// Gunakan harga dari data gunung, fallback ke 350000 jika tidak ada
+  const selectedTrailInfo = mountain?.trailDetails.find(
+  (trail) => trail.name.toLowerCase() === bookingData.selectedTrail.toLowerCase()
+);
+
+const baseCost = selectedTrailInfo?.price ?? 350000;
 
   // Calculate costs
-  const baseCost = 350000; // Base cost per person per day
   const days = Math.ceil(
     (new Date(bookingData.exitDate).getTime() - new Date(bookingData.entryDate).getTime()) /
       (1000 * 60 * 60 * 24)

@@ -12,7 +12,7 @@ export interface Mountain {
   trailDetails: TrailInfo[];
   galleryImages: string[];
   bookingTerms: string[];
-  price?: number; // Optional price per person for the mountain
+  
 }
 
 export interface TrailInfo {
@@ -21,6 +21,7 @@ export interface TrailInfo {
   icon: string;
   quota: number; // Daily quota for this specific trail
   available: number; // Current available spots for this trail
+  price?: number; // Optional price per person for the mountain
    // Optional price per person for this trail
 }
 

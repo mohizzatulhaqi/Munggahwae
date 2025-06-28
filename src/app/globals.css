@@ -131,10 +131,9 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+  label:has(*:last-child)::after {
+  content: '';
+}
+
+  
 }

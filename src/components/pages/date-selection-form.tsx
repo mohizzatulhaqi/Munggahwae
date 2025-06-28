@@ -26,6 +26,7 @@ interface DateSelectionFormProps {
     exitDate: string;
     numberOfBookers: number;
     selectedTrail: string;
+    price?: number;
   }) => void;
 }
 
@@ -236,8 +237,13 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateDates() && validateForm()) {
-      onSubmit({ entryDate, exitDate, numberOfBookers, selectedTrail });
-    }
+  onSubmit({
+  entryDate,
+  exitDate,
+  numberOfBookers,
+  selectedTrail,
+  price: selectedTrailInfo?.price ?? 350000, // ✅ benar
+});    }
   };
 
   const selectedTrailInfo = mountain?.trailDetails.find((trail) => trail.name === selectedTrail);
