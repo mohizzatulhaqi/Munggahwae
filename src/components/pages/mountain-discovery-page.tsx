@@ -1,27 +1,31 @@
 'use client';
-import type React from 'react';
-import { useState, useMemo } from 'react';
-import Image from 'next/image';
+import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import Pagination from '@/components/ui/Pagination';
 import { getAllMountains } from '@/lib/mountain-data';
 import ProvinceFilter from '../ui/ProvinceFilter';
+import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const MountainDiscoveryPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [appliedSearchQuery, setAppliedSearchQuery] = useState<string>(''); // New state for applied search
+  const [appliedSearchQuery, setAppliedSearchQuery] = useState<string>('');
   const [selectedProvince, setSelectedProvince] = useState<string>('Semua Provinsi');
   const [currentPage, setCurrentPage] = useState<number>(1);
 
+  // Automatically reset search when input is cleared
+  useEffect(() => {
+    if (searchQuery.trim() === '') {
+      setAppliedSearchQuery('');
+    }
+  }, [searchQuery]);
+
   const mountains = getAllMountains();
 
-  // Filter mountains based on applied search query and selected province
   const filteredMountains = useMemo(() => {
     let filtered = mountains;
 
-    // Filter by applied search query (only when search button is clicked)
     if (appliedSearchQuery.trim()) {
       filtered = filtered.filter(
         (mountain) =>
@@ -31,7 +35,6 @@ const MountainDiscoveryPage: React.FC = () => {
       );
     }
 
-    // Filter by province
     if (selectedProvince !== 'Semua Provinsi') {
       filtered = filtered.filter((mountain) => mountain.province === selectedProvince);
     }
@@ -40,12 +43,10 @@ const MountainDiscoveryPage: React.FC = () => {
   }, [appliedSearchQuery, selectedProvince, mountains]);
 
   const handleSearch = () => {
-    setAppliedSearchQuery(searchQuery); // Apply the search when button is clicked
-    setCurrentPage(1); // Reset to first page when searching
-    console.log('Searching for:', searchQuery);
+    setAppliedSearchQuery(searchQuery);
+    setCurrentPage(1);
   };
 
-  // Handle Enter key press in search input
   const handleSearchKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleSearch();
@@ -54,35 +55,27 @@ const MountainDiscoveryPage: React.FC = () => {
 
   const handleProvinceChange = (province: string) => {
     setSelectedProvince(province);
-    setCurrentPage(1); // Reset to first page when changing province
-    console.log('Province changed to:', province);
+    setCurrentPage(1);
   };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    console.log('Page changed to:', page);
   };
 
-  // Calculate total pages based on filtered results
   const itemsPerPage = 10;
   const totalPages = Math.ceil(filteredMountains.length / itemsPerPage);
-
-  // Get current page items
   const currentItems = filteredMountains.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // Show results info only when province filter is active or search is active
   const showResultsInfo = selectedProvince !== 'Semua Provinsi' || appliedSearchQuery.trim() !== '';
 
   return (
     <div className="flex flex-col min-h-screen bg-global-2">
       <div className="flex flex-col flex-1 bg-global-1">
-        {/* Header */}
         <Header />
 
-        {/* Main Content */}
         <main className="flex flex-col items-center w-full max-w-[1200px] mx-auto px-4 py-8">
           {/* Hero Section */}
           <div
@@ -106,12 +99,7 @@ const MountainDiscoveryPage: React.FC = () => {
               {/* Search Bar */}
               <div className="flex flex-row w-full max-w-[480px] h-16 mt-12">
                 <div className="flex items-center justify-center w-16 h-16 bg-global-1 border border-[#cee8db] rounded-l-xl">
-                  <Image
-                    src="/placeholder.svg?height=20&width=20"
-                    alt="Search"
-                    width={20}
-                    height={20}
-                  />
+                  <Search size={20} color="#000000" />
                 </div>
                 <input
                   type="text"
@@ -123,7 +111,7 @@ const MountainDiscoveryPage: React.FC = () => {
                 />
                 <button
                   onClick={handleSearch}
-                  className="w-[92px] h-16 text-base font-bold leading-[21px] text-center text-global-3 font-plus-jakarta bg-global-1 border border-[#cee8db] rounded-r-xl hover:bg-global-3 hover:text-global-1 transition-colors"
+                  className="w-[92px] h-16 text-base font-bold leading-[21px] text-center text-global-1 font-plus-jakarta bg-[#1af286] border border-[#cee8db] rounded-r-xl hover:bg-global-4 transition-colors"
                 >
                   Cari
                 </button>
@@ -133,7 +121,6 @@ const MountainDiscoveryPage: React.FC = () => {
 
           {/* Filter Section */}
           <div className="flex flex-col sm:flex-row gap-4 w-full justify-center mb-8">
-            {/* Province Filter */}
             <div className="flex justify-center">
               <ProvinceFilter
                 selectedProvince={selectedProvince}
@@ -142,13 +129,12 @@ const MountainDiscoveryPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Results Info - Only show when filtering */}
           {showResultsInfo && (
             <div className="w-full mb-4">
               <p className="text-sm text-global-2 font-plus-jakarta text-center">
                 Menampilkan {currentItems.length} dari {filteredMountains.length} gunung
                 {selectedProvince !== 'Semua Provinsi' && ` di ${selectedProvince}`}
-                {appliedSearchQuery && ` untuk "${appliedSearchQuery}"`}
+                {appliedSearchQuery.trim() && ` untuk "${appliedSearchQuery}"`}
               </p>
             </div>
           )}
@@ -160,11 +146,9 @@ const MountainDiscoveryPage: React.FC = () => {
                 <Link key={mountain.id} href={`/mountain/${mountain.id}`}>
                   <div className="flex flex-col items-center w-full cursor-pointer hover:transform hover:scale-105 transition-transform">
                     <div className="w-full h-[156px]">
-                      <Image
+                      <img
                         src={mountain.image || '/placeholder.svg'}
                         alt={mountain.name}
-                        width={176}
-                        height={99}
                         className="w-full h-[99px] object-cover rounded-xl"
                       />
                       <h3 className="mt-3 text-base font-medium leading-[21px] text-global-1 font-plus-jakarta text-center">
@@ -199,13 +183,7 @@ const MountainDiscoveryPage: React.FC = () => {
                 disabled={currentPage === 1}
                 className="disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Image
-                  src="/placeholder.svg?height=40&width=40"
-                  alt="Previous"
-                  width={40}
-                  height={40}
-                  className="cursor-pointer"
-                />
+                <ChevronLeft size={40} className="cursor-pointer text-global-1" />
               </button>
               <Pagination
                 currentPage={currentPage}
@@ -217,19 +195,12 @@ const MountainDiscoveryPage: React.FC = () => {
                 disabled={currentPage === totalPages}
                 className="disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Image
-                  src="/placeholder.svg?height=40&width=40"
-                  alt="Next"
-                  width={40}
-                  height={40}
-                  className="cursor-pointer"
-                />
+                <ChevronRight size={40} className="cursor-pointer text-global-1" />
               </button>
             </div>
           )}
         </main>
 
-        {/* Footer */}
         <Footer />
       </div>
     </div>
