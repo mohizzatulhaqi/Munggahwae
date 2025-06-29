@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation';
-import { getMountainById } from '@/lib/mountain-data';
 import BookingTermsPage from '@/components/pages/booking-terms-page';
 
 interface BookingTermsPageProps {
@@ -8,12 +7,13 @@ interface BookingTermsPageProps {
   };
 }
 
-export default function BookingTerms({ params }: BookingTermsPageProps) {
-  const mountain = getMountainById(params.id);
+export default async function BookingTerms({ params }: BookingTermsPageProps) {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/gunung/${params.id}`, { cache: 'no-store' });
+  const data = await res.json();
 
-  if (!mountain) {
+  if (!data.success || !data.mountain) {
     notFound();
   }
 
-  return <BookingTermsPage mountain={mountain} />;
+  return <BookingTermsPage mountain={data.mountain} />;
 }
