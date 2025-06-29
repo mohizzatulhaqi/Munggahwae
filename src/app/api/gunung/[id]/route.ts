@@ -1,36 +1,38 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { createClient } from '@/utils/supabase/server';
 
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
+    const supabase = createClient();
     const { id } = params;
 
-    const gunung = await prisma.gunung.findUnique({
-      where: { id },
-      include: {
-        jalur: {
-          orderBy: { name: 'asc' }
-        },
-        galeriGunung: {
-          orderBy: { orderIndex: 'asc' }
-        },
-        peraturan: {
-          orderBy: { orderIndex: 'asc' }
-        }
+    // Query detail gunung dengan relasi Jalur, GaleriGunung, dan Peraturan
+    const { data: gunung, error } = await supabase
+      .from('Gunung')
+      .select(`*, Jalur(*), GaleriGunung(*), Peraturan(*)`)
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return NextResponse.json(
+          { success: false, error: 'Gunung not found' },
+          { status: 404 }
+        );
       }
-    });
+      console.error('Error fetching gunung:', error);
+      return NextResponse.json(
+        { success: false, error: 'Failed to fetch gunung' },
+        { status: 500 }
+      );
+    }
 
     if (!gunung) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Gunung not found' 
-        }, 
+        { success: false, error: 'Gunung not found' },
         { status: 404 }
       );
     }
@@ -39,17 +41,11 @@ export async function GET(
       success: true,
       mountain: gunung
     });
-
   } catch (error) {
     console.error('Error fetching gunung:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to fetch gunung' 
-      }, 
+      { success: false, error: 'Failed to fetch gunung' },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 } 

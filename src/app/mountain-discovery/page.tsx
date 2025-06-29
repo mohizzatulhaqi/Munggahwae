@@ -16,13 +16,17 @@ export default function MountainDiscovery() {
   }, [selectedProvinsi])
 
   const loadMountains = async () => {
+    console.log('window:', typeof window);
+    console.log('Fetching mountains...');
     try {
       setLoading(true)
       setError(null)
 
       const params = selectedProvinsi ? { provinsi: selectedProvinsi } : {}
-      const response: GetMountainsResponse = await mountainApi.getMountains(params)
+      console.log('Before fetch');
 
+      const response: GetMountainsResponse = await mountainApi.getMountains(params)
+      console.log('After fetch', response);
       if (response.success) {
         setMountains(response.mountains)
       } else {

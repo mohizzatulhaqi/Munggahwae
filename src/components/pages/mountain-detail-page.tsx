@@ -13,6 +13,11 @@ interface MountainDetailPageProps {
   mountain: Gunung;
 }
 
+function canAcceptBookings(mountain: any) {
+  // Contoh logika, sesuaikan dengan kebutuhan Anda
+  return mountain.status === 'active' && mountain.kuota > 0;
+}
+
 const MountainDetailPage: React.FC<MountainDetailPageProps> = ({ mountain }) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const router = useRouter();
@@ -101,14 +106,14 @@ const MountainDetailPage: React.FC<MountainDetailPageProps> = ({ mountain }) => 
             </h2>
             <button
               onClick={handleBookingClick}
-              disabled={!mountain.canAcceptBookings()}
+              disabled={!canAcceptBookings(mountain)}
               className={`text-sm font-medium leading-[18px] px-4 py-2 rounded-lg font-plus-jakarta transition-opacity ${
-                mountain.canAcceptBookings()
+                canAcceptBookings(mountain)
                   ? 'bg-[#0FBD66] text-white hover:opacity-90'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
             >
-              {mountain.canAcceptBookings() ? 'Pesan Sekarang' : 'Tidak Tersedia'}
+              {canAcceptBookings(mountain) ? 'Pesan Sekarang' : 'Tidak Tersedia'}
             </button>
           </div>
         </div>

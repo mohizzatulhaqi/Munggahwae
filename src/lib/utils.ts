@@ -19,3 +19,11 @@ export function formatCurrencyDetailed(amount: number): string {
   const decimalPart = parts[1] ? `.${parts[1]}` : ""
   return `Rp${integerPart}${decimalPart}`
 }
+
+function convertBigIntToString(obj: any) {
+  return JSON.parse(
+    JSON.stringify(obj, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+  );
+}

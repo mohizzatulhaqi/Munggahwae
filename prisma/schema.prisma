@@ -15,12 +15,12 @@ datasource db {
 
 model User {
   id           String   @id @default(uuid())
-  namaLengkap  String
+  namaLengkap  String   @map("nama_lengkap")
   email        String   @unique
-  phoneNumber  String?
-  avatarUrl    String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  phoneNumber  String?  @map("phone_number")
+  avatarUrl    String?  @map("avatar_url")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
   
   // Relations
   bookings     Booking[]
@@ -29,18 +29,17 @@ model User {
 
 model Gunung {
   id              String   @id @default(uuid())
-  nama            String
-  kuota           Int
-  deskripsi       String
-  urlGambar       String
-  harga           Int
-  lokasi          String
-  provinsi        String
-  kuotaPerHari    Int      @default(100)
-  hargaPerOrang   BigInt
+  nama            String   @map("name")
+  kuota           Int      @map("quota_per_day")
+  deskripsi       String?  @map("description")
+  urlGambar       String?  @map("image_url")
+  heroImageUrl    String?  @map("hero_image_url")
+  harga           Int      @map("price_per_person")
+  lokasi          String   @map("location")
+  provinsi        String   @map("province")
   status          String   @default("active")
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
   
   // Relations
   peraturan       Peraturan[]
@@ -48,49 +47,54 @@ model Gunung {
   galeriGunung    GaleriGunung[]
   jalur           Jalur[]
   kuotaHarian     KuotaHarian[]
+  
+  @@map("mountains")
 }
 
 model Peraturan {
   id        String   @id @default(uuid())
-  isi       String
-  gunungId  String
-  termText  String
-  orderIndex Int     @default(0)
-  createdAt DateTime @default(now())
+  isi       String   @map("term_text")
+  gunungId  String   @map("mountain_id")
+  orderIndex Int     @default(0) @map("order_index")
+  createdAt DateTime @default(now()) @map("created_at")
   
   // Relations
   gunung    Gunung   @relation(fields: [gunungId], references: [id])
+  
+  @@map("booking_terms")
 }
 
 model Jalur {
   id                    String   @id @default(uuid())
-  mountainId            String
+  mountainId            String   @map("mountain_id")
   name                  String
   description           String?
-  difficultyLevel       String?
-  estimatedDurationHours Int?
-  maxAltitude           Int?
-  createdAt             DateTime @default(now())
+  difficultyLevel       String?  @map("difficulty_level")
+  estimatedDurationHours Int?    @map("estimated_duration_hours")
+  maxAltitude           Int?     @map("max_altitude")
+  createdAt             DateTime @default(now()) @map("created_at")
   
   // Relations
   mountain              Gunung   @relation(fields: [mountainId], references: [id])
   bookings              Booking[]
+  
+  @@map("trails")
 }
 
 model Booking {
   id              String   @id @default(uuid())
-  userId          String?
-  mountainId      String?
-  trailId         String?
-  tanggalMasuk    DateTime
-  tanggalKeluar   DateTime
-  jumlahPemesan   Int
-  totalHarga      Int
+  userId          String?  @map("user_id")
+  mountainId      String?  @map("mountain_id")
+  trailId         String?  @map("trail_id")
+  tanggalMasuk    DateTime @map("tanggal_masuk")
+  tanggalKeluar   DateTime @map("tanggal_keluar")
+  jumlahPemesan   Int      @map("jumlah_pemesan")
+  totalHarga      Int      @map("total_harga")
   status          String   @default("pending")
-  paymentStatus   String   @default("unpaid")
-  specialRequests String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  paymentStatus   String   @default("unpaid") @map("payment_status")
+  specialRequests String?  @map("special_requests")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
   
   // Relations
   user            User?    @relation(fields: [userId], references: [id])
@@ -98,65 +102,75 @@ model Booking {
   trail           Jalur?   @relation(fields: [trailId], references: [id])
   anggotaPemesanan AnggotaPemesanan[]
   notifications   Notifikasi[]
+  
+  @@map("bookings")
 }
 
 model AnggotaPemesanan {
   id              String   @id @default(uuid())
-  pemesananId     String?
+  pemesananId     String?  @map("pemesanan_id")
   email           String
   nama            String
-  noIdentitas     String
+  noIdentitas     String   @map("no_identitas")
   kewarganegaraan String   @default("Indonesia")
-  jenisKelamin    String?
-  tempatLahir     String?
-  tanggalLahir    DateTime?
-  fileKtp         String?
-  isCompanion     Boolean  @default(false)
-  createdAt       DateTime @default(now())
+  jenisKelamin    String?  @map("jenis_kelamin")
+  tempatLahir     String?  @map("tempat_lahir")
+  tanggalLahir    DateTime? @map("tanggal_lahir")
+  fileKtp         String?  @map("file_ktp")
+  isCompanion     Boolean  @default(false) @map("is_companion")
+  createdAt       DateTime @default(now()) @map("created_at")
   
   // Relations
   pemesanan       Booking? @relation(fields: [pemesananId], references: [id])
+  
+  @@map("booking_members")
 }
 
 model GaleriGunung {
   id          String   @id @default(uuid())
-  mountainId  String?
-  imageUrl    String
+  mountainId  String?  @map("mountain_id")
+  imageUrl    String   @map("image_url")
   caption     String?
-  orderIndex  Int      @default(0)
-  createdAt   DateTime @default(now())
+  orderIndex  Int      @default(0) @map("order_index")
+  createdAt   DateTime @default(now()) @map("created_at")
   
   // Relations
   mountain    Gunung?  @relation(fields: [mountainId], references: [id])
+  
+  @@map("mountain_gallery")
 }
 
 model KuotaHarian {
   id              String   @id @default(uuid())
-  mountainId      String?
+  mountainId      String?  @map("mountain_id")
   date            DateTime
-  totalQuota      Int
-  bookedQuota     Int      @default(0)
-  availableQuota  Int      @default(0)
+  totalQuota      Int      @map("total_quota")
+  bookedQuota     Int      @default(0) @map("booked_quota")
+  availableQuota  Int      @default(0) @map("available_quota")
   status          String   @default("open")
-  createdAt       DateTime @default(now())
+  createdAt       DateTime @default(now()) @map("created_at")
   
   // Relations
   mountain        Gunung?  @relation(fields: [mountainId], references: [id])
+  
+  @@map("daily_quotas")
 }
 
 model Notifikasi {
   id          String   @id @default(uuid())
-  userId      String?
-  bookingId   String?
+  userId      String?  @map("user_id")
+  bookingId   String?  @map("booking_id")
   title       String
   message     String
   type        String?
-  isRead      Boolean  @default(false)
-  createdAt   DateTime @default(now())
+  isRead      Boolean  @default(false) @map("is_read")
+  createdAt   DateTime @default(now()) @map("created_at")
   
   // Relations
   user        User?    @relation(fields: [userId], references: [id])
   booking     Booking? @relation(fields: [bookingId], references: [id])
+  
+  @@map("notifications")
 }
 
 

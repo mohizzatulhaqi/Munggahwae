@@ -1,12 +1,19 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { createClient } from '@/utils/supabase/server';
 
-const prisma = new PrismaClient();
+function convertBigIntToString(obj: any) {
+  return JSON.parse(
+    JSON.stringify(obj, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+  );
+}
 
 export async function GET(request: Request) {
   try {
+    const supabase = createClient();
     const { searchParams } = new URL(request.url);
-    
+
     // Get query parameters
     const searchQuery = searchParams.get('search');
     const provinsi = searchParams.get('provinsi');
@@ -16,64 +23,50 @@ export async function GET(request: Request) {
     const from = (page - 1) * limit;
     const to = from + limit - 1;
 
-    // Build where clause
-    const where: any = {};
-    
+    // Build Supabase query
+    let query = supabase
+      .from('Gunung')
+      .select(`*, Jalur(*), GaleriGunung(*)`, { count: 'exact' })
+      .order('createdAt', { ascending: false })
+      .range(from, to);
+
     if (searchQuery) {
-      where.OR = [
-        { nama: { contains: searchQuery, mode: 'insensitive' } },
-        { lokasi: { contains: searchQuery, mode: 'insensitive' } },
-        { provinsi: { contains: searchQuery, mode: 'insensitive' } }
-      ];
+      query = query.or(
+        `nama.ilike.%${searchQuery}%,lokasi.ilike.%${searchQuery}%,provinsi.ilike.%${searchQuery}%`
+      );
     }
-    
     if (provinsi) {
-      where.provinsi = provinsi;
+      query = query.eq('provinsi', provinsi);
     }
-    
     if (status) {
-      where.status = status;
+      query = query.eq('status', status);
     }
 
-    // Get total count
-    const totalCount = await prisma.gunung.count({ where });
+    const { data, count, error } = await query;
 
-    // Get paginated data
-    const gunungData = await prisma.gunung.findMany({
-      where,
-      skip: from,
-      take: limit,
-      orderBy: { createdAt: 'desc' },
-      include: {
-        jalur: true,
-        galeriGunung: {
-          orderBy: { orderIndex: 'asc' }
-        }
-      }
-    });
+    if (error) {
+      throw error;
+    }
 
     return NextResponse.json({
       success: true,
-      mountains: gunungData,
+      mountains: convertBigIntToString(data),
       meta: {
-        total: totalCount,
+        total: count ?? 0,
         page,
         limit,
-        totalPages: Math.ceil(totalCount / limit),
+        totalPages: count ? Math.ceil(count / limit) : 1,
       },
     });
-
   } catch (error) {
     console.error('Error fetching gunung data:', error);
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Failed to fetch gunung data',
-        mountains: []
-      }, 
+        mountains: [],
+      },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }
