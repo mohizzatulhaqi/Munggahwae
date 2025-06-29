@@ -6,6 +6,8 @@ import Link from "next/link"
 import Image from "next/image"
 import Header from "@/components/common/Header"
 import Footer from "@/components/common/Footer"
+import { loginUser } from "@/models/user/controller/login"
+
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -26,14 +28,28 @@ const LoginPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Login data:", formData)
-      alert("Login berhasil!")
-      setIsLoading(false)
-    }, 1500)
+  
+    try {
+      const res = await loginUser({
+        email: formData.email,
+        password: formData.password,
+      })
+  
+      if (res?.isCreated) {
+        alert("Login berhasil!")
+        console.log("Data user:", res.user)
+        // TODO: simpan ke state global / cookies jika perlu
+      } else {
+        alert(res?.message || "Login gagal")
+      }
+    } catch (err) {
+      alert("Terjadi kesalahan saat login.")
+      console.error(err)
+    }
+  
+    setIsLoading(false)
   }
+  
 
   return (
     <div className="min-h-screen bg-global-1">
