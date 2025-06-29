@@ -24,6 +24,7 @@ export interface PersonalData {
   idCardFile?: File
   isCompanion?: boolean // New field for companion role
   healthCertificateFile?: File 
+  
   age?: number // Calculated age
 }
 
