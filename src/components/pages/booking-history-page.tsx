@@ -18,81 +18,15 @@ import {
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import { formatCurrency } from '@/lib/utils';
+import { BookingWithMountain } from '@/lib/api/bookingApi';
 
-interface BookingHistory {
-  id: string;
-  bookingCode: string;
-  mountainName: string;
-  mountainImage: string;
-  startDate: string;
-  endDate: string;
-  duration: number;
-  climbers: number;
-  totalCost: number;
-  status: 'approved' | 'rejected' | 'pending';
-  bookingDate: string;
-  paymentMethod: string;
-  trail: string;
-  location: string;
-  rejectionReason?: string;
+interface BookingHistoryPageProps {
+  bookings: BookingWithMountain[];
+  onRefresh: () => void;
+  loading: boolean;
 }
 
-// Sample booking data - in real app this would come from API
-const sampleBookings: BookingHistory[] = [
-  {
-    id: '1',
-    bookingCode: 'MNG-001-2024',
-    mountainName: 'Gunung Rinjani',
-    mountainImage: '/placeholder.svg?height=200&width=300',
-    startDate: '2024-07-15',
-    endDate: '2024-07-17',
-    duration: 3,
-    climbers: 2,
-    totalCost: 1250000,
-    status: 'approved',
-    bookingDate: '2024-06-20',
-    paymentMethod: 'Bank Transfer - BCA',
-    trail: 'Jalur Senaru',
-    location: 'Lombok, Nusa Tenggara Barat',
-  },
-  {
-    id: '2',
-    bookingCode: 'MNG-002-2024',
-    mountainName: 'Gunung Semeru',
-    mountainImage: '/placeholder.svg?height=200&width=300',
-    startDate: '2024-08-10',
-    endDate: '2024-08-12',
-    duration: 3,
-    climbers: 4,
-    totalCost: 2100000,
-    status: 'pending',
-    bookingDate: '2024-06-25',
-    paymentMethod: 'E-Wallet - GoPay',
-    trail: 'Jalur Ranu Pani',
-    location: 'Malang, Jawa Timur',
-  },
-  {
-    id: '3',
-    bookingCode: 'MNG-003-2024',
-    mountainName: 'Gunung Bromo',
-    mountainImage: '/placeholder.svg?height=200&width=300',
-    startDate: '2024-06-01',
-    endDate: '2024-06-02',
-    duration: 2,
-    climbers: 3,
-    totalCost: 850000,
-    status: 'rejected',
-    bookingDate: '2024-05-15',
-    paymentMethod: 'Credit Card',
-    trail: 'Jalur Cemoro Lawang',
-    location: 'Probolinggo, Jawa Timur',
-    rejectionReason:
-      'Dokumen identitas tidak jelas.',
-  },
-];
-
-export default function BookingHistoryPage() {
-  const [bookings] = useState<BookingHistory[]>(sampleBookings);
+export default function BookingHistoryPage({ bookings, onRefresh, loading }: BookingHistoryPageProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'approved' | 'rejected' | 'pending'>(
     'all'
@@ -101,8 +35,8 @@ export default function BookingHistoryPage() {
   // Filter bookings based on search and status
   const filteredBookings = bookings.filter((booking) => {
     const matchesSearch =
-      booking.mountainName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.bookingCode.toLowerCase().includes(searchTerm.toLowerCase());
+      booking.gunung.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      booking.kodeBooking.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || booking.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -133,8 +67,8 @@ export default function BookingHistoryPage() {
     });
   };
 
-  const formatShortDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('id-ID', {
+  const formatShortDate = (date: Date) => {
+    return date.toLocaleDateString('id-ID', {
       day: '2-digit',
       month: 'short',
       year: 'numeric',
@@ -205,7 +139,7 @@ export default function BookingHistoryPage() {
                   onClick={() => setStatusFilter('pending')}
                   size="sm"
                 >
-                  Pending
+                  Menunggu
                 </Button>
                 <Button
                   variant={statusFilter === 'rejected' ? 'default' : 'outline'}
@@ -218,132 +152,115 @@ export default function BookingHistoryPage() {
             </div>
 
             {/* Booking Cards */}
-            {filteredBookings.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-gray-500">
-                  Tidak ada booking yang sesuai dengan pencarian Anda.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                {filteredBookings.map((booking) => (
-                  <Card
-                    key={booking.id}
-                    className="overflow-hidden hover:shadow-lg transition-shadow"
-                  >
-                    <CardContent className="p-0">
-                      <div className="flex flex-col lg:flex-row">
-                        {/* Mountain Image */}
-                        <div className="lg:w-1/4 relative">
-                          <img
-                            src={booking.mountainImage || '/placeholder.svg'}
-                            alt={booking.mountainName}
-                            className="w-full h-48 lg:h-full object-cover"
-                          />
+            <div className="space-y-6">
+              {filteredBookings.map((booking) => (
+                <Card key={booking.id} className="overflow-hidden">
+                  <CardContent className="p-6">
+                    <div className="flex flex-col lg:flex-row gap-6">
+                      {/* Mountain Image */}
+                      <div className="lg:w-48 lg:h-32 w-full h-48">
+                        <img
+                          src={booking.gunung.urlGambar || '/placeholder.svg'}
+                          alt={booking.gunung.nama}
+                          className="w-full h-full object-cover rounded-lg"
+                        />
+                      </div>
+
+                      {/* Booking Details */}
+                      <div className="flex-1 space-y-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                          <div>
+                            <h3 className="text-xl font-semibold text-gray-900">
+                              {booking.gunung.nama}
+                            </h3>
+                            <p className="text-gray-600 flex items-center gap-1">
+                              <MapPin className="w-4 h-4" />
+                              {booking.gunung.lokasi}, {booking.gunung.provinsi}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {getStatusBadge(booking.status)}
+                            <span className="text-sm text-gray-500">
+                              {booking.kodeBooking}
+                            </span>
+                          </div>
                         </div>
 
-                        {/* Booking Details */}
-                        <div className="flex-1 p-6">
-                          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4">
+                        {/* Booking Info Grid */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                          <div className="flex items-center gap-2">
+                            <Calendar className="w-4 h-4 text-gray-400" />
                             <div>
-                              <h3 className="text-xl font-semibold text-gray-900 mb-1">
-                                {booking.mountainName}
-                              </h3>
-                              <div className="flex items-center gap-1 text-sm text-gray-500 mb-1">
-                                <MapPin className="w-3 h-3" />
-                                {booking.location}
-                              </div>
-                              <p className="text-sm text-gray-500 mb-2">
-                                Kode Booking: {booking.bookingCode}
-                              </p>
-                              <p className="text-sm text-gray-600 mb-2">Jalur: {booking.trail}</p>
-                              {getStatusBadge(booking.status)}
+                              <p className="text-sm text-gray-500">Tanggal Masuk</p>
+                              <p className="font-medium">{formatShortDate(booking.tanggalMasuk)}</p>
                             </div>
-                            <div className="text-right mt-4 sm:mt-0">
-                              <p className="text-2xl font-bold text-green-600">
-                                {formatCurrency(booking.totalCost)}
-                              </p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Clock className="w-4 h-4 text-gray-400" />
+                            <div>
+                              <p className="text-sm text-gray-500">Tanggal Keluar</p>
+                              <p className="font-medium">{formatShortDate(booking.tanggalKeluar)}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Users className="w-4 h-4 text-gray-400" />
+                            <div>
+                              <p className="text-sm text-gray-500">Jumlah Pendaki</p>
+                              <p className="font-medium">{booking.jumlahPemesan} orang</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <CreditCard className="w-4 h-4 text-gray-400" />
+                            <div>
                               <p className="text-sm text-gray-500">Total Biaya</p>
+                              <p className="font-medium">{formatCurrency(booking.totalBiaya)}</p>
                             </div>
                           </div>
+                        </div>
 
-                          {/* Rejection Reason */}
-                          {booking.status === 'rejected' && booking.rejectionReason && (
-                            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                              <div className="flex items-start gap-2">
-                                <AlertTriangle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
-                                <div>
-                                  <p className="text-sm font-medium text-red-900 mb-1">
-                                    Alasan Penolakan:
-                                  </p>
-                                  <p className="text-sm text-red-800">{booking.rejectionReason}</p>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Booking Info Grid */}
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-                            <div className="flex items-center gap-2">
-                              <Calendar className="w-4 h-4 text-gray-400" />
-                              <div>
-                                <p className="text-xs text-gray-500">Tanggal Mulai</p>
-                                <p className="text-sm font-medium">
-                                  {formatDate(booking.startDate)}
-                                </p>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Clock className="w-4 h-4 text-gray-400" />
-                              <div>
-                                <p className="text-xs text-gray-500">Durasi</p>
-                                <p className="text-sm font-medium">{booking.duration} hari</p>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Users className="w-4 h-4 text-gray-400" />
-                              <div>
-                                <p className="text-xs text-gray-500">Pendaki</p>
-                                <p className="text-sm font-medium">{booking.climbers} orang</p>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <CreditCard className="w-4 h-4 text-gray-400" />
-                              <div>
-                                <p className="text-xs text-gray-500">Pembayaran</p>
-                                <p className="text-sm font-medium">{booking.paymentMethod}</p>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Action Buttons */}
-                          <div className="flex flex-wrap gap-2">
+                        {/* Action Buttons */}
+                        <div className="flex flex-col sm:flex-row gap-2 pt-4 border-t">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => window.location.href = `/history/${booking.id}`}
+                          >
+                            Lihat Detail
+                          </Button>
+                          {booking.status === 'approved' && (
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => (window.location.href = `/history/${booking.id}`)}
+                              onClick={() => window.location.href = `/history/${booking.id}/e-ticket`}
                             >
-                              Lihat Detail
+                              Download E-Ticket
                             </Button>
-                            {booking.status === 'approved' && (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() =>
-                                  (window.location.href = `/history/${booking.id}/e-ticket`)
-                                }
-                              >
-                                Download E-Ticket
-                              </Button>
-                            )}
-                          </div>
+                          )}
+                          {booking.status === 'pending' && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => window.location.href = `/history/${booking.id}`}
+                            >
+                              Lihat Status
+                            </Button>
+                          )}
+                          {booking.status === 'rejected' && booking.alasanPenolakan && (
+                            <div className="flex items-start gap-2 p-3 bg-red-50 rounded-lg">
+                              <AlertTriangle className="w-4 h-4 text-red-500 mt-0.5" />
+                              <div>
+                                <p className="text-sm font-medium text-red-800">Alasan Penolakan:</p>
+                                <p className="text-sm text-red-700">{booking.alasanPenolakan}</p>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </>
         )}
       </main>

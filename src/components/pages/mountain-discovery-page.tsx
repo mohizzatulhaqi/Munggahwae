@@ -4,14 +4,27 @@ import Link from 'next/link';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import Pagination from '@/components/ui/Pagination';
-import { getAllMountains } from '@/lib/mountain-data';
 import ProvinceFilter from '../ui/ProvinceFilter';
 import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Gunung } from '@/domain/entities/Gunung';
 
-const MountainDiscoveryPage: React.FC = () => {
+interface MountainDiscoveryPageProps {
+  mountains: Gunung[];
+  selectedProvinsi: string;
+  onProvinsiChange: (provinsi: string) => void;
+  onRefresh: () => void;
+  loading: boolean;
+}
+
+const MountainDiscoveryPage: React.FC<MountainDiscoveryPageProps> = ({
+  mountains,
+  selectedProvinsi,
+  onProvinsiChange,
+  onRefresh,
+  loading
+}) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [appliedSearchQuery, setAppliedSearchQuery] = useState<string>('');
-  const [selectedProvince, setSelectedProvince] = useState<string>('Semua Provinsi');
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   // Automatically reset search when input is cleared
@@ -21,26 +34,24 @@ const MountainDiscoveryPage: React.FC = () => {
     }
   }, [searchQuery]);
 
-  const mountains = getAllMountains();
-
   const filteredMountains = useMemo(() => {
-    let filtered = mountains;
+    let filtered = mountains || [];
 
     if (appliedSearchQuery.trim()) {
       filtered = filtered.filter(
         (mountain) =>
-          mountain.name.toLowerCase().includes(appliedSearchQuery.toLowerCase()) ||
-          mountain.location.toLowerCase().includes(appliedSearchQuery.toLowerCase()) ||
-          mountain.province.toLowerCase().includes(appliedSearchQuery.toLowerCase())
+          mountain.nama.toLowerCase().includes(appliedSearchQuery.toLowerCase()) ||
+          mountain.lokasi.toLowerCase().includes(appliedSearchQuery.toLowerCase()) ||
+          mountain.provinsi.toLowerCase().includes(appliedSearchQuery.toLowerCase())
       );
     }
 
-    if (selectedProvince !== 'Semua Provinsi') {
-      filtered = filtered.filter((mountain) => mountain.province === selectedProvince);
+    if (selectedProvinsi && selectedProvinsi !== 'Semua Provinsi') {
+      filtered = filtered.filter((mountain) => mountain.provinsi === selectedProvinsi);
     }
 
     return filtered;
-  }, [appliedSearchQuery, selectedProvince, mountains]);
+  }, [appliedSearchQuery, selectedProvinsi, mountains]);
 
   const handleSearch = () => {
     setAppliedSearchQuery(searchQuery);
@@ -54,7 +65,7 @@ const MountainDiscoveryPage: React.FC = () => {
   };
 
   const handleProvinceChange = (province: string) => {
-    setSelectedProvince(province);
+    onProvinsiChange(province);
     setCurrentPage(1);
   };
 
@@ -69,7 +80,7 @@ const MountainDiscoveryPage: React.FC = () => {
     currentPage * itemsPerPage
   );
 
-  const showResultsInfo = selectedProvince !== 'Semua Provinsi' || appliedSearchQuery.trim() !== '';
+  const showResultsInfo = selectedProvinsi !== 'Semua Provinsi' || appliedSearchQuery.trim() !== '';
 
   return (
     <div className="flex flex-col min-h-screen bg-global-2">
@@ -123,60 +134,67 @@ const MountainDiscoveryPage: React.FC = () => {
           <div className="flex flex-col sm:flex-row gap-4 w-full justify-center mb-8">
             <div className="flex justify-center">
               <ProvinceFilter
-                selectedProvince={selectedProvince}
+                selectedProvince={selectedProvinsi || 'Semua Provinsi'}
                 onProvinceChange={handleProvinceChange}
               />
             </div>
           </div>
 
-          {showResultsInfo && (
+          {!loading && showResultsInfo && (
             <div className="w-full mb-4">
               <p className="text-sm text-global-2 font-plus-jakarta text-center">
                 Menampilkan {currentItems.length} dari {filteredMountains.length} gunung
-                {selectedProvince !== 'Semua Provinsi' && ` di ${selectedProvince}`}
+                {selectedProvinsi !== 'Semua Provinsi' && ` di ${selectedProvinsi}`}
                 {appliedSearchQuery.trim() && ` untuk "${appliedSearchQuery}"`}
               </p>
             </div>
           )}
 
           {/* Mountain Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 w-full mb-8">
-            {currentItems.length > 0 ? (
-              currentItems.map((mountain) => (
-                <Link key={mountain.id} href={`/mountain/${mountain.id}`}>
-                  <div className="flex flex-col items-center w-full cursor-pointer hover:transform hover:scale-105 transition-transform">
-                    <div className="w-full h-[156px]">
-                      <img
-                        src={mountain.image || '/placeholder.svg'}
-                        alt={mountain.name}
-                        className="w-full h-[99px] object-cover rounded-xl"
-                      />
-                      <h3 className="mt-3 text-base font-medium leading-[21px] text-global-1 font-plus-jakarta text-center">
-                        {mountain.name}
-                      </h3>
-                      <p className="mt-1 text-sm font-normal leading-[18px] text-global-2 font-plus-jakarta text-center">
-                        {mountain.location === mountain.province
-                          ? mountain.province
-                          : `${mountain.location}, ${mountain.province}`}
-                      </p>
+          {loading ? (
+            <div className="col-span-full text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
+              <p className="text-lg text-global-2 font-plus-jakarta">Memuat data gunung...</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 w-full mb-8">
+              {currentItems.length > 0 ? (
+                currentItems.map((mountain) => (
+                  <Link key={mountain.id} href={`/mountain/${mountain.id}`}>
+                    <div className="flex flex-col items-center w-full cursor-pointer hover:transform hover:scale-105 transition-transform">
+                      <div className="w-full h-[156px]">
+                        <img
+                          src={mountain.urlGambar || '/placeholder.svg'}
+                          alt={mountain.nama}
+                          className="w-full h-[99px] object-cover rounded-xl"
+                        />
+                        <h3 className="mt-3 text-base font-medium leading-[21px] text-global-1 font-plus-jakarta text-center">
+                          {mountain.nama}
+                        </h3>
+                        <p className="mt-1 text-sm font-normal leading-[18px] text-global-2 font-plus-jakarta text-center">
+                          {mountain.lokasi === mountain.provinsi
+                            ? mountain.provinsi
+                            : `${mountain.lokasi}, ${mountain.provinsi}`}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              ))
-            ) : (
-              <div className="col-span-full text-center py-12">
-                <p className="text-lg text-global-2 font-plus-jakarta mb-2">
-                  Tidak ada gunung ditemukan
-                </p>
-                <p className="text-sm text-global-2 font-plus-jakarta">
-                  Coba ubah filter atau kata kunci pencarian Anda
-                </p>
-              </div>
-            )}
-          </div>
+                  </Link>
+                ))
+              ) : (
+                <div className="col-span-full text-center py-12">
+                  <p className="text-lg text-global-2 font-plus-jakarta mb-2">
+                    Tidak ada gunung ditemukan
+                  </p>
+                  <p className="text-sm text-global-2 font-plus-jakarta">
+                    Coba ubah filter atau kata kunci pencarian Anda
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Pagination */}
-          {totalPages > 1 && (
+          {!loading && totalPages > 1 && (
             <div className="flex flex-row items-center justify-center gap-4 w-full">
               <button
                 onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
