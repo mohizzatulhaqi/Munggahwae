@@ -6,8 +6,7 @@ import Link from "next/link"
 import Image from "next/image"
 import Header from "@/components/common/Header"
 import Footer from "@/components/common/Footer"
-import { loginUser } from "@/models/user/controller/login"
-
+import { createClient } from "@/utils/supabase/client"
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -26,30 +25,29 @@ const LoginPage = () => {
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
+    const supabase = await createClient()
+
     e.preventDefault()
     setIsLoading(true)
-  
-    try {
-      const res = await loginUser({
-        email: formData.email,
-        password: formData.password,
-      })
-  
-      if (res?.isCreated) {
-        alert("Login berhasil!")
-        console.log("Data user:", res.user)
-        // TODO: simpan ke state global / cookies jika perlu
-      } else {
-        alert(res?.message || "Login gagal")
-      }
-    } catch (err) {
-      alert("Terjadi kesalahan saat login.")
-      console.error(err)
+
+    const { email, password } = formData
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+
+    if (error) {
+      alert("Login gagal: " + error.message)
+      console.error("Supabase error:", error)
+    } else {
+      alert("Login berhasil!")
+      console.log("User data:", data)
+      // TODO: simpan session/token bila perlu
     }
-  
+
     setIsLoading(false)
   }
-  
 
   return (
     <div className="min-h-screen bg-global-1">
