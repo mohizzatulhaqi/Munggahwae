@@ -1,86 +1,100 @@
-"use client"
-import { useState } from "react"
-import type React from "react"
+'use client';
+import { useState } from 'react';
+import type React from 'react';
+import { useRouter } from 'next/navigation'; // Import useRouter
 
-import Link from "next/link"
-import Image from "next/image"
-import Header from "@/components/common/Header"
-import Footer from "@/components/common/Footer"
-import { supabase } from "@/app/api/supabaseClient"
-import { createUser } from "@/models/user/controller/createUser"
+import Link from 'next/link';
+import Image from 'next/image';
+import Header from '@/components/common/Header';
+import Footer from '@/components/common/Footer';
+import { supabase } from '@/app/api/supabaseClient';
+import { createUser } from '@/models/user/controller/createUser';
+import { Eye, EyeOff, Mountain } from 'lucide-react';
 
 const RegisterPage = () => {
+  const router = useRouter(); // Initialize router
   const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    phone: "",
+    fullName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    phone: '',
     agreeToTerms: false,
-  })
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target
+    const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }))
-  }
-
-  
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Password dan konfirmasi password tidak cocok!")
-      return
+      alert('Password dan konfirmasi password tidak cocok!');
+      return;
     }
 
     if (!formData.agreeToTerms) {
-      alert("Silakan setujui syarat dan ketentuan!")
-      return
+      alert('Silakan setujui syarat dan ketentuan!');
+      return;
     }
 
-    console.log(formData.email, formData.fullName, formData.confirmPassword, formData.agreeToTerms, formData.password, formData.phone)
+    console.log(
+      formData.email,
+      formData.fullName,
+      formData.confirmPassword,
+      formData.agreeToTerms,
+      formData.password,
+      formData.phone
+    );
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     const { data, error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          data: {
-            full_name: formData.fullName,
-          },
-    },
-  })
+      email: formData.email,
+      password: formData.password,
+      options: {
+        data: {
+          full_name: formData.fullName,
+        },
+      },
+    });
 
-  if (error) {
-    alert(`Gagal daftar: ${error.message}`)
-  } else {
-    alert("Pendaftaran berhasil! Silakan cek login.")
-    try {
-      const res = await createUser({  
-        id: data.user?.id ?? "",
-        namaLengkap: formData.fullName,
-        email: formData.email,
-        password: formData.password, // opsional
-      })
+    if (error) {
+      alert(`Gagal daftar: ${error.message}`);
+      setIsLoading(false);
+    } else {
+      alert('Pendaftaran berhasil! Silakan cek login.');
+      try {
+        const res = await createUser({
+          id: data.user?.id ?? '',
+          namaLengkap: formData.fullName,
+          email: formData.email,
+          password: formData.password, // opsional
+        });
 
-      console.log(res);
-    } catch (e: any) {
-      console.error("Gagal simpan data user:", e)
-      alert("Akun berhasil dibuat, tapi gagal menyimpan data tambahan.")
-    }  
-  }
+        console.log(res);
 
-  setIsLoading(false)
-}
+        // Redirect to login page after successful registration
+        router.push('/login');
+      } catch (e: any) {
+        console.error('Gagal simpan data user:', e);
+        alert('Akun berhasil dibuat, tapi gagal menyimpan data tambahan.');
 
+        // Still redirect to login even if additional data saving fails
+        router.push('/login');
+      }
+    }
+
+    setIsLoading(false);
+  };
 
   return (
     <div className="min-h-screen bg-global-1">
@@ -91,11 +105,15 @@ const RegisterPage = () => {
           {/* Logo and Title */}
           <div className="text-center mb-8">
             <div className="flex items-center justify-center gap-2 mb-4">
-              <Image src="/placeholder.svg?height=32&width=32" alt="Logo" width={32} height={32} className="w-8 h-8" />
+              <Mountain size={20} color="var(--global-bg-4)" strokeWidth={2.5} />
               <span className="text-2xl font-bold text-global-1 font-plus-jakarta">Munggahwae</span>
             </div>
-            <h1 className="text-2xl font-bold text-global-1 font-plus-jakarta mb-2">Bergabung dengan Kami</h1>
-            <p className="text-global-2 font-plus-jakarta">Daftar sekarang dan mulai petualangan mendaki Anda</p>
+            <h1 className="text-2xl font-bold text-global-1 font-plus-jakarta mb-2">
+              Bergabung dengan Kami
+            </h1>
+            <p className="text-global-2 font-plus-jakarta">
+              Daftar sekarang dan mulai petualangan mendaki Anda
+            </p>
           </div>
 
           {/* Register Form */}
@@ -103,7 +121,10 @@ const RegisterPage = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Full Name Field */}
               <div>
-                <label htmlFor="fullName" className="block text-sm font-medium text-global-1 font-plus-jakarta mb-2">
+                <label
+                  htmlFor="fullName"
+                  className="block text-sm font-medium text-global-1 font-plus-jakarta mb-2"
+                >
                   Nama Lengkap
                 </label>
                 <input
@@ -120,7 +141,10 @@ const RegisterPage = () => {
 
               {/* Email Field */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-global-1 font-plus-jakarta mb-2">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-global-1 font-plus-jakarta mb-2"
+                >
                   Email
                 </label>
                 <input
@@ -137,12 +161,15 @@ const RegisterPage = () => {
 
               {/* Password Field */}
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-global-1 font-plus-jakarta mb-2">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-global-1 font-plus-jakarta mb-2"
+                >
                   Password
                 </label>
                 <div className="relative">
                   <input
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword ? 'text' : 'password'}
                     id="password"
                     name="password"
                     value={formData.password}
@@ -156,12 +183,7 @@ const RegisterPage = () => {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
                   >
-                    <Image
-                      src="/placeholder.svg?height=20&width=20"
-                      alt={showPassword ? "Hide" : "Show"}
-                      width={20}
-                      height={20}
-                    />
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
                 </div>
               </div>
@@ -176,7 +198,7 @@ const RegisterPage = () => {
                 </label>
                 <div className="relative">
                   <input
-                    type={showConfirmPassword ? "text" : "password"}
+                    type={showConfirmPassword ? 'text' : 'password'}
                     id="confirmPassword"
                     name="confirmPassword"
                     value={formData.confirmPassword}
@@ -190,12 +212,7 @@ const RegisterPage = () => {
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
                   >
-                    <Image
-                      src="/placeholder.svg?height=20&width=20"
-                      alt={showConfirmPassword ? "Hide" : "Show"}
-                      width={20}
-                      height={20}
-                    />
+                    {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
                 </div>
               </div>
@@ -210,12 +227,15 @@ const RegisterPage = () => {
                   onChange={handleInputChange}
                   className="mt-1 w-4 h-4 text-global-4 border-gray-300 rounded focus:ring-global-4"
                 />
-                <label htmlFor="agreeToTerms" className="text-sm text-global-1 font-plus-jakarta leading-relaxed">
-                  Saya setuju dengan{" "}
+                <label
+                  htmlFor="agreeToTerms"
+                  className="text-sm text-global-1 font-plus-jakarta leading-relaxed"
+                >
+                  Saya setuju dengan{' '}
                   <Link href="/terms" className="text-global-2 hover:underline">
                     Syarat & Ketentuan
-                  </Link>{" "}
-                  dan{" "}
+                  </Link>{' '}
+                  dan{' '}
                   <Link href="/privacy" className="text-global-2 hover:underline">
                     Kebijakan Privasi
                   </Link>
@@ -227,17 +247,19 @@ const RegisterPage = () => {
                 type="submit"
                 disabled={isLoading}
                 className={`w-full py-3 px-4 rounded-lg font-medium font-plus-jakarta transition-all ${
-                  isLoading ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-global-4 text-white hover:opacity-90"
+                  isLoading
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-global-4 text-white hover:opacity-90'
                 }`}
               >
-                {isLoading ? "Memproses..." : "Daftar Sekarang"}
+                {isLoading ? 'Memproses...' : 'Daftar Sekarang'}
               </button>
             </form>
 
             {/* Login Link */}
             <div className="mt-6 text-center">
               <p className="text-global-1 font-plus-jakarta">
-                Sudah punya akun?{" "}
+                Sudah punya akun?{' '}
                 <Link href="/login" className="text-global-2 font-medium hover:underline">
                   Masuk di sini
                 </Link>
@@ -249,7 +271,7 @@ const RegisterPage = () => {
 
       <Footer />
     </div>
-  )
-}
+  );
+};
 
-export default RegisterPage
+export default RegisterPage;
