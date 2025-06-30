@@ -10,6 +10,7 @@ export interface BookingData {
   exitDate: string
   numberOfBookers: number
   bookers: PersonalData[]
+  selectedTrail: string
 }
 
 export interface PersonalData {
@@ -22,6 +23,7 @@ export interface PersonalData {
   birthPlace: string
   idCardFile?: File
   isCompanion?: boolean // New field for companion role
+  healthCertificateFile?: File 
   age?: number // Calculated age
 }
 
@@ -32,6 +34,7 @@ let globalBookingData: BookingData = {
   exitDate: "",
   numberOfBookers: 1,
   bookers: [],
+  selectedTrail: "",
 }
 
 export function getGlobalBookingData() {
@@ -49,7 +52,8 @@ export default function HomePage() {
   const mountainId = params?.id as string;
   const mountain = mountainsData.find((m) => m.id === mountainId);
 
-  const handleDateSubmit = (dates: { entryDate: string; exitDate: string; numberOfBookers: number }) => {
+  const handleDateSubmit = (dates: { entryDate: string; exitDate: string; numberOfBookers: number; selectedTrail: string; price?: number }) => {
+    console.log('handleDateSubmit called with:', dates);
     // Initialize empty bookers array based on numberOfBookers
     const emptyBookers = Array.from({ length: dates.numberOfBookers }, () => ({
       email: "",
@@ -59,6 +63,10 @@ export default function HomePage() {
       gender: "male" as const,
       birthDate: "",
       birthPlace: "",
+      idCardFile: undefined,
+      healthCertificateFile: undefined, // ← Tambahkan ini
+      isCompanion: false,
+      age: undefined,
     }))
 
     // Update global state
@@ -68,7 +76,8 @@ export default function HomePage() {
     })
 
     // Navigate to the personal data form page with the first booker
-    router.push(`/mountain/${mountain?.id}/booking-terms/booking-form/personal-data/0`)
+    console.log('Redirecting to', `/mountain/${mountainId}/booking-terms/booking-form/personal-data/0`);
+    router.push(`/mountain/${mountainId}/booking-terms/booking-form/personal-data/0`);
   }
 
   return (
