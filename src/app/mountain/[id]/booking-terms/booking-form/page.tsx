@@ -1,14 +1,4 @@
-<<<<<<< HEAD
-'use client';
-
-import React from 'react';
-=======
 "use client"
-
-import DateSelectionForm from "@/components/pages/date-selection-form"
-import { useParams, useRouter } from "next/navigation"
-import {mountainsData, type Mountain } from "@/lib/mountain-data"
->>>>>>> faiz
 
 import { useParams, useRouter } from 'next/navigation';
 import DateSelectionForm from '@/components/pages/date-selection-form';
