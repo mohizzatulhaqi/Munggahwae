@@ -1,63 +1,51 @@
 'use client';
-import { useState, useMemo, useEffect } from 'react';
+import type React from 'react';
+import { useState, useMemo } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import Pagination from '@/components/ui/Pagination';
+import { getAllMountains } from '@/lib/mountain-data';
 import ProvinceFilter from '../ui/ProvinceFilter';
-import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Gunung } from '@/domain/entities/Gunung';
 
-interface MountainDiscoveryPageProps {
-  mountains: Gunung[];
-  selectedProvinsi: string;
-  onProvinsiChange: (provinsi: string) => void;
-  onRefresh: () => void;
-  loading: boolean;
-}
-
-const MountainDiscoveryPage: React.FC<MountainDiscoveryPageProps> = ({
-  mountains,
-  selectedProvinsi,
-  onProvinsiChange,
-  onRefresh,
-  loading
-}) => {
+const MountainDiscoveryPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [appliedSearchQuery, setAppliedSearchQuery] = useState<string>('');
+  const [appliedSearchQuery, setAppliedSearchQuery] = useState<string>(''); // New state for applied search
+  const [selectedProvince, setSelectedProvince] = useState<string>('Semua Provinsi');
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  // Automatically reset search when input is cleared
-  useEffect(() => {
-    if (searchQuery.trim() === '') {
-      setAppliedSearchQuery('');
-    }
-  }, [searchQuery]);
+  const mountains = getAllMountains();
 
+  // Filter mountains based on applied search query and selected province
   const filteredMountains = useMemo(() => {
-    let filtered = mountains || [];
+    let filtered = mountains;
 
+    // Filter by applied search query (only when search button is clicked)
     if (appliedSearchQuery.trim()) {
       filtered = filtered.filter(
         (mountain) =>
-          mountain.nama.toLowerCase().includes(appliedSearchQuery.toLowerCase()) ||
-          mountain.lokasi.toLowerCase().includes(appliedSearchQuery.toLowerCase()) ||
-          mountain.provinsi.toLowerCase().includes(appliedSearchQuery.toLowerCase())
+          mountain.name.toLowerCase().includes(appliedSearchQuery.toLowerCase()) ||
+          mountain.location.toLowerCase().includes(appliedSearchQuery.toLowerCase()) ||
+          mountain.province.toLowerCase().includes(appliedSearchQuery.toLowerCase())
       );
     }
 
-    if (selectedProvinsi && selectedProvinsi !== 'Semua Provinsi') {
-      filtered = filtered.filter((mountain) => mountain.provinsi === selectedProvinsi);
+    // Filter by province
+    if (selectedProvince !== 'Semua Provinsi') {
+      filtered = filtered.filter((mountain) => mountain.province === selectedProvince);
     }
 
     return filtered;
-  }, [appliedSearchQuery, selectedProvinsi, mountains]);
+  }, [appliedSearchQuery, selectedProvince, mountains]);
 
   const handleSearch = () => {
-    setAppliedSearchQuery(searchQuery);
-    setCurrentPage(1);
+    setAppliedSearchQuery(searchQuery); // Apply the search when button is clicked
+    setCurrentPage(1); // Reset to first page when searching
+    console.log('Searching for:', searchQuery);
   };
 
+  // Handle Enter key press in search input
   const handleSearchKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleSearch();
@@ -65,35 +53,43 @@ const MountainDiscoveryPage: React.FC<MountainDiscoveryPageProps> = ({
   };
 
   const handleProvinceChange = (province: string) => {
-    onProvinsiChange(province);
-    setCurrentPage(1);
+    setSelectedProvince(province);
+    setCurrentPage(1); // Reset to first page when changing province
+    console.log('Province changed to:', province);
   };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    console.log('Page changed to:', page);
   };
 
+  // Calculate total pages based on filtered results
   const itemsPerPage = 10;
   const totalPages = Math.ceil(filteredMountains.length / itemsPerPage);
+
+  // Get current page items
   const currentItems = filteredMountains.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  const showResultsInfo = selectedProvinsi !== 'Semua Provinsi' || appliedSearchQuery.trim() !== '';
+  // Show results info only when province filter is active or search is active
+  const showResultsInfo = selectedProvince !== 'Semua Provinsi' || appliedSearchQuery.trim() !== '';
 
   return (
     <div className="flex flex-col min-h-screen bg-global-2">
       <div className="flex flex-col flex-1 bg-global-1">
+        {/* Header */}
         <Header />
 
+        {/* Main Content */}
         <main className="flex flex-col items-center w-full max-w-[1200px] mx-auto px-4 py-8">
           {/* Hero Section */}
           <div
             className="relative flex flex-col w-full h-[480px] rounded-xl overflow-hidden mb-8"
             style={{
               background:
-                'linear-gradient(90deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.4) 100%), url(/images/hero-gunung.jpg)',
+                'linear-gradient(90deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.4) 100%), url(/placeholder.svg?height=480&width=1200)',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}
@@ -110,7 +106,12 @@ const MountainDiscoveryPage: React.FC<MountainDiscoveryPageProps> = ({
               {/* Search Bar */}
               <div className="flex flex-row w-full max-w-[480px] h-16 mt-12">
                 <div className="flex items-center justify-center w-16 h-16 bg-global-1 border border-[#cee8db] rounded-l-xl">
-                  <Search size={20} color="#000000" />
+                  <Image
+                    src="/placeholder.svg?height=20&width=20"
+                    alt="Search"
+                    width={20}
+                    height={20}
+                  />
                 </div>
                 <input
                   type="text"
@@ -122,7 +123,7 @@ const MountainDiscoveryPage: React.FC<MountainDiscoveryPageProps> = ({
                 />
                 <button
                   onClick={handleSearch}
-                  className="w-[92px] h-16 text-base font-bold leading-[21px] text-center text-global-1 font-plus-jakarta bg-[#1af286] border border-[#cee8db] rounded-r-xl hover:bg-global-4 transition-colors"
+                  className="w-[92px] h-16 text-base font-bold leading-[21px] text-center text-global-3 font-plus-jakarta bg-global-1 border border-[#cee8db] rounded-r-xl hover:bg-global-3 hover:text-global-1 transition-colors"
                 >
                   Cari
                 </button>
@@ -132,76 +133,79 @@ const MountainDiscoveryPage: React.FC<MountainDiscoveryPageProps> = ({
 
           {/* Filter Section */}
           <div className="flex flex-col sm:flex-row gap-4 w-full justify-center mb-8">
+            {/* Province Filter */}
             <div className="flex justify-center">
               <ProvinceFilter
-                selectedProvince={selectedProvinsi || 'Semua Provinsi'}
+                selectedProvince={selectedProvince}
                 onProvinceChange={handleProvinceChange}
               />
             </div>
           </div>
 
-          {!loading && showResultsInfo && (
+          {/* Results Info - Only show when filtering */}
+          {showResultsInfo && (
             <div className="w-full mb-4">
               <p className="text-sm text-global-2 font-plus-jakarta text-center">
                 Menampilkan {currentItems.length} dari {filteredMountains.length} gunung
-                {selectedProvinsi !== 'Semua Provinsi' && ` di ${selectedProvinsi}`}
-                {appliedSearchQuery.trim() && ` untuk "${appliedSearchQuery}"`}
+                {selectedProvince !== 'Semua Provinsi' && ` di ${selectedProvince}`}
+                {appliedSearchQuery && ` untuk "${appliedSearchQuery}"`}
               </p>
             </div>
           )}
 
           {/* Mountain Grid */}
-          {loading ? (
-            <div className="col-span-full text-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
-              <p className="text-lg text-global-2 font-plus-jakarta">Memuat data gunung...</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 w-full mb-8">
-              {currentItems.length > 0 ? (
-                currentItems.map((mountain) => (
-                  <Link key={mountain.id} href={`/mountain/${mountain.id}`}>
-                    <div className="flex flex-col items-center w-full cursor-pointer hover:transform hover:scale-105 transition-transform">
-                      <div className="w-full h-[156px]">
-                        <img
-                          src={mountain.urlGambar || '/placeholder.svg'}
-                          alt={mountain.nama}
-                          className="w-full h-[99px] object-cover rounded-xl"
-                        />
-                        <h3 className="mt-3 text-base font-medium leading-[21px] text-global-1 font-plus-jakarta text-center">
-                          {mountain.nama}
-                        </h3>
-                        <p className="mt-1 text-sm font-normal leading-[18px] text-global-2 font-plus-jakarta text-center">
-                          {mountain.lokasi === mountain.provinsi
-                            ? mountain.provinsi
-                            : `${mountain.lokasi}, ${mountain.provinsi}`}
-                        </p>
-                      </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 w-full mb-8">
+            {currentItems.length > 0 ? (
+              currentItems.map((mountain) => (
+                <Link key={mountain.id} href={`/mountain/${mountain.id}`}>
+                  <div className="flex flex-col items-center w-full cursor-pointer hover:transform hover:scale-105 transition-transform">
+                    <div className="w-full h-[156px]">
+                      <Image
+                        src={mountain.image || '/placeholder.svg'}
+                        alt={mountain.name}
+                        width={176}
+                        height={99}
+                        className="w-full h-[99px] object-cover rounded-xl"
+                      />
+                      <h3 className="mt-3 text-base font-medium leading-[21px] text-global-1 font-plus-jakarta text-center">
+                        {mountain.name}
+                      </h3>
+                      <p className="mt-1 text-sm font-normal leading-[18px] text-global-2 font-plus-jakarta text-center">
+                        {mountain.location === mountain.province
+                          ? mountain.province
+                          : `${mountain.location}, ${mountain.province}`}
+                      </p>
                     </div>
-                  </Link>
-                ))
-              ) : (
-                <div className="col-span-full text-center py-12">
-                  <p className="text-lg text-global-2 font-plus-jakarta mb-2">
-                    Tidak ada gunung ditemukan
-                  </p>
-                  <p className="text-sm text-global-2 font-plus-jakarta">
-                    Coba ubah filter atau kata kunci pencarian Anda
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
+                  </div>
+                </Link>
+              ))
+            ) : (
+              <div className="col-span-full text-center py-12">
+                <p className="text-lg text-global-2 font-plus-jakarta mb-2">
+                  Tidak ada gunung ditemukan
+                </p>
+                <p className="text-sm text-global-2 font-plus-jakarta">
+                  Coba ubah filter atau kata kunci pencarian Anda
+                </p>
+              </div>
+            )}
+          </div>
 
           {/* Pagination */}
-          {!loading && totalPages > 1 && (
+          {totalPages > 1 && (
             <div className="flex flex-row items-center justify-center gap-4 w-full">
               <button
                 onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
                 className="disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <ChevronLeft size={40} className="cursor-pointer text-global-1" />
+                <Image
+                  src="/placeholder.svg?height=40&width=40"
+                  alt="Previous"
+                  width={40}
+                  height={40}
+                  className="cursor-pointer"
+                />
               </button>
               <Pagination
                 currentPage={currentPage}
@@ -213,12 +217,19 @@ const MountainDiscoveryPage: React.FC<MountainDiscoveryPageProps> = ({
                 disabled={currentPage === totalPages}
                 className="disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <ChevronRight size={40} className="cursor-pointer text-global-1" />
+                <Image
+                  src="/placeholder.svg?height=40&width=40"
+                  alt="Next"
+                  width={40}
+                  height={40}
+                  className="cursor-pointer"
+                />
               </button>
             </div>
           )}
         </main>
 
+        {/* Footer */}
         <Footer />
       </div>
     </div>

@@ -1,8 +1,8 @@
 'use client';
 import type React from 'react';
+import Image from 'next/image';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
-import { Mountain, Eye, Target, ShieldCheck, Handshake, Leaf } from 'lucide-react';
 
 const AboutPage: React.FC = () => {
   return (
@@ -59,12 +59,18 @@ const AboutPage: React.FC = () => {
                 <p className="text-base font-normal leading-7 text-global-2 font-plus-jakarta">
                   Kami percaya bahwa pengalaman mendaki yang menyenangkan berawal dari proses
                   persiapan yang efisien. Karena itu, Munggahwae berkomitmen menjadi jembatan antara
-                  para pendaki dengan pengelola gunung, agar setiap pendakian dapat dimulai tanpa
-                  hambatan.
+                  para pendaki dengan pengelola gunung, agar setiap pendakian dapat dimulai
+                  tanpa hambatan.
                 </p>
               </div>
               <div className="order-1 lg:order-2 flex justify-center">
-                <Mountain className="w-[500px] h-[400px] text-[#0fbd66]" />
+                <Image
+                  src="/placeholder.svg?height=400&width=500"
+                  alt="Mountain Story"
+                  width={500}
+                  height={400}
+                  className="rounded-xl shadow-lg"
+                />
               </div>
             </div>
           </div>
@@ -74,10 +80,15 @@ const AboutPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Vision */}
               <div className="bg-global-4 p-8 rounded-xl shadow-lg">
-                <div className="flex items-center justify-center w-16 h-16 bg-global-1 rounded-full mb-6 mx-auto">
-                  <Eye className="text-global-2 w-8 h-8" />
+                <div className="flex items-center justify-center w-16 h-16 bg-global-3 rounded-full mb-6 mx-auto">
+                  <Image
+                    src="/placeholder.svg?height=32&width=32"
+                    alt="Vision Icon"
+                    width={32}
+                    height={32}
+                  />
                 </div>
-                <h3 className="text-2xl font-bold leading-[31px] text-global-4 font-plus-jakarta mb-4 text-center">
+                <h3 className="text-2xl font-bold leading-[31px] text-global-4   font-plus-jakarta mb-4 text-center">
                   Visi Kami
                 </h3>
                 <p className="text-base font-normal leading-7 text-global-4 font-plus-jakarta text-center">
@@ -89,8 +100,13 @@ const AboutPage: React.FC = () => {
 
               {/* Mission */}
               <div className="bg-global-4 p-8 rounded-xl shadow-lg">
-                <div className="flex items-center justify-center w-16 h-16 bg-global-1 rounded-full mb-6 mx-auto">
-                  <Target className="text-global-2 w-8 h-8" />
+                <div className="flex items-center justify-center w-16 h-16 bg-global-3 rounded-full mb-6 mx-auto">
+                  <Image
+                    src="/placeholder.svg?height=32&width=32"
+                    alt="Mission Icon"
+                    width={32}
+                    height={32}
+                  />
                 </div>
                 <h3 className="text-2xl font-bold leading-[31px] text-global-4 font-plus-jakarta mb-4 text-center">
                   Misi Kami
@@ -116,8 +132,13 @@ const AboutPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {/* Keamanan */}
               <div className="text-center">
-                <div className="flex items-center justify-center w-20 h-20 bg-global-4 rounded-full mb-6 mx-auto">
-                  <ShieldCheck className="text-global-4 w-10 h-10" />
+                <div className="flex items-center justify-center w-20 h-20 bg-global-3 rounded-full mb-6 mx-auto">
+                  <Image
+                    src="/placeholder.svg?height=40&width=40"
+                    alt="Safety Icon"
+                    width={40}
+                    height={40}
+                  />
                 </div>
                 <h3 className="text-xl font-bold leading-[26px] text-global-1 font-plus-jakarta mb-4">
                   Keamanan
@@ -130,8 +151,13 @@ const AboutPage: React.FC = () => {
 
               {/* Kepercayaan */}
               <div className="text-center">
-                <div className="flex items-center justify-center w-20 h-20 bg-global-4 rounded-full mb-6 mx-auto">
-                  <Handshake className="text-global-4 w-10 h-10" />
+                <div className="flex items-center justify-center w-20 h-20 bg-global-3 rounded-full mb-6 mx-auto">
+                  <Image
+                    src="/placeholder.svg?height=40&width=40"
+                    alt="Trust Icon"
+                    width={40}
+                    height={40}
+                  />
                 </div>
                 <h3 className="text-xl font-bold leading-[26px] text-global-1 font-plus-jakarta mb-4">
                   Kepercayaan
@@ -144,8 +170,13 @@ const AboutPage: React.FC = () => {
 
               {/* Keberlanjutan */}
               <div className="text-center">
-                <div className="flex items-center justify-center w-20 h-20 bg-global-4 rounded-full mb-6 mx-auto">
-                  <Leaf className="text-global-4 w-10 h-10" />
+                <div className="flex items-center justify-center w-20 h-20 bg-global-3 rounded-full mb-6 mx-auto">
+                  <Image
+                    src="/placeholder.svg?height=40&width=40"
+                    alt="Sustainability Icon"
+                    width={40}
+                    height={40}
+                  />
                 </div>
                 <h3 className="text-xl font-bold leading-[26px] text-global-1 font-plus-jakarta mb-4">
                   Keberlanjutan
@@ -167,7 +198,7 @@ const AboutPage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
                   <p className="text-4xl font-extrabold leading-[52px] text-global-4 font-plus-jakarta mb-2">
-                    15
+                    150+
                   </p>
                   <p className="text-base font-normal leading-6 text-global-4 font-plus-jakarta">
                     Gunung Terdaftar
@@ -183,7 +214,7 @@ const AboutPage: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-4xl font-extrabold leading-[52px] text-global-4 font-plus-jakarta mb-2">
-                    7
+                    34
                   </p>
                   <p className="text-base font-normal leading-6 text-global-4 font-plus-jakarta">
                     Provinsi Terjangkau
@@ -198,6 +229,22 @@ const AboutPage: React.FC = () => {
                   </p>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* CTA Section */}
+          <div className="w-full">
+            <div className="text-center bg-global-4 p-12 rounded-xl">
+              <h2 className="text-3xl font-bold leading-[39px] text-global-4 font-plus-jakarta mb-4">
+                Siap Memulai Petualanganmu?
+              </h2>
+              <p className="text-lg font-normal leading-7 text-global-4 font-plus-jakarta mb-8 max-w-[600px] mx-auto">
+                Bergabunglah dengan ribuan pendaki lainnya yang telah mempercayai Munggahwae untuk
+                petualangan gunung mereka.
+              </p>
+              <button className="bg-[#67AD8D] text-global-4 font-bold py-4 px-8 rounded-xl transition-all font-plus-jakarta text-lg">
+                Jelajahi Gunung Sekarang
+              </button>
             </div>
           </div>
         </main>

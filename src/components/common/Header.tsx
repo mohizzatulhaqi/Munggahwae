@@ -1,29 +1,29 @@
 'use client';
 import Link from 'next/link';
-import { Mountain } from 'lucide-react';
+import Image from 'next/image';
 
 const Header = () => {
   return (
     <header className="w-full h-[65px] border-b border-primary bg-white sticky top-0 z-50">
       <div className="max-w-[1200px] h-full mx-auto px-4 flex items-center justify-between">
-        {/* Kiri - Logo + Riwayat */}
+        {/* Bagian Kiri - Logo dan Menu */}
         <div className="flex items-center gap-6">
+          {/* Logo Munggahwae */}
           <Link href="/" className="flex items-center gap-2">
-            <Mountain size={20} color="var(--global-bg-4)" strokeWidth={2.5} />
+            <Image
+              src="/placeholder.svg?height=16&width=16"
+              alt="Logo"
+              width={16}
+              height={16}
+              className="w-4 h-4"
+            />
             <span className="text-lg font-bold leading-[23px] text-global-1 font-plus-jakarta">
               Munggahwae
             </span>
           </Link>
-
-          <Link
-            href="/history"
-            className="text-sm text-global-1 font-plus-jakarta hover:text-global-2 transition-colors"
-          >
-            Riwayat
-          </Link>
         </div>
 
-        {/* Kanan - Masuk & Daftar */}
+        {/* Bagian Kanan - Login/Register Buttons */}
         <div className="flex items-center gap-3">
           <Link
             href="/login"

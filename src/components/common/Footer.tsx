@@ -34,6 +34,37 @@ const Footer = () => {
           </Link>
         </div>
 
+        {/* Social Media Icons */}
+        <div className="flex justify-center gap-6 mb-6">
+          <a href="#" aria-label="Facebook">
+            <Image
+              src="/placeholder.svg?height=24&width=24"
+              alt="Facebook"
+              width={24}
+              height={24}
+              className="hover:opacity-80 transition-opacity"
+            />
+          </a>
+          <a href="#" aria-label="Twitter">
+            <Image
+              src="/placeholder.svg?height=24&width=24"
+              alt="Twitter"
+              width={24}
+              height={24}
+              className="hover:opacity-80 transition-opacity"
+            />
+          </a>
+          <a href="#" aria-label="Instagram">
+            <Image
+              src="/placeholder.svg?height=24&width=24"
+              alt="Instagram"
+              width={24}
+              height={24}
+              className="hover:opacity-80 transition-opacity"
+            />
+          </a>
+        </div>
+
         {/* Copyright */}
         <p className="text-center text-base font-normal leading-[21px] text-global-2 font-plus-jakarta">
           © 2025 Munggahwae. All rights reserved.
