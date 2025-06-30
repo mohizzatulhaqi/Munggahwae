@@ -9,29 +9,27 @@ export async function GET(
     const supabase = createClient();
     const { id } = params;
 
-    // Query semua peraturan untuk gunung dengan id tertentu
-    const { data: peraturan, error } = await supabase
-      .from('Peraturan')
-      .select('isi')
+    // Query semua jalur untuk gunung dengan id tertentu
+    const { data: trails, error } = await supabase
+      .from('Jalur')
+      .select('name')
       .eq('gunungId', id)
-      .order('orderIndex', { ascending: true });
+      .order('name', { ascending: true });
 
     if (error) {
       return NextResponse.json(
-        { success: false, error: 'Failed to fetch peraturan' },
+        { success: false, error: 'Failed to fetch trails' },
         { status: 500 }
       );
     }
 
-    console.log(id);
-
     return NextResponse.json({
       success: true,
-      rules: peraturan
+      trails: trails || []
     });
   } catch (error) {
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch peraturan' },
+      { success: false, error: 'Failed to fetch trails' },
       { status: 500 }
     );
   }

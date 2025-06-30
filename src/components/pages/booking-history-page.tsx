@@ -18,22 +18,60 @@ import {
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import { formatCurrency } from '@/lib/utils';
-import { BookingWithMountain } from '@/lib/api/bookingApi';
+import { BookingWithMountain } from '@/lib/api/historyApi';
 
 interface BookingHistoryPageProps {
   bookings: BookingWithMountain[];
   onRefresh: () => void;
   loading: boolean;
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+  onPageChange?: (page: number) => void;
+  onStatusFilter?: (status: string) => void;
+  onSearch?: (search: string) => void;
 }
 
-export default function BookingHistoryPage({ bookings, onRefresh, loading }: BookingHistoryPageProps) {
+export default function BookingHistoryPage({ 
+  bookings, 
+  onRefresh, 
+  loading,
+  pagination,
+  onPageChange,
+  onStatusFilter,
+  onSearch
+}: BookingHistoryPageProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'approved' | 'rejected' | 'pending'>(
     'all'
   );
 
-  // Filter bookings based on search and status
-  const filteredBookings = bookings.filter((booking) => {
+  // Handle search with debounce
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    
+    // Call parent search handler if provided
+    if (onSearch) {
+      onSearch(value);
+    }
+  };
+
+  // Handle status filter
+  const handleStatusFilter = (status: 'all' | 'approved' | 'rejected' | 'pending') => {
+    setStatusFilter(status);
+    
+    // Call parent status filter handler if provided
+    if (onStatusFilter) {
+      onStatusFilter(status);
+    }
+  };
+
+  // Filter bookings based on search and status (only if not using server-side filtering)
+  const filteredBookings = onSearch ? bookings : bookings.filter((booking) => {
     const matchesSearch =
       booking.gunung.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
       booking.kodeBooking.toLowerCase().includes(searchTerm.toLowerCase());
@@ -115,35 +153,35 @@ export default function BookingHistoryPage({ bookings, onRefresh, loading }: Boo
                 <Input
                   placeholder="Cari berdasarkan nama gunung atau kode booking..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={handleSearchChange}
                   className="pl-10"
                 />
               </div>
               <div className="flex gap-2">
                 <Button
                   variant={statusFilter === 'all' ? 'default' : 'outline'}
-                  onClick={() => setStatusFilter('all')}
+                  onClick={() => handleStatusFilter('all')}
                   size="sm"
                 >
                   Semua
                 </Button>
                 <Button
                   variant={statusFilter === 'approved' ? 'default' : 'outline'}
-                  onClick={() => setStatusFilter('approved')}
+                  onClick={() => handleStatusFilter('approved')}
                   size="sm"
                 >
                   Disetujui
                 </Button>
                 <Button
                   variant={statusFilter === 'pending' ? 'default' : 'outline'}
-                  onClick={() => setStatusFilter('pending')}
+                  onClick={() => handleStatusFilter('pending')}
                   size="sm"
                 >
                   Menunggu
                 </Button>
                 <Button
                   variant={statusFilter === 'rejected' ? 'default' : 'outline'}
-                  onClick={() => setStatusFilter('rejected')}
+                  onClick={() => handleStatusFilter('rejected')}
                   size="sm"
                 >
                   Ditolak
@@ -192,14 +230,14 @@ export default function BookingHistoryPage({ bookings, onRefresh, loading }: Boo
                             <Calendar className="w-4 h-4 text-gray-400" />
                             <div>
                               <p className="text-sm text-gray-500">Tanggal Masuk</p>
-                              <p className="font-medium">{formatShortDate(booking.tanggalMasuk)}</p>
+                              <p className="font-medium">{formatShortDate(new Date(booking.tanggalMasuk))}</p>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
                             <Clock className="w-4 h-4 text-gray-400" />
                             <div>
                               <p className="text-sm text-gray-500">Tanggal Keluar</p>
-                              <p className="font-medium">{formatShortDate(booking.tanggalKeluar)}</p>
+                              <p className="font-medium">{formatShortDate(new Date(booking.tanggalKeluar))}</p>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
@@ -261,6 +299,33 @@ export default function BookingHistoryPage({ bookings, onRefresh, loading }: Boo
                 </Card>
               ))}
             </div>
+
+            {/* Pagination */}
+            {pagination && pagination.totalPages > 1 && (
+              <div className="mt-8 flex justify-center">
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onPageChange?.(pagination.page - 1)}
+                    disabled={pagination.page <= 1}
+                  >
+                    Previous
+                  </Button>
+                  <span className="px-4 py-2 text-sm text-gray-600">
+                    Page {pagination.page} of {pagination.totalPages}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onPageChange?.(pagination.page + 1)}
+                    disabled={pagination.page >= pagination.totalPages}
+                  >
+                    Next
+                  </Button>
+                </div>
+              </div>
+            )}
           </>
         )}
       </main>

@@ -122,6 +122,12 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
     entryDate?: string;
     exitDate?: string;
   }>({});
+  const [trails, setTrails] = useState<any[]>([]);
+  const [trailsLoading, setTrailsLoading] = useState(true);
+  const [trailsError, setTrailsError] = useState<string | null>(null);
+  const [trailDailyQuotas, setTrailDailyQuotas] = useState<Record<string, any[]>>({});
+  const [trailDailyQuotasLoading, setTrailDailyQuotasLoading] = useState(true);
+  const [trailDailyQuotasError, setTrailDailyQuotasError] = useState<string | null>(null);
 
   const params = useParams();
   const mountainId = params?.id as string;
@@ -190,6 +196,76 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
     }
   }, [entryDate, exitDate, selectedTrail, mountain, numberOfBookers]);
 
+  // Fetch trails from API
+  useEffect(() => {
+    const fetchTrails = async () => {
+      setTrailsLoading(true);
+      setTrailsError(null);
+      try {
+        const res = await fetch(`/api/jalur/${mountainId}`);
+        const data = await res.json();
+        if (data.success) {
+          setTrails(data.trails || []);
+        } else {
+          setTrailsError(data.error || 'Gagal memuat jalur');
+        }
+      } catch (err) {
+        setTrailsError('Gagal memuat jalur');
+      } finally {
+        setTrailsLoading(false);
+      }
+    };
+    if (mountainId) fetchTrails();
+  }, [mountainId]);
+
+  useEffect(() => {
+    const fetchTrailDailyQuotas = async () => {
+      setTrailDailyQuotasLoading(true);
+      setTrailDailyQuotasError(null);
+      try {
+        if (!mountainId || !entryDate || !exitDate || trails.length === 0) {
+          setTrailDailyQuotas({});
+          setTrailDailyQuotasLoading(false);
+          return;
+        }
+        // Ambil range tanggal
+        const start = new Date(entryDate);
+        const end = new Date(exitDate);
+        const dates: string[] = [];
+        const current = new Date(start);
+        while (current < end) {
+          dates.push(current.toISOString().split('T')[0]);
+          current.setDate(current.getDate() + 1);
+        }
+        // Fetch kuota harian untuk setiap trail dan tanggal
+        const quotasByTrail: Record<string, any[]> = {};
+        for (const trail of trails) {
+          quotasByTrail[trail.id] = [];
+          for (const date of dates) {
+            const res = await fetch(`/api/kuota-harian/${mountainId}?jalurId=${trail.id}&date=${date}`);
+            const data = await res.json();
+            if (data.success && data.quotas.length > 0) {
+              quotasByTrail[trail.id].push(data.quotas[0]);
+            }
+          }
+        }
+        setTrailDailyQuotas(quotasByTrail);
+      } catch (err) {
+        setTrailDailyQuotasError('Gagal memuat kuota harian per jalur');
+      } finally {
+        setTrailDailyQuotasLoading(false);
+      }
+    };
+    fetchTrailDailyQuotas();
+  }, [mountainId, entryDate, exitDate, trails]);
+
+  // Validasi jumlah pemesan maksimal per jalur
+  const maxBookersByTrail: Record<string, number> = {};
+  trails.forEach((trail) => {
+    const quotas = trailDailyQuotas[trail.id] || [];
+    maxBookersByTrail[trail.id] = quotas.length > 0 ? Math.min(...quotas.map(q => q.availableQuota)) : 0;
+  });
+
   const validateForm = () => {
     const newErrors: {
       entryDate?: string;
@@ -246,7 +322,7 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
 });    }
   };
 
-  const selectedTrailInfo = mountain?.trailDetails.find((trail) => trail.name === selectedTrail);
+  const selectedTrailInfo = trails.find((trail) => trail.name === selectedTrail);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -388,20 +464,25 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
                       <SelectValue placeholder="Pilih jalur pendakian" />
                     </SelectTrigger>
                     <SelectContent>
-                      {mountain?.trailDetails.map((trail) => {
-                        const minQuota = getMinimumQuota(trail.name, entryDate, exitDate, mountain);
-                        return (
-                          <SelectItem key={trail.name} value={trail.name}>
-                            <div className="flex justify-between items-center w-full">
-                              <span>{trail.name}</span>
-                              <span className="ml-4 text-sm text-gray-600">
-                                ({minQuota}/{trail.quota} tersedia)
-                              </span>
-                            </div>
-                          </SelectItem>
-                        );
-                      })}
-                    </SelectContent>
+  {trailsLoading ? (
+    <div key="loading" className="px-4 py-2 text-gray-500">Memuat jalur...</div>
+  ) : trailsError ? (
+    <div key="error" className="px-4 py-2 text-red-500">{trailsError}</div>
+  ) : trails.length > 0 ? (
+    trails.map((trail, idx) => (
+      <SelectItem key={`${trail.id || 'trail'}-${idx}`} value={trail.name}>
+        <div className="flex justify-between items-center w-full">
+          <span>{trail.name}</span>
+          <span className="ml-4 text-sm text-gray-600">
+            {maxBookersByTrail[trail.id] > 0 ? maxBookersByTrail[trail.id] : 'Tidak tersedia'}
+          </span>
+        </div>
+      </SelectItem>
+    ))
+  ) : (
+    <div key="no-trails" className="px-4 py-2 text-gray-500">Tidak ada jalur tersedia</div>
+  )}
+</SelectContent>
                   </Select>
                   {errors.selectedTrail && (
                     <p className="text-sm text-red-600">{errors.selectedTrail}</p>
@@ -412,63 +493,36 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
                       <h4 className="font-medium text-gray-700">
                         Kuota Jalur untuk Tanggal {formatDate(entryDate)} - {formatDate(exitDate)}:
                       </h4>
-                      {mountain?.trailDetails.map((trail) => {
-                        const minQuota = getMinimumQuota(trail.name, entryDate, exitDate, mountain);
-                        const quotaDetails = getDailyQuotaDetails(
-                          trail.name,
-                          entryDate,
-                          exitDate,
-                          mountain
-                        );
-
+                      {trails.map((trail, idx) => {
+                        const quotas = trailDailyQuotas[trail.id] || [];
+                        const minQuota = quotas.length > 0 ? Math.min(...quotas.map(q => q.availableQuota)) : 0;
                         return (
-                          <div
-                            key={trail.name}
-                            className="border border-gray-200 rounded-lg p-4 bg-white"
-                          >
+                          <div key={`${trail.id || 'trail'}-${idx}`} className="border border-gray-200 rounded-lg p-4 bg-white mb-4">
                             <div className="flex justify-between items-start mb-2">
                               <h5 className="font-medium text-gray-800">{trail.name}</h5>
                               <div className="text-right">
-                                <div
-                                  className={`text-sm font-medium ${minQuota > 0 ? 'text-green-600' : 'text-red-600'}`}
-                                >
-                                  {minQuota}/{trail.quota} tersedia
+                                <div className={`text-sm font-medium ${maxBookersByTrail[trail.id] > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                  {maxBookersByTrail[trail.id]} tersedia
                                 </div>
-                                {trail.price && (
-                                  <div className="text-sm text-gray-600">
-                                    Rp {trail.price.toLocaleString('id-ID')}/orang
-                                  </div>
-                                )}
                               </div>
                             </div>
                             <p className="text-sm text-gray-600 mb-2">{trail.description}</p>
-
                             <div className="mt-3 p-3 bg-gray-50 rounded">
-                              <h6 className="text-xs font-medium text-gray-700 mb-2">
-                                Kuota per hari:
-                              </h6>
+                              <h6 className="text-xs font-medium text-gray-700 mb-2">Kuota per hari:</h6>
                               <div className="space-y-1">
-                                {quotaDetails.map((day) => (
-                                  <div key={day.date} className="flex justify-between text-xs">
-                                    <span>{formatDate(day.date)}</span>
-                                    <span
-                                      className={
-                                        day.available > 0 ? 'text-green-600' : 'text-red-600'
-                                      }
-                                    >
-                                      {day.available}/{day.quota}
+                                {quotas.map((quota, idx) => (
+                                  <div key={`${trail.id || 'trail'}-${quota.date}-${idx}`} className="flex justify-between text-xs">
+                                    <span>{new Date(quota.date).toLocaleDateString('id-ID')}</span>
+                                    <span className={quota.availableQuota > 0 ? 'text-green-600' : 'text-red-600'}>
+                                      {quota.availableQuota} tersedia
                                     </span>
                                   </div>
                                 ))}
                               </div>
                             </div>
-
-                            {minQuota === 0 && (
+                            {maxBookersByTrail[trail.id] === 0 && (
                               <div className="flex items-center gap-2 mt-2 text-red-600">
-                                <AlertCircle className="w-4 h-4" />
-                                <span className="text-sm font-medium">
-                                  Kuota penuh untuk periode ini
-                                </span>
+                                <span className="text-sm font-medium">Kuota penuh untuk periode ini</span>
                               </div>
                             )}
                           </div>
@@ -502,8 +556,8 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
                           <h6 className="text-sm font-medium text-blue-900">Kuota harian:</h6>
                         </div>
                         <div className="space-y-1">
-                          {dailyQuotaDetails.map((day) => (
-                            <div key={day.date} className="flex justify-between text-sm">
+                          {dailyQuotaDetails.map((day, idx) => (
+                            <div key={`${selectedTrailInfo?.id}-${day.date}-${idx}`} className="flex justify-between text-sm">
                               <span className="text-gray-700">{formatDate(day.date)}</span>
                               <span
                                 className={
@@ -554,7 +608,7 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
                     id="numberOfBookers"
                     type="number"
                     min="1"
-                    max={Math.min(availableQuota, 10)}
+                    max={Math.min(availableQuota, maxBookersByTrail[selectedTrailInfo?.id] ?? 0, 10)}
                     value={numberOfBookers}
                     onChange={(e) => setNumberOfBookers(Number.parseInt(e.target.value) || 1)}
                     className={`h-12 ${errors.numberOfBookers ? 'border-red-500' : ''}`}
@@ -563,7 +617,7 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
                     <p className="text-sm text-red-600">{errors.numberOfBookers}</p>
                   )}
                   <p className="text-sm text-gray-500">
-                    Maksimal {Math.min(availableQuota, 10)} orang
+                    Maksimal {Math.min(availableQuota, maxBookersByTrail[selectedTrailInfo?.id] ?? 0, 10)} orang
                     {availableQuota < 10 ? ' (berdasarkan kuota tersedia)' : ' per pendaftaran'}
                   </p>
                 </div>
@@ -634,7 +688,6 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
                 className="w-full h-12 text-lg bg-green-600 hover:bg-green-700"
                 disabled={
                   !selectedTrail ||
-                  availableQuota === 0 ||
                   !entryDate ||
                   !exitDate ||
                   Object.keys(dateWarnings).length > 0 ||
@@ -653,14 +706,12 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
                       : 'PERBAIKI TANGGAL YANG DIPILIH'
                     : !selectedTrail
                       ? 'PILIH JALUR PENDAKIAN'
-                      : availableQuota === 0
-                        ? 'KUOTA PENUH UNTUK PERIODE INI'
-                        : Math.ceil(
-                              (new Date(exitDate).getTime() - new Date(entryDate).getTime()) /
-                                (1000 * 60 * 60 * 24)
-                            ) > 3
-                          ? 'MAKSIMAL 3 HARI'
-                          : 'SELANJUTNYA'}
+                      : Math.ceil(
+                            (new Date(exitDate).getTime() - new Date(entryDate).getTime()) /
+                              (1000 * 60 * 60 * 24)
+                          ) > 3
+                        ? 'MAKSIMAL 3 HARI'
+                        : 'SELANJUTNYA'}
               </Button>
             </form>
           </CardContent>

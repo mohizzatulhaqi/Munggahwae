@@ -93,7 +93,7 @@ const MountainDiscoveryPage: React.FC<MountainDiscoveryPageProps> = ({
             className="relative flex flex-col w-full h-[480px] rounded-xl overflow-hidden mb-8"
             style={{
               background:
-                'linear-gradient(90deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.4) 100%), url(/placeholder.svg?height=480&width=1200)',
+                'linear-gradient(90deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.4) 100%), url(/images/hero-gunung.jpg)',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}

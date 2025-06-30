@@ -52,7 +52,8 @@ export default function HomePage() {
   const mountainId = params?.id as string;
   const mountain = mountainsData.find((m) => m.id === mountainId);
 
-  const handleDateSubmit = (dates: { entryDate: string; exitDate: string; numberOfBookers: number }) => {
+  const handleDateSubmit = (dates: { entryDate: string; exitDate: string; numberOfBookers: number; selectedTrail: string; price?: number }) => {
+    console.log('handleDateSubmit called with:', dates);
     // Initialize empty bookers array based on numberOfBookers
     const emptyBookers = Array.from({ length: dates.numberOfBookers }, () => ({
       email: "",
@@ -75,7 +76,8 @@ export default function HomePage() {
     })
 
     // Navigate to the personal data form page with the first booker
-    router.push(`/mountain/${mountain?.id}/booking-terms/booking-form/personal-data/0`)
+    console.log('Redirecting to', `/mountain/${mountainId}/booking-terms/booking-form/personal-data/0`);
+    router.push(`/mountain/${mountainId}/booking-terms/booking-form/personal-data/0`);
   }
 
   return (

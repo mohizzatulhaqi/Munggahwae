@@ -1,29 +1,44 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { bookingApi, GetBookingsResponse, BookingWithMountain } from '@/lib/api/bookingApi'
+import { historyApi, GetHistoryResponse, BookingWithMountain } from '@/lib/api/historyApi'
 import BookingHistoryPage from '@/components/pages/booking-history-page'
 
 export default function History() {
   const [bookings, setBookings] = useState<BookingWithMountain[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 0,
+  })
 
   useEffect(() => {
     loadBookings()
   }, [])
 
-  const loadBookings = async () => {
+  const loadBookings = async (page = 1, status?: string, search?: string) => {
     try {
       setLoading(true)
       setError(null)
 
-      // TODO: Get userId from authentication context
-      const userId = 'user-123' // Placeholder
-      const response: GetBookingsResponse = await bookingApi.getBookings({ userId })
+      const response: GetHistoryResponse = await historyApi.getHistory({
+        page,
+        limit: pagination.limit,
+        status,
+        search,
+      })
 
       if (response.success) {
         setBookings(response.bookings)
+        setPagination({
+          page: response.page,
+          limit: response.limit,
+          total: response.total,
+          totalPages: response.totalPages,
+        })
       } else {
         setError(response.error || 'Failed to load bookings')
       }
@@ -36,7 +51,19 @@ export default function History() {
   }
 
   const handleRefresh = () => {
-    loadBookings()
+    loadBookings(pagination.page)
+  }
+
+  const handlePageChange = (newPage: number) => {
+    loadBookings(newPage)
+  }
+
+  const handleStatusFilter = (status: string) => {
+    loadBookings(1, status === 'all' ? undefined : status)
+  }
+
+  const handleSearch = (searchTerm: string) => {
+    loadBookings(1, undefined, searchTerm || undefined)
   }
 
   if (loading) {
@@ -73,6 +100,10 @@ export default function History() {
       bookings={bookings}
       onRefresh={handleRefresh}
       loading={loading}
+      pagination={pagination}
+      onPageChange={handlePageChange}
+      onStatusFilter={handleStatusFilter}
+      onSearch={handleSearch}
     />
   )
 }
