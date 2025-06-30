@@ -2,6 +2,8 @@
 
 import type React from 'react';
 import { useState, useRef, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import { Button } from '@/components/ui/button';
@@ -25,12 +27,13 @@ import {
   ChevronRight,
   AlertTriangle,
 } from 'lucide-react';
+
 import type { PersonalData } from '@/app/mountain/[id]/booking-terms/booking-form/page';
-import { useParams, useRouter } from 'next/navigation';
 
 interface PersonalDataFormProps {
   onSubmit: (data: PersonalData) => void;
   onNext: () => void;
+  onBack: () => void;
   onPrevious: () => void;
   bookerIndex: number;
   totalBookers: number;
@@ -68,12 +71,38 @@ export default function PersonalDataForm({
   const [errors, setErrors] = useState<Partial<Record<keyof PersonalData, string>>>({});
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [ageValidationWarning, setAgeValidationWarning] = useState<string>('');
+  const [healthCertificateFile, setHealthCertificateFile] = useState<File | null>(null);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const healthFileInputRef = useRef<HTMLInputElement>(null);
   const params = useParams();
   const router = useRouter();
   const mountainId = params.id as string;
 
-  // Calculate age from birth date
+  // PERUBAHAN: Hanya PDF untuk Surat Sehat
+  const handleHealthCertificateUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Ukuran file maksimal 5MB');
+        return;
+      }
+      if (file.type !== 'application/pdf') {
+        alert('Format file harus PDF');
+        return;
+      }
+      setHealthCertificateFile(file);
+    }
+  };
+
+  function RequiredLabel({ children }: { children: React.ReactNode }) {
+    return (
+      <>
+        {children} <span className="text-red-600">*</span>
+      </>
+    );
+  }
+
   const calculateAge = (birthDate: string): number => {
     if (!birthDate) return 0;
     const today = new Date();
@@ -86,7 +115,6 @@ export default function PersonalDataForm({
     return age;
   };
 
-  // Check if there are minors (under 12) in the group
   const checkMinorValidation = (currentAge: number, allBookers: PersonalData[]): string => {
     const minorsCount = allBookers.filter((booker) => {
       if (booker.birthDate) {
@@ -96,7 +124,6 @@ export default function PersonalDataForm({
       return false;
     }).length;
 
-    // Add current booker if they're a minor
     const totalMinors = currentAge < 12 ? minorsCount + 1 : minorsCount;
 
     if (totalMinors > 0) {
@@ -106,14 +133,12 @@ export default function PersonalDataForm({
 
       const companionsCount = allBookers.filter((booker) => booker.isCompanion).length;
       const currentIsCompanion = formData.isCompanion;
-
       const totalCompanions = currentIsCompanion ? companionsCount + 1 : companionsCount;
 
       if (totalCompanions < 2) {
         return `Diperlukan minimal 2 pendamping dewasa untuk anak di bawah 12 tahun. Saat ini hanya ada ${totalCompanions} pendamping.`;
       }
     }
-
     return '';
   };
 
@@ -121,7 +146,6 @@ export default function PersonalDataForm({
     if (formData.birthDate) {
       const age = calculateAge(formData.birthDate);
       setFormData((prev) => ({ ...prev, age }));
-
       const warning = checkMinorValidation(age, allBookersData);
       setAgeValidationWarning(warning);
     }
@@ -135,39 +159,28 @@ export default function PersonalDataForm({
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Format email tidak valid';
     }
-
-    if (!formData.fullName) {
-      newErrors.fullName = 'Nama lengkap harus diisi';
-    }
-
+    if (!formData.fullName) newErrors.fullName = 'Nama lengkap harus diisi';
     if (!formData.idNumber) {
       newErrors.idNumber = 'Nomor identitas harus diisi';
     } else if (formData.idNumber.length !== 16) {
       newErrors.idNumber = 'Nomor identitas harus 16 digit';
     }
-
     if (!formData.phoneNumber) {
       newErrors.phoneNumber = 'Nomor telepon harus diisi';
     } else if (!/^(\+62|62|0)[0-9]{9,13}$/.test(formData.phoneNumber)) {
       newErrors.phoneNumber = 'Format nomor telepon tidak valid';
     }
-
     if (!formData.birthDate) {
       newErrors.birthDate = 'Tanggal lahir harus diisi';
     } else {
       const age = calculateAge(formData.birthDate);
-      if (age < 5) {
-        newErrors.birthDate = 'Usia minimal untuk pendakian adalah 5 tahun';
-      } else if (age > 70) {
-        newErrors.birthDate = 'Usia maksimal untuk pendakian adalah 70 tahun';
+      if (age < 10) {
+        newErrors.birthDate = 'Usia minimal untuk pendakian adalah 10 tahun';
+      } else if (age >= 60) {
+        newErrors.birthDate = 'Batas usia maksimal untuk pendakian adalah di bawah 60 tahun.';
       }
     }
-
-    if (!formData.birthPlace) {
-      newErrors.birthPlace = 'Tempat lahir harus diisi';
-    }
-
-    // Age validation for companions
+    if (!formData.birthPlace) newErrors.birthPlace = 'Tempat lahir harus diisi';
     if (formData.isCompanion && formData.birthDate) {
       const age = calculateAge(formData.birthDate);
       if (age < 18) {
@@ -182,15 +195,11 @@ export default function PersonalDataForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      // Final validation for minor/companion rules
       if (ageValidationWarning && !isLastBooker) {
         alert('Harap selesaikan pengisian data semua pemesan untuk memvalidasi aturan pendamping.');
         return;
       }
-
       onSubmit({ ...formData, idCardFile: uploadedFile || undefined });
-
-      // If this is the last booker, redirect to payment page
       if (isLastBooker) {
         router.push(`/mountain/${mountainId}/booking-terms/booking-form/payment`);
       }
@@ -204,6 +213,7 @@ export default function PersonalDataForm({
     }
   };
 
+  // PERUBAHAN: Hanya PDF untuk Kartu Identitas
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -211,8 +221,8 @@ export default function PersonalDataForm({
         alert('Ukuran file maksimal 5MB');
         return;
       }
-      if (!['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'].includes(file.type)) {
-        alert('Format file harus JPG, PNG, atau PDF');
+      if (file.type !== 'application/pdf') {
+        alert('Format file harus PDF');
         return;
       }
       setUploadedFile(file);
@@ -251,12 +261,10 @@ export default function PersonalDataForm({
                 <ChevronLeft className="w-4 h-4" />
                 Sebelumnya
               </Button>
-
               <div className="text-center">
                 <h3 className="font-semibold text-lg">Pemesan ke - {bookerIndex + 1}</h3>
                 <p className="text-sm text-gray-600">dari {totalBookers} orang</p>
               </div>
-
               <Button
                 variant="outline"
                 size="sm"
@@ -270,7 +278,6 @@ export default function PersonalDataForm({
             </div>
           </div>
 
-          {/* Age Validation Warning */}
           {ageValidationWarning && (
             <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
               <div className="flex items-start gap-3">
@@ -295,7 +302,7 @@ export default function PersonalDataForm({
               <form onSubmit={handleSubmit} className="space-y-6">
                 <InputField
                   id="email"
-                  label="Email *"
+                  label={<RequiredLabel>Email</RequiredLabel>}
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
                   error={errors.email}
@@ -304,7 +311,7 @@ export default function PersonalDataForm({
                 />
                 <InputField
                   id="fullName"
-                  label="Nama Lengkap *"
+                  label={<RequiredLabel>Nama Lengkap</RequiredLabel>}
                   value={formData.fullName}
                   onChange={(e) => handleInputChange('fullName', e.target.value)}
                   error={errors.fullName}
@@ -313,7 +320,7 @@ export default function PersonalDataForm({
                 />
                 <InputField
                   id="idNumber"
-                  label="No Identitas *"
+                  label={<RequiredLabel>No Identitas</RequiredLabel>}
                   value={formData.idNumber}
                   onChange={(e) => handleInputChange('idNumber', e.target.value)}
                   error={errors.idNumber}
@@ -322,7 +329,7 @@ export default function PersonalDataForm({
                 />
                 <InputField
                   id="phoneNumber"
-                  label="Nomor Telepon *"
+                  label={<RequiredLabel>Nomor Telepon</RequiredLabel>}
                   value={formData.phoneNumber}
                   onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
                   error={errors.phoneNumber}
@@ -331,7 +338,9 @@ export default function PersonalDataForm({
                 />
 
                 <div className="space-y-2">
-                  <Label htmlFor="gender">Jenis Kelamin *</Label>
+                  <Label htmlFor="gender">
+                    <RequiredLabel>Jenis Kelamin</RequiredLabel>
+                  </Label>
                   <Select
                     value={formData.gender}
                     onValueChange={(value: 'male' | 'female') => handleInputChange('gender', value)}
@@ -348,7 +357,7 @@ export default function PersonalDataForm({
 
                 <InputField
                   id="birthDate"
-                  label="Tanggal Lahir *"
+                  label={<RequiredLabel>Tanggal Lahir</RequiredLabel>}
                   value={formData.birthDate}
                   onChange={(e) => handleInputChange('birthDate', e.target.value)}
                   error={errors.birthDate}
@@ -356,7 +365,7 @@ export default function PersonalDataForm({
                 />
                 <InputField
                   id="birthPlace"
-                  label="Tempat Lahir *"
+                  label={<RequiredLabel>Tempat Lahir</RequiredLabel>}
                   value={formData.birthPlace}
                   onChange={(e) => handleInputChange('birthPlace', e.target.value)}
                   error={errors.birthPlace}
@@ -364,43 +373,37 @@ export default function PersonalDataForm({
                   placeholder="Contoh: Jakarta"
                 />
 
-                {/* Companion Checkbox - only show for adults */}
                 {currentAge >= 18 && (
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
                       <Checkbox
                         id="isCompanion"
                         checked={formData.isCompanion || false}
-                        onCheckedChange={(checked) =>
-                          handleInputChange('isCompanion', checked as boolean)
-                        }
+                        onCheckedChange={(checked) => handleInputChange('isCompanion', checked as boolean)}
                       />
                       <Label
                         htmlFor="isCompanion"
                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                       >
-                        Saya bersedia menjadi pendamping untuk anak di bawah 12 tahun
+                        Saya bersedia menjadi pendamping untuk anak di bawah 10 tahun
                       </Label>
                     </div>
                     <p className="text-xs text-gray-500">
-                      Pendamping bertanggung jawab atas keselamatan dan pengawasan anak di bawah 12
+                      Pendamping bertanggung jawab atas keselamatan dan pengawasan anak di bawah 10
                       tahun selama pendakian.
                     </p>
-                    {errors.isCompanion && (
-                      <p className="text-sm text-red-600">{errors.isCompanion}</p>
-                    )}
+                    {errors.isCompanion && <p className="text-sm text-red-600">{errors.isCompanion}</p>}
                   </div>
                 )}
 
-                {/* Minor Warning */}
-                {currentAge < 12 && currentAge > 0 && (
+                {currentAge < 10 && currentAge > 0 && (
                   <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
                     <div className="flex items-start gap-3">
                       <AlertTriangle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
                       <div className="text-orange-800">
                         <p className="font-medium text-sm mb-1">Pemesan Anak</p>
                         <p className="text-xs">
-                          Karena berusia di bawah 12 tahun, diperlukan minimal 2 pendamping dewasa
+                          Karena berusia di bawah 10 tahun, diperlukan minimal 2 pendamping dewasa
                           dalam grup dan total minimal 3 orang.
                         </p>
                       </div>
@@ -409,12 +412,12 @@ export default function PersonalDataForm({
                 )}
 
                 <div className="space-y-2">
-                  <Label>Upload Kartu Identitas</Label>
+                  <Label><RequiredLabel>Upload Kartu Identitas</RequiredLabel></Label>
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
                     <input
                       ref={fileInputRef}
                       type="file"
-                      accept="image/*,.pdf"
+                      accept="application/pdf" // PERUBAHAN: Hanya PDF
                       onChange={handleFileUpload}
                       className="hidden"
                     />
@@ -442,7 +445,49 @@ export default function PersonalDataForm({
                           <FileText className="w-4 h-4 mr-2" />
                           Pilih File
                         </Button>
-                        <p className="text-sm text-gray-500">Format: JPG, PNG, PDF (Max. 5MB)</p>
+                        {/* PERUBAHAN: Teks bantuan */}
+                        <p className="text-sm text-gray-500">Format: PDF (Max. 5MB)</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label><RequiredLabel>Upload Surat Keterangan Sehat</RequiredLabel></Label>
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
+                    <input
+                      ref={healthFileInputRef}
+                      type="file"
+                      accept="application/pdf" // PERUBAHAN: Hanya PDF
+                      onChange={handleHealthCertificateUpload}
+                      className="hidden"
+                    />
+                    {healthCertificateFile ? (
+                      <div className="flex items-center justify-center space-x-3 text-green-600">
+                        <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                          <Check className="w-6 h-6" />
+                        </div>
+                        <div className="text-left">
+                          <p className="font-medium">File berhasil diupload</p>
+                          <p className="text-sm text-gray-600">{healthCertificateFile.name}</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center">
+                        <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                          <Upload className="w-6 h-6 text-gray-400" />
+                        </div>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => healthFileInputRef.current?.click()}
+                          className="mb-2"
+                        >
+                          <FileText className="w-4 h-4 mr-2" />
+                          Pilih File
+                        </Button>
+                        {/* PERUBAHAN: Teks bantuan */}
+                        <p className="text-sm text-gray-500">Format: PDF (Max. 5MB)</p>
                       </div>
                     )}
                   </div>
@@ -477,7 +522,7 @@ function InputField({
   error,
 }: {
   id: string;
-  label: string;
+  label: React.ReactNode;
   type: string;
   placeholder?: string;
   value: string;

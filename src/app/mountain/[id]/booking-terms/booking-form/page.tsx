@@ -16,27 +16,12 @@ import { mountainsData, type Mountain } from '@/lib/mountain-data';
 import BookingTermsPage from '@/components/pages/booking-terms-page';
 
 export interface BookingData {
-<<<<<<< HEAD
-  entryDate: string;
-  exitDate: string;
-  numberOfBookers: number;
-  bookers: PersonalData[];
-}
 
-export interface PersonalData {
-  email: string;
-  fullName: string;
-  idNumber: string;
-  phoneNumber: string;
-  gender: 'male' | 'female';
-  birthDate: string;
-  birthPlace: string;
-  idCardFile?: File;
-=======
   entryDate: string
   exitDate: string
   numberOfBookers: number
   bookers: PersonalData[]
+  selectedTrail: string
 }
 
 export interface PersonalData {
@@ -49,8 +34,9 @@ export interface PersonalData {
   birthPlace: string
   idCardFile?: File
   isCompanion?: boolean // New field for companion role
+  healthCertificateFile?: File 
+  
   age?: number // Calculated age
->>>>>>> faiz
 }
 
 // Create a global store to persist data between pages
@@ -60,7 +46,9 @@ let globalBookingData: BookingData = {
   exitDate: '',
   numberOfBookers: 1,
   bookers: [],
-};
+  selectedTrail: "",
+}
+
 
 export function getGlobalBookingData() {
   return globalBookingData;
@@ -70,13 +58,9 @@ export function updateGlobalBookingData(data: Partial<BookingData>) {
   globalBookingData = { ...globalBookingData, ...data };
 }
 
-<<<<<<< HEAD
-export default function BookignForm() {
-  const router = useRouter();
-=======
+
 export default function HomePage() {
   const router = useRouter()
->>>>>>> faiz
 
   const params = useParams();
   const mountainId = params?.id as string;
@@ -89,14 +73,18 @@ export default function HomePage() {
   }) => {
     // Initialize empty bookers array based on numberOfBookers
     const emptyBookers = Array.from({ length: dates.numberOfBookers }, () => ({
-      email: '',
-      fullName: '',
-      idNumber: '',
-      phoneNumber: '',
-      gender: 'male' as const,
-      birthDate: '',
-      birthPlace: '',
-    }));
+      email: "",
+      fullName: "",
+      idNumber: "",
+      phoneNumber: "",
+      gender: "male" as const,
+      birthDate: "",
+      birthPlace: "",
+      idCardFile: undefined,
+      healthCertificateFile: undefined, // ← Tambahkan ini
+      isCompanion: false,
+      age: undefined,
+    }))
 
     // Update global state
     updateGlobalBookingData({
@@ -105,13 +93,8 @@ export default function HomePage() {
     });
 
     // Navigate to the personal data form page with the first booker
-<<<<<<< HEAD
-    router.push(`/mountain/${mountain?.id}/booking-terms/booking-form/personal-data/0`);
-  };
-=======
     router.push(`/mountain/${mountain?.id}/booking-terms/booking-form/personal-data/0`)
   }
->>>>>>> faiz
 
   return (
     <div className="min-h-screen bg-gray-50">
