@@ -1,5 +1,4 @@
 "use client"
-
 import { useRouter, useParams } from "next/navigation"
 import { getGlobalBookingData, PersonalData, updateGlobalBookingData } from "../../page"
 import PersonalDataForm from "@/components/pages/personal-data-form"
@@ -8,7 +7,6 @@ export default function PersonalDataPage() {
   const router = useRouter()
   const params = useParams()
   const bookerIndex = Number.parseInt(params.index as string, 10)
-
   const bookingData = getGlobalBookingData()
   const totalBookers = bookingData.numberOfBookers
 
@@ -16,7 +14,6 @@ export default function PersonalDataPage() {
     // Update this booker's data
     const updatedBookers = [...bookingData.bookers]
     updatedBookers[bookerIndex] = personalData
-
     updateGlobalBookingData({
       bookers: updatedBookers,
     })
@@ -26,6 +23,18 @@ export default function PersonalDataPage() {
       // All bookers completed
       alert("Pendaftaran berhasil!")
       console.log("Final booking data:", getGlobalBookingData())
+<<<<<<< HEAD
+      router.push(`/mountain/${params.id}/booking-terms/booking-form/confirmation`);
+    } else {
+      // Move to next booker
+      router.push(`/mountain/${params.id}/booking-terms/booking-form/personal-data/${bookerIndex + 1}`);
+    }
+  }
+
+  const handleNextBooker = () => {
+    if (bookerIndex < totalBookers - 1) {
+      router.push(`/mountain/${params.id}/booking-terms/booking-form/personal-data/${bookerIndex + 1}`);
+=======
       router.push("/confirmation")
     } else {
       // Move to next booker
@@ -40,12 +49,17 @@ export default function PersonalDataPage() {
   const handleNextBooker = () => {
     if (bookerIndex < totalBookers - 1) {
       router.push(`/personal-data/${bookerIndex + 1}`)
+>>>>>>> faiz
     }
   }
 
   const handlePreviousBooker = () => {
     if (bookerIndex > 0) {
+<<<<<<< HEAD
+      router.push(`/mountain/${params.id}/booking-terms/booking-form/personal-data/${bookerIndex - 1}`);
+=======
       router.push(`/personal-data/${bookerIndex - 1}`)
+>>>>>>> faiz
     }
   }
 
@@ -53,7 +67,6 @@ export default function PersonalDataPage() {
     <div className="min-h-screen bg-gray-50">
       <PersonalDataForm
         onSubmit={handlePersonalDataSubmit}
-        onBack={handleBack}
         onNext={handleNextBooker}
         onPrevious={handlePreviousBooker}
         bookerIndex={bookerIndex}

@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import Image from 'next/image';
+import { Filter, ChevronDown } from 'lucide-react';
 
 interface ProvinceFilterProps {
   selectedProvince: string;
@@ -63,17 +63,11 @@ const ProvinceFilter = ({ selectedProvince, onProvinceChange }: ProvinceFilterPr
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 h-8 px-4 bg-chipview-1 rounded-xl cursor-pointer transition-colors hover:bg-global-3"
       >
-        <Image src="/placeholder.svg?height=16&width=16" alt="Filter" width={16} height={16} />
+        <Filter className="w-4 h-4" />
         <span className="text-sm font-medium leading-[18px] text-global-1 font-plus-jakarta">
           {selectedProvince}
         </span>
-        <Image
-          src="/placeholder.svg?height=12&width=12"
-          alt="Arrow"
-          width={12}
-          height={12}
-          className={`transition-transform ${isOpen ? 'rotate-180' : ''}`}
-        />
+        <ChevronDown className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
