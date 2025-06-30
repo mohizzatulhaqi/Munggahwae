@@ -65,7 +65,7 @@ class MountainApi {
       if (response.ok && data.success) {
         return {
           success: true,
-          mountain: data.mountain,
+          mountain: data,
         };
       } else {
         return {

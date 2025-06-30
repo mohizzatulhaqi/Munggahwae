@@ -4,6 +4,7 @@ import { useRouter, useParams } from "next/navigation"
 import { getGlobalBookingData, PersonalData, updateGlobalBookingData } from "../../page"
 import PersonalDataForm from "@/components/pages/personal-data-form"
 
+
 export default function PersonalDataPage() {
   const router = useRouter()
   const params = useParams()
