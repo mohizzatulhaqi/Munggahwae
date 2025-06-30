@@ -9,7 +9,6 @@
     --global-bg-2: #ffffff;
     --global-bg-3: #e8f2ed;
     --global-bg-4: #0fbd66;
-    --global-bg-5: #0fef7f;
     --global-text-1: #0c1c14;
     --global-text-2: #4c9972;
     --global-text-3: #e5e8ea;
@@ -130,10 +129,13 @@
   }
 }
 
-@layer base {
-  label:has(*:last-child)::after {
-  content: '';
-}
 
-  
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }

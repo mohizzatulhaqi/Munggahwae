@@ -29,7 +29,7 @@ export default function PersonalDataPage() {
       router.push("/confirmation")
     } else {
       // Move to next booker
-      router.push(`/mountain/[id]/booking-terms/booking-form/personal-data/${bookerIndex + 1}`)
+      router.push(`/personal-data/${bookerIndex + 1}`)
     }
   }
 
@@ -39,13 +39,13 @@ export default function PersonalDataPage() {
 
   const handleNextBooker = () => {
     if (bookerIndex < totalBookers - 1) {
-      router.push(`/mountain/[id]/booking-terms/booking-form/personal-data/${bookerIndex + 1}`)
+      router.push(`/personal-data/${bookerIndex + 1}`)
     }
   }
 
   const handlePreviousBooker = () => {
     if (bookerIndex > 0) {
-      router.push(`/mountain/[id]/booking-terms/booking-form/personal-data/${bookerIndex - 1}`)
+      router.push(`/personal-data/${bookerIndex - 1}`)
     }
   }
 
