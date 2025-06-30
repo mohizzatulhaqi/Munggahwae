@@ -20,12 +20,10 @@ export default function PersonalDataPage() {
 
     // Check if this is the last booker
     if (bookerIndex === totalBookers - 1) {
-      // All bookers completed
       alert("Pendaftaran berhasil!")
       console.log("Final booking data:", getGlobalBookingData())
       router.push("/confirmation")
     } else {
-      // Move to next booker
       router.push(`/mountain/${params.id}/booking-terms/booking-form/personal-data/${bookerIndex + 1}`)
     }
   }

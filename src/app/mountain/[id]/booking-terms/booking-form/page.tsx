@@ -11,7 +11,6 @@ export interface BookingData {
   exitDate: string
   numberOfBookers: number
   bookers: PersonalData[]
-  selectedTrail: string
 }
 
 export interface PersonalData {
@@ -25,7 +24,6 @@ export interface PersonalData {
   idCardFile?: File
   isCompanion?: boolean // New field for companion role
   healthCertificateFile?: File 
-  
   age?: number // Calculated age
 }
 
@@ -36,7 +34,6 @@ let globalBookingData: BookingData = {
   exitDate: '',
   numberOfBookers: 1,
   bookers: [],
-  selectedTrail: "",
 }
 
 
@@ -70,10 +67,6 @@ export default function HomePage() {
       gender: "male" as const,
       birthDate: "",
       birthPlace: "",
-      idCardFile: undefined,
-      healthCertificateFile: undefined, // ← Tambahkan ini
-      isCompanion: false,
-      age: undefined,
     }))
 
     // Update global state

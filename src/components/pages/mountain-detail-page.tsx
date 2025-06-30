@@ -7,7 +7,6 @@ import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import BackButton from '@/components/ui/BackButton';
 import type { Mountain } from '@/lib/mountain-data';
-import { Route } from 'lucide-react';
 
 interface MountainDetailPageProps {
   mountain: Mountain;
@@ -144,9 +143,14 @@ const MountainDetailPage: React.FC<MountainDetailPageProps> = ({ mountain }) => 
                 className="bg-global-1 p-4 rounded-lg flex items-start gap-4 border border-gray-200"
               >
                 <div className="bg-global-2 p-3 rounded-lg flex-shrink-0">
-                  <Route className="w-6 h-6 text-global-1" />
+                  <Image
+                    src={trail.icon || '/placeholder.svg'}
+                    alt="Trail icon"
+                    width={24}
+                    height={24}
+                    className="w-6 h-6"
+                  />
                 </div>
-
                 <div className="flex-1">
                   <h3 className="text-base font-medium leading-[21px] text-global-1 font-plus-jakarta mb-1">
                     {trail.name}
