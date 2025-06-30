@@ -36,3 +36,7 @@ jest-test-results.json
 # Optional: if using TurboRepo or monorepo
 turbo/
 /src/generated/prisma
+
+
+.env
+.env.local

@@ -13,56 +13,149 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
   id           String   @id @default(uuid())
   namaLengkap  String
-  email        String   @unique
   password     String
-  // Relasi ke tiket bisa ditambahkan nanti
+  email        String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  // Relations
+  bookings     Booking[]
+  notifications Notifikasi[]
 }
 
 model Gunung {
-  id         String       @id @default(uuid())
-  nama       String       
-  kuota      Int
-  jalur      String[]
-  deskripsi  String
-  gambar     String       // bisa URL gambar
-  harga      Int
-  peraturan  Peraturan[]  // Relasi ke banyak peraturan
-  // Relasi ke jadwal pendakian bisa ditambahkan nanti
+  id              String   @id @default(uuid())
+  nama            String
+  kuota           Int
+  deskripsi       String
+  urlGambar       String
+  harga           Int
+  lokasi          String
+  provinsi        String
+  kuotaPerHari    Int      @default(100)
+  hargaPerOrang   BigInt
+  status          String   @default("active")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // Relations
+  peraturan       Peraturan[]
+  bookings        Booking[]
+  galeriGunung    GaleriGunung[]
+  jalur           Jalur[]
+  kuotaHarian     KuotaHarian[]
 }
 
 model Peraturan {
   id        String   @id @default(uuid())
-  isi       String   // isi atau deskripsi peraturan
+  isi       String
   gunungId  String
+  termText  String
+  orderIndex Int     @default(0)
+  createdAt DateTime @default(now())
+  
+  // Relations
   gunung    Gunung   @relation(fields: [gunungId], references: [id])
 }
 
-model Pemesanan {
-  id              String           @id @default(uuid())
+model Jalur {
+  id                    String   @id @default(uuid())
+  mountainId            String
+  name                  String
+  description           String?
+  difficultyLevel       String?
+  estimatedDurationHours Int?
+  maxAltitude           Int?
+  createdAt             DateTime @default(now())
+  
+  // Relations
+  mountain              Gunung   @relation(fields: [mountainId], references: [id])
+  bookings              Booking[]
+}
+
+model Booking {
+  id              String   @id @default(uuid())
+  userId          String?
+  mountainId      String?
+  trailId         String?
   tanggalMasuk    DateTime
   tanggalKeluar   DateTime
   jumlahPemesan   Int
-
-  anggotaPemesan  AnggotaPemesan[] // Relasi one-to-many
+  totalHarga      Int
+  status          String   @default("pending")
+  paymentStatus   String   @default("unpaid")
+  specialRequests String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // Relations
+  user            User?    @relation(fields: [userId], references: [id])
+  mountain        Gunung?  @relation(fields: [mountainId], references: [id])
+  trail           Jalur?   @relation(fields: [trailId], references: [id])
+  anggotaPemesanan AnggotaPemesanan[]
+  notifications   Notifikasi[]
 }
 
-model AnggotaPemesan {
-  id              String     @id @default(uuid())
-  pemesananId     String
-  pemesanan       Pemesanan  @relation(fields: [pemesananId], references: [id])
-
+model AnggotaPemesanan {
+  id              String   @id @default(uuid())
+  pemesananId     String?
   email           String
   nama            String
   noIdentitas     String
-  kewarganegaraan String
-  jenisKelamin    String     // Misal: "Laki-laki", "Perempuan"
+  kewarganegaraan String   @default("Indonesia")
+  jenisKelamin    String?
   tempatLahir     String?
   tanggalLahir    DateTime?
-  fileKtp         String?    // Path file KTP (opsional)
+  fileKtp         String?
+  isCompanion     Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  
+  // Relations
+  pemesanan       Booking? @relation(fields: [pemesananId], references: [id])
+}
+
+model GaleriGunung {
+  id          String   @id @default(uuid())
+  mountainId  String?
+  imageUrl    String
+  caption     String?
+  orderIndex  Int      @default(0)
+  createdAt   DateTime @default(now())
+  
+  // Relations
+  mountain    Gunung?  @relation(fields: [mountainId], references: [id])
+}
+
+model KuotaHarian {
+  id              String   @id @default(uuid())
+  mountainId      String?
+  date            DateTime
+  totalQuota      Int
+  bookedQuota     Int      @default(0)
+  availableQuota  Int      @default(0)
+  status          String   @default("open")
+  createdAt       DateTime @default(now())
+  
+  // Relations
+  mountain        Gunung?  @relation(fields: [mountainId], references: [id])
+}
+
+model Notifikasi {
+  id          String   @id @default(uuid())
+  userId      String?
+  bookingId   String?
+  title       String
+  message     String
+  type        String?
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  
+  // Relations
+  user        User?    @relation(fields: [userId], references: [id])
+  booking     Booking? @relation(fields: [bookingId], references: [id])
 }
 
 

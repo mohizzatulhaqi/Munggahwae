@@ -1,18 +1,25 @@
-import type React from 'react';
+import type { Metadata } from 'next';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
+import ErrorBoundary from '@/components/common/ErrorBoundary';
+import { AuthProvider } from '@/contexts/AuthContext';
 
-const plusJakarta = Plus_Jakarta_Sans({
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  weight: ['400', '500', '700'],
   variable: '--font-plus-jakarta',
 });
 
-export const metadata = {
-  title: 'Munggahwae - Jelajahi Gunung Impianmu',
-  description: 'Platform booking tiket pendakian gunung di Indonesia',
-  icons: {
-    icon: [{ url: '/favicon.ico', type: 'image/x-icon' }],
+export const metadata: Metadata = {
+  title: 'Munggahwae - Platform Pemesanan Tiket Pendakian Gunung',
+  description:
+    'Platform pemesanan tiket pendakian gunung terpercaya di Indonesia. Pesan tiket pendakian dengan mudah dan aman.',
+  keywords: 'pendakian, gunung, tiket, booking, indonesia, hiking, mountaineering',
+  authors: [{ name: 'Munggahwae Team' }],
+  openGraph: {
+    title: 'Munggahwae - Platform Pemesanan Tiket Pendakian Gunung',
+    description: 'Platform pemesanan tiket pendakian gunung terpercaya di Indonesia.',
+    type: 'website',
+    locale: 'id_ID',
   },
 };
 
@@ -23,7 +30,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id">
-      <body className={`${plusJakarta.variable} font-plus-jakarta`}>{children}</body>
+      <body className={`${plusJakartaSans.variable} font-plus-jakarta`}>
+        <ErrorBoundary>
+          <AuthProvider>{children}</AuthProvider>
+        </ErrorBoundary>
+      </body>
     </html>
   );
 }
