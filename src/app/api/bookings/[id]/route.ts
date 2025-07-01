@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { BookingController } from '../../../../presentation/controllers/BookingController';
+import { SupabaseBookingRepository } from '../../../../infrastructure/repositories/SupabaseBookingRepository';
+import { SupabaseGunungRepository } from '../../../../infrastructure/repositories/SupabaseGunungRepository';
+import { SupabaseUserRepository } from '../../../../infrastructure/repositories/SupabaseUserRepository';
 
 const bookingController = new BookingController();
 
@@ -33,9 +36,9 @@ export async function PATCH(
 // Helper method for marking booking as paid
 async function markBookingAsPaid(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const bookingRepository = new (await import('../../../../infrastructure/repositories/PrismaBookingRepository')).PrismaBookingRepository(new (await import('@prisma/client')).PrismaClient());
-    const gunungRepository = new (await import('../../../../infrastructure/repositories/PrismaGunungRepository')).PrismaGunungRepository(new (await import('@prisma/client')).PrismaClient());
-    const userRepository = new (await import('../../../../infrastructure/repositories/PrismaUserRepository')).PrismaUserRepository(new (await import('@prisma/client')).PrismaClient());
+    const bookingRepository = new SupabaseBookingRepository();
+    const gunungRepository = new SupabaseGunungRepository();
+    const userRepository = new SupabaseUserRepository();
     
     const bookingService = new (await import('../../../../domain/services/BookingService')).BookingService(
       bookingRepository,

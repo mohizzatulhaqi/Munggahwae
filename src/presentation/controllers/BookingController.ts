@@ -1,19 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { CreateBookingUseCase, CreateBookingInput } from '../../application/use-cases/CreateBookingUseCase';
-import { PrismaUserRepository } from '../../infrastructure/repositories/PrismaUserRepository';
-import { PrismaGunungRepository } from '../../infrastructure/repositories/PrismaGunungRepository';
-import { PrismaBookingRepository } from '../../infrastructure/repositories/PrismaBookingRepository';
-import { PrismaClient } from '@prisma/client';
+import { SupabaseUserRepository } from '../../infrastructure/repositories/SupabaseUserRepository';
+import { SupabaseGunungRepository } from '../../infrastructure/repositories/SupabaseGunungRepository';
+import { SupabaseBookingRepository } from '../../infrastructure/repositories/SupabaseBookingRepository';
 
 export class BookingController {
-  private prisma: PrismaClient;
   private createBookingUseCase: CreateBookingUseCase;
 
   constructor() {
-    this.prisma = new PrismaClient();
-    const userRepository = new PrismaUserRepository(this.prisma);
-    const gunungRepository = new PrismaGunungRepository(this.prisma);
-    const bookingRepository = new PrismaBookingRepository(this.prisma);
+    const userRepository = new SupabaseUserRepository();
+    const gunungRepository = new SupabaseGunungRepository();
+    const bookingRepository = new SupabaseBookingRepository();
     
     this.createBookingUseCase = new CreateBookingUseCase(
       userRepository,
@@ -88,7 +85,7 @@ export class BookingController {
       const mountainId = searchParams.get('mountainId');
       const status = searchParams.get('status');
 
-      const bookingRepository = new PrismaBookingRepository(this.prisma);
+      const bookingRepository = new SupabaseBookingRepository();
       let bookings;
 
       if (userId) {
@@ -121,7 +118,7 @@ export class BookingController {
 
   async getBookingById(request: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse> {
     try {
-      const bookingRepository = new PrismaBookingRepository(this.prisma);
+      const bookingRepository = new SupabaseBookingRepository();
       const booking = await bookingRepository.findById(params.id);
 
       if (!booking) {
@@ -153,9 +150,9 @@ export class BookingController {
 
   async confirmBooking(request: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse> {
     try {
-      const bookingRepository = new PrismaBookingRepository(this.prisma);
-      const gunungRepository = new PrismaGunungRepository(this.prisma);
-      const userRepository = new PrismaUserRepository(this.prisma);
+      const bookingRepository = new SupabaseBookingRepository();
+      const gunungRepository = new SupabaseGunungRepository();
+      const userRepository = new SupabaseUserRepository();
       
       const bookingService = new (await import('../../domain/services/BookingService')).BookingService(
         bookingRepository,
@@ -185,9 +182,9 @@ export class BookingController {
 
   async cancelBooking(request: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse> {
     try {
-      const bookingRepository = new PrismaBookingRepository(this.prisma);
-      const gunungRepository = new PrismaGunungRepository(this.prisma);
-      const userRepository = new PrismaUserRepository(this.prisma);
+      const bookingRepository = new SupabaseBookingRepository();
+      const gunungRepository = new SupabaseGunungRepository();
+      const userRepository = new SupabaseUserRepository();
       
       const bookingService = new (await import('../../domain/services/BookingService')).BookingService(
         bookingRepository,
@@ -217,9 +214,9 @@ export class BookingController {
 
   async getBookingStatistics(request: NextRequest): Promise<NextResponse> {
     try {
-      const bookingRepository = new PrismaBookingRepository(this.prisma);
-      const gunungRepository = new PrismaGunungRepository(this.prisma);
-      const userRepository = new PrismaUserRepository(this.prisma);
+      const bookingRepository = new SupabaseBookingRepository();
+      const gunungRepository = new SupabaseGunungRepository();
+      const userRepository = new SupabaseUserRepository();
       
       const bookingService = new (await import('../../domain/services/BookingService')).BookingService(
         bookingRepository,

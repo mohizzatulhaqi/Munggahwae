@@ -33,25 +33,25 @@ export async function GET(request: NextRequest) {
 
     // 3. Build query untuk mengambil data booking dengan join ke mountains
     let query = supabase
-      .from('bookings')
+      .from('Booking')
       .select(`
         *,
-        mountains (
+        Gunung (
           id,
-          name,
-          location,
-          province,
-          image_url,
-          hero_image_url
+          nama,
+          lokasi,
+          provinsi,
+          urlGambar,
+          urlGambarHero
         ),
-        trails (
+        Jalur (
           id,
-          name,
-          difficulty_level
+          nama,
+          tingkatKesulitan
         )
       `)
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
+      .eq('userId', user.id)
+      .order('createdAt', { ascending: false });
 
     // 4. Apply filters
     if (status && status !== 'all') {
@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (search) {
-      query = query.or(`mountains.name.ilike.%${search}%,kode_booking.ilike.%${search}%`);
+      query = query.or(`Gunung.nama.ilike.%${search}%,kode_booking.ilike.%${search}%`);
     }
 
     // 5. Apply pagination
@@ -82,29 +82,29 @@ export async function GET(request: NextRequest) {
     // 7. Transform data untuk kompatibilitas dengan frontend
     const transformedBookings = bookings?.map((booking: any) => ({
       id: booking.id,
-      kodeBooking: booking.kode_booking || `BK-${booking.id.slice(0, 8).toUpperCase()}`,
-      tanggalMasuk: booking.tanggal_masuk,
-      tanggalKeluar: booking.tanggal_keluar,
-      jumlahPemesan: booking.jumlah_pemesan,
-      totalBiaya: booking.total_harga,
+      kodeBooking: booking.kodeBooking || `BK-${booking.id.slice(0, 8).toUpperCase()}`,
+      tanggalMasuk: booking.tanggalMasuk,
+      tanggalKeluar: booking.tanggalKeluar,
+      jumlahPemesan: booking.jumlahPemesan,
+      totalBiaya: booking.totalBiaya,
       status: booking.status,
-      paymentStatus: booking.payment_status,
-      specialRequests: booking.special_requests,
-      createdAt: booking.created_at,
-      updatedAt: booking.updated_at,
-      alasanPenolakan: booking.alasan_penolakan,
+      paymentStatus: booking.paymentStatus,
+      specialRequests: booking.specialRequests,
+      createdAt: booking.createdAt,
+      updatedAt: booking.updatedAt,
+      alasanPenolakan: booking.alasanPenolakan,
       gunung: {
-        id: booking.mountains?.id,
-        nama: booking.mountains?.name,
-        lokasi: booking.mountains?.location,
-        provinsi: booking.mountains?.province,
-        urlGambar: booking.mountains?.image_url,
-        heroImageUrl: booking.mountains?.hero_image_url,
+        id: booking.Gunung?.id,
+        nama: booking.Gunung?.nama,
+        lokasi: booking.Gunung?.lokasi,
+        provinsi: booking.Gunung?.provinsi,
+        urlGambar: booking.Gunung?.urlGambar,
+        urlGambarHero: booking.Gunung?.urlGambarHero,
       },
-      jalur: booking.trails ? {
-        id: booking.trails.id,
-        nama: booking.trails.name,
-        tingkatKesulitan: booking.trails.difficulty_level,
+      jalur: booking.Jalur ? {
+        id: booking.Jalur.id,
+        nama: booking.Jalur.nama,
+        tingkatKesulitan: booking.Jalur.tingkatKesulitan,
       } : null,
     })) || [];
 
