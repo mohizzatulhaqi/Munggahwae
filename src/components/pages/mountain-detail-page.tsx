@@ -70,7 +70,7 @@ const MountainDetailPage: React.FC<MountainDetailPageProps> = ({ mountain }) => 
               {mountain.kuota}
             </span>
           </div>
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center"> 
             <span className="text-sm font-normal leading-[18px] text-global-2 font-plus-jakarta">
               Lokasi
             </span>
