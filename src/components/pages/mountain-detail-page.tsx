@@ -83,7 +83,7 @@ const MountainDetailPage: React.FC<MountainDetailPageProps> = ({ mountain }) => 
               Harga per Orang
             </span>
             <span className="text-sm font-normal leading-[18px] text-global-1 font-plus-jakarta">
-              Rp {mountain.hargaPerOrang.toLocaleString()}
+            Rp {typeof mountain.hargaPerOrang === 'number' ? mountain.hargaPerOrang.toLocaleString() : '-'}
             </span>
           </div>
           <div className="flex justify-between items-center">
