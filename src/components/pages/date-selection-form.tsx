@@ -28,6 +28,7 @@ interface DateSelectionFormProps {
     selectedTrail: string;
     price?: number;
   }) => void;
+  mountain: any;
 }
 
 const getDateRange = (startDate: string, endDate: string): string[] => {
@@ -45,66 +46,46 @@ const getDateRange = (startDate: string, endDate: string): string[] => {
 };
 
 const getMinimumQuota = (
-  trailName: string,
+  trailId: string,
   entryDate: string,
   exitDate: string,
-  mountain: any
+  trailDailyQuotas: Record<string, any[]>
 ): number => {
-  if (!entryDate || !exitDate || !trailName || !mountain) {
+  if (!entryDate || !exitDate || !trailId || !trailDailyQuotas[trailId]) {
     return 0;
   }
-
   const dates = getDateRange(entryDate, exitDate);
-  const trail = mountain.trailDetails.find((t: any) => t.name === trailName);
-
-  if (!trail || !trail.dailyQuotas) {
-    return trail?.available || 0;
-  }
-
-  let minQuota = Infinity;
-  for (const date of dates) {
-    const dailyQuota = trail.dailyQuotas[date];
-    if (dailyQuota !== undefined) {
-      minQuota = Math.min(minQuota, dailyQuota);
-    } else {
-      minQuota = Math.min(minQuota, trail.available);
-    }
-  }
-
-  return minQuota === Infinity ? trail.available : minQuota;
+  const quotas = trailDailyQuotas[trailId].filter(q => dates.includes(q.date));
+  if (quotas.length === 0) return 0;
+  return Math.min(...quotas.map(q => q.availableQuota));
 };
 
 const getDailyQuotaDetails = (
-  trailName: string,
+  trailId: string,
   entryDate: string,
   exitDate: string,
-  mountain: any
+  trailDailyQuotas: Record<string, any[]>
 ) => {
-  if (!entryDate || !exitDate || !trailName || !mountain) {
+  if (!entryDate || !exitDate || !trailId || !trailDailyQuotas[trailId]) {
     return [];
   }
-
   const dates = getDateRange(entryDate, exitDate);
-  const trail = mountain.trailDetails.find((t: any) => t.name === trailName);
-
-  if (!trail) return [];
-
-  return dates.map((date) => {
-    const dailyQuota = trail.dailyQuotas ? trail.dailyQuotas[date] : trail.available;
-    return {
-      date,
-      available: dailyQuota !== undefined ? dailyQuota : trail.available,
-      quota: trail.quota,
-    };
-  });
+  return trailDailyQuotas[trailId].filter(q => dates.includes(q.date));
 };
 
-export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) {
+function getQuotaFromKuotaHarian(trailId: string, trailDailyQuotas: Record<string, any[]>) {
+  const quotas = trailDailyQuotas[trailId] || [];
+  if (quotas.length === 0) return 0;
+  return Math.min(...quotas.map((q: any) => q.availableQuota));
+}
+
+export default function DateSelectionForm({ onSubmit, mountain }: DateSelectionFormProps) {
   const [entryDate, setEntryDate] = useState('');
   const [exitDate, setExitDate] = useState('');
   const [numberOfBookers, setNumberOfBookers] = useState(1);
   const [selectedTrail, setSelectedTrail] = useState('');
   const [availableQuota, setAvailableQuota] = useState<number>(0);
+  const [totalQuota, setTotalQuota] = useState<number>(0);
   const [dailyQuotaDetails, setDailyQuotaDetails] = useState<
     Array<{
       date: string;
@@ -128,10 +109,6 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
   const [trailDailyQuotas, setTrailDailyQuotas] = useState<Record<string, any[]>>({});
   const [trailDailyQuotasLoading, setTrailDailyQuotasLoading] = useState(true);
   const [trailDailyQuotasError, setTrailDailyQuotasError] = useState<string | null>(null);
-
-  const params = useParams();
-  const mountainId = params?.id as string;
-  const mountain = mountainsData.find((m) => m.id === mountainId);
 
   const validateDates = () => {
     const newWarnings: {
@@ -180,21 +157,26 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
   useEffect(() => {
     validateDates();
 
-    if (entryDate && exitDate && selectedTrail && mountain) {
-      const minQuota = getMinimumQuota(selectedTrail, entryDate, exitDate, mountain);
-      const quotaDetails = getDailyQuotaDetails(selectedTrail, entryDate, exitDate, mountain);
+    if (entryDate && exitDate && selectedTrail && trails.length > 0) {
+      const selectedTrailObj = trails.find((t: any) => t.name === selectedTrail);
+      const trailId = selectedTrailObj?.id;
+      const minQuota = getMinimumQuota(trailId, entryDate, exitDate, trailDailyQuotas);
+      const quotaDetails = getDailyQuotaDetails(trailId, entryDate, exitDate, trailDailyQuotas);
 
       setAvailableQuota(minQuota);
-      setDailyQuotaDetails(quotaDetails);
+      setTotalQuota(
+        quotaDetails.length > 0 ? Math.min(...quotaDetails.map((q) => q.quota)) : 0
+      );
 
       if (numberOfBookers > minQuota) {
         setNumberOfBookers(Math.max(1, minQuota));
       }
     } else {
       setAvailableQuota(0);
+      setTotalQuota(0);
       setDailyQuotaDetails([]);
     }
-  }, [entryDate, exitDate, selectedTrail, mountain, numberOfBookers]);
+  }, [entryDate, exitDate, selectedTrail, trails, numberOfBookers, trailDailyQuotas]);
 
   // Fetch trails from API
   useEffect(() => {
@@ -202,7 +184,7 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
       setTrailsLoading(true);
       setTrailsError(null);
       try {
-        const res = await fetch(`/api/jalur/${mountainId}`);
+        const res = await fetch(`/api/jalur/${mountain.id}`);
         const data = await res.json();
         if (data.success) {
           setTrails(data.trails || []);
@@ -215,15 +197,15 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
         setTrailsLoading(false);
       }
     };
-    if (mountainId) fetchTrails();
-  }, [mountainId]);
+    if (mountain.id) fetchTrails();
+  }, [mountain.id]);
 
   useEffect(() => {
     const fetchTrailDailyQuotas = async () => {
       setTrailDailyQuotasLoading(true);
       setTrailDailyQuotasError(null);
       try {
-        if (!mountainId || !entryDate || !exitDate || trails.length === 0) {
+        if (!mountain.id || !entryDate || !exitDate || trails.length === 0) {
           setTrailDailyQuotas({});
           setTrailDailyQuotasLoading(false);
           return;
@@ -242,8 +224,8 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
         for (const trail of trails) {
           quotasByTrail[trail.id] = [];
           for (const date of dates) {
-            const res = await fetch(`/api/kuota-harian/${mountainId}?jalurId=${trail.id}&date=${date}`);
-            const data = await res.json();
+            const quotaRes = await fetch(`/api/kuota-harian/${mountain.id}?jalurId=${trail.id}&date=${date}`);
+            const data = await quotaRes.json();
             if (data.success && data.quotas.length > 0) {
               quotasByTrail[trail.id].push(data.quotas[0]);
             }
@@ -257,7 +239,7 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
       }
     };
     fetchTrailDailyQuotas();
-  }, [mountainId, entryDate, exitDate, trails]);
+  }, [mountain.id, entryDate, exitDate, trails]);
 
   // Validasi jumlah pemesan maksimal per jalur
   const maxBookersByTrail: Record<string, number> = {};
@@ -265,6 +247,8 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
     const quotas = trailDailyQuotas[trail.id] || [];
     maxBookersByTrail[trail.id] = quotas.length > 0 ? Math.min(...quotas.map(q => q.availableQuota)) : 0;
   });
+  
+  console.log('DEBUG: availableQuota', availableQuota);
 
   const validateForm = () => {
     const newErrors: {
@@ -273,6 +257,8 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
       numberOfBookers?: string;
       selectedTrail?: string;
     } = {};
+
+    console.log('DEBUG: validateForm', { availableQuota, numberOfBookers, selectedTrail, entryDate, exitDate });
 
     if (!entryDate) {
       newErrors.entryDate = 'Tanggal masuk harus diisi';
@@ -310,19 +296,26 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
     return Object.keys(newErrors).length === 0;
   };
 
+  const selectedTrailInfo = trails.find((trail) => trail.name === selectedTrail);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateDates() && validateForm()) {
-  onSubmit({
-  entryDate,
-  exitDate,
-  numberOfBookers,
-  selectedTrail,
-  price: selectedTrailInfo?.price ?? 350000, // ✅ benar
-});    }
+    const datesValid = validateDates();
+    const formValid = validateForm();
+    console.log('DEBUG: handleSubmit called', { datesValid, formValid, entryDate, exitDate, numberOfBookers, selectedTrail });
+    if (datesValid && formValid) {
+      console.log('DEBUG: onSubmit dipanggil', { entryDate, exitDate, numberOfBookers, selectedTrail, price: selectedTrailInfo?.price ?? 350000 });
+      onSubmit({
+        entryDate,
+        exitDate,
+        numberOfBookers,
+        selectedTrail,
+        price: selectedTrailInfo?.price ?? 350000, // ✅ benar
+      });
+    } else {
+      console.log('DEBUG: Validasi gagal', { datesValid, formValid });
+    }
   };
-
-  const selectedTrailInfo = trails.find((trail) => trail.name === selectedTrail);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -514,7 +507,7 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
                                   <div key={`${trail.id || 'trail'}-${quota.date}-${idx}`} className="flex justify-between text-xs">
                                     <span>{new Date(quota.date).toLocaleDateString('id-ID')}</span>
                                     <span className={quota.availableQuota > 0 ? 'text-green-600' : 'text-red-600'}>
-                                      {quota.availableQuota} tersedia
+                                      {getQuotaFromKuotaHarian(trail.id, trailDailyQuotas)} tersedia
                                     </span>
                                   </div>
                                 ))}
@@ -539,7 +532,7 @@ export default function DateSelectionForm({ onSubmit }: DateSelectionFormProps) 
                           <div
                             className={`text-sm font-medium ${availableQuota > 0 ? 'text-green-600' : 'text-red-600'}`}
                           >
-                            {availableQuota}/{selectedTrailInfo.quota} tersedia
+                            {availableQuota}/{dailyQuotaDetails.reduce((sum, q) => sum + q.quota, 0)} tersedia
                           </div>
                           {selectedTrailInfo.price && (
                             <div className="text-sm text-blue-700">

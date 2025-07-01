@@ -1,9 +1,8 @@
 "use client"
 
-import DateSelectionForm from "@/components/pages/date-selection-form"
-import { useParams, useRouter } from "next/navigation"
-import {mountainsData, type Mountain } from "@/lib/mountain-data"
-
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import DateSelectionForm from "@/components/pages/date-selection-form";
 
 export interface BookingData {
   entryDate: string
@@ -45,12 +44,23 @@ export function updateGlobalBookingData(data: Partial<BookingData>) {
   globalBookingData = { ...globalBookingData, ...data }
 }
 
-export default function HomePage() {
+export default function BookingFormPage() {
   const router = useRouter()
-
   const params = useParams();
   const mountainId = params?.id as string;
-  const mountain = mountainsData.find((m) => m.id === mountainId);
+  const [mountain, setMountain] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (mountainId) {
+      fetch(`/api/gunung/${mountainId}`)
+        .then(res => res.json())
+        .then(data => {
+          setMountain(data.mountain);
+          setLoading(false);
+        });
+    }
+  }, [mountainId]);
 
   const handleDateSubmit = (dates: { entryDate: string; exitDate: string; numberOfBookers: number; selectedTrail: string; price?: number }) => {
     console.log('handleDateSubmit called with:', dates);
@@ -77,12 +87,15 @@ export default function HomePage() {
 
     // Navigate to the personal data form page with the first booker
     console.log('Redirecting to', `/mountain/${mountainId}/booking-terms/booking-form/personal-data/0`);
-    router.push(`/mountain/${mountainId}/booking-terms/booking-form/personal-data/0`);
+    router.push(`/mountain/${mountain?.id}/booking-terms/booking-form/personal-data/0`)
   }
+
+  if (loading) return <div>Loading...</div>;
+  if (!mountain) return <div>Gunung tidak ditemukan</div>;
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <DateSelectionForm onSubmit={handleDateSubmit} />
+      <DateSelectionForm mountain={mountain} onSubmit={handleDateSubmit} />
     </div>
   )
 }
