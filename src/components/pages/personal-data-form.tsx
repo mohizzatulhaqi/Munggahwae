@@ -192,16 +192,41 @@ export default function PersonalDataForm({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
       if (ageValidationWarning && !isLastBooker) {
         alert('Harap selesaikan pengisian data semua pemesan untuk memvalidasi aturan pendamping.');
         return;
       }
-      onSubmit({ ...formData, idCardFile: uploadedFile || undefined });
-      if (isLastBooker) {
-        router.push(`/mountain/${mountainId}/booking-terms/booking-form/payment`);
+      // Integrasi API personal-data
+      const formPayload = new FormData();
+      formPayload.append('email', formData.email);
+      formPayload.append('fullName', formData.fullName);
+      formPayload.append('idNumber', formData.idNumber);
+      formPayload.append('phoneNumber', formData.phoneNumber);
+      formPayload.append('gender', formData.gender);
+      formPayload.append('birthDate', formData.birthDate);
+      formPayload.append('birthPlace', formData.birthPlace);
+      formPayload.append('isCompanion', String(formData.isCompanion));
+      if (uploadedFile) formPayload.append('idCardFile', uploadedFile);
+      if (healthCertificateFile) formPayload.append('healthCertificateFile', healthCertificateFile);
+
+      try {
+        const res = await fetch('/api/personal-data', {
+          method: 'POST',
+          body: formPayload,
+        });
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.error || 'Gagal menyimpan data');
+        alert('Data berhasil disimpan!');
+        if (isLastBooker) {
+          router.push(`/mountain/${mountainId}/booking-terms/booking-form/payment`);
+        } else {
+          onNext();
+        }
+      } catch (err: any) {
+        alert(err.message || 'Terjadi kesalahan saat menyimpan data');
       }
     }
   };

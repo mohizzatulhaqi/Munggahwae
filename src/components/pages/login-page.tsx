@@ -6,6 +6,7 @@ import Link from "next/link"
 import Image from "next/image"
 import Header from "@/components/common/Header"
 import Footer from "@/components/common/Footer"
+import { createClient } from "@/utils/supabase/client"
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -24,15 +25,28 @@ const LoginPage = () => {
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
+    const supabase = await createClient()
+
     e.preventDefault()
     setIsLoading(true)
 
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Login data:", formData)
+    const { email, password } = formData
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+
+    if (error) {
+      alert("Login gagal: " + error.message)
+      console.error("Supabase error:", error)
+    } else {
       alert("Login berhasil!")
-      setIsLoading(false)
-    }, 1500)
+      console.log("User data:", data)
+      // TODO: simpan session/token bila perlu
+    }
+
+    setIsLoading(false)
   }
 
   return (
