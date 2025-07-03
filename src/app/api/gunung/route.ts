@@ -26,7 +26,7 @@ export async function GET(request: Request) {
     // Build Supabase query
     let query = supabase
       .from('Gunung')
-      .select(`*, Jalur(*), GaleriGunung(*)`, { count: 'exact' })
+      .select(`(*)`, { count: 'exact' })
       .order('createdAt', { ascending: false })
       .range(from, to);
 

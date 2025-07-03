@@ -37,6 +37,6 @@ jest-test-results.json
 turbo/
 /src/generated/prisma
 
-#env
-.env
 .env.local
+.env
+

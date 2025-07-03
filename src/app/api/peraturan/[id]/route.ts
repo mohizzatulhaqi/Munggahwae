@@ -23,6 +23,8 @@ export async function GET(
       );
     }
 
+    console.log(id);
+
     return NextResponse.json({
       success: true,
       rules: peraturan

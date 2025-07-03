@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AdminLayout from './admin-layout';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -80,7 +80,26 @@ const AdminMountainsPage = () => {
     bookingTerms: [''],
   });
 
-  const mountains = getAllMountains();
+  const [mountains, setMountains] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchMountains() {
+      try {
+        setIsLoading(true);
+        const data = await getAllMountains();
+        setMountains(data);
+      } catch (error: any) {
+        setFetchError(error.message || 'Terjadi kesalahan saat mengambil data');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchMountains();
+  }, []);
+
 
   const validateForm = (formData: any) => {
     const newErrors: Record<string, string> = {};
