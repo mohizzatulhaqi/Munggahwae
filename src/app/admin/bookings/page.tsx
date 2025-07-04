@@ -1,4 +1,4 @@
-import AdminBookingsPage from "@/components/pages/admin/admin-bookings-page";
+import AdminBookingsPage from "@/components/pages/admin/admin-booking-page";
 
 
 export default function AdminBookings() {

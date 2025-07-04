@@ -16,6 +16,7 @@ const AdminLoginPage = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,14 +30,29 @@ const AdminLoginPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setErrorMsg('');
 
-    // Simulate API call
-    setTimeout(() => {
-      console.log('Admin login data:', formData);
-      // In a real app, validate credentials and set auth token
-      router.push('/admin/dashboard');
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        // Sukses login, redirect ke dashboard
+        router.push('/admin/dashboard');
+      } else {
+        // Gagal login, tampilkan pesan error
+        setErrorMsg(data.message || 'Login gagal');
+      }
+    } catch (err) {
+      setErrorMsg('Terjadi kesalahan server');
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   return (
@@ -116,12 +132,11 @@ const AdminLoginPage = () => {
             </Button>
           </form>
 
-          {/* Demo Credentials */}
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <p className="text-xs text-gray-600 font-plus-jakarta mb-2">Demo Credentials:</p>
-            <p className="text-xs text-gray-600 font-plus-jakarta">Email: admin@munggahwae.com</p>
-            <p className="text-xs text-gray-600 font-plus-jakarta">Password: admin123</p>
-          </div>
+          {errorMsg && (
+            <div className="mt-4 text-red-600 text-sm text-center font-plus-jakarta">
+              {errorMsg}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

@@ -6,16 +6,10 @@ import { useRouter } from 'next/navigation';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import BackButton from '@/components/ui/BackButton';
-import { Gunung } from '@/domain/entities/Gunung';
-import { Route } from 'lucide-react';
+import type { Mountain } from '@/lib/mountain-data';
 
 interface MountainDetailPageProps {
-  mountain: Gunung;
-}
-
-function canAcceptBookings(mountain: any) {
-  // Contoh logika, sesuaikan dengan kebutuhan Anda
-  return mountain.status === 'active' && mountain.kuota > 0;
+  mountain: Mountain;
 }
 
 const MountainDetailPage: React.FC<MountainDetailPageProps> = ({ mountain }) => {
@@ -47,8 +41,8 @@ const MountainDetailPage: React.FC<MountainDetailPageProps> = ({ mountain }) => 
         {/* Hero Image */}
         <div className="mb-8">
           <Image
-            src={mountain.urlGambar || '/placeholder.svg'}
-            alt={mountain.nama}
+            src={mountain.heroImage || '/placeholder.svg'}
+            alt={mountain.name}
             width={928}
             height={320}
             className="w-full h-80 object-cover rounded-lg"
@@ -57,7 +51,7 @@ const MountainDetailPage: React.FC<MountainDetailPageProps> = ({ mountain }) => 
 
         {/* Title */}
         <h1 className="text-2xl font-bold leading-7 text-global-1 font-plus-jakarta mb-8">
-          {mountain.nama}
+          {mountain.name}
         </h1>
 
         {/* Info Section */}
@@ -67,20 +61,20 @@ const MountainDetailPage: React.FC<MountainDetailPageProps> = ({ mountain }) => 
               Kuota
             </span>
             <span className="text-sm font-normal leading-[18px] text-global-1 font-plus-jakarta">
-              {mountain.kuota}
+              {mountain.quota}
             </span>
           </div>
           <div className="flex justify-between items-center"> 
             <span className="text-sm font-normal leading-[18px] text-global-2 font-plus-jakarta">
-              Lokasi
+              Jalur
             </span>
             <span className="text-sm font-normal leading-[18px] text-global-1 font-plus-jakarta">
-              {mountain.lokasi}, {mountain.provinsi}
+              {mountain.trails}
             </span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-sm font-normal leading-[18px] text-global-2 font-plus-jakarta">
-              Harga per Orang
+              Tersedia
             </span>
             <span className="text-sm font-normal leading-[18px] text-global-1 font-plus-jakarta">
             Rp {typeof mountain.hargaPerOrang === 'number' ? mountain.hargaPerOrang.toLocaleString() : '-'}
@@ -106,14 +100,9 @@ const MountainDetailPage: React.FC<MountainDetailPageProps> = ({ mountain }) => 
             </h2>
             <button
               onClick={handleBookingClick}
-              disabled={!canAcceptBookings(mountain)}
-              className={`text-sm font-medium leading-[18px] px-4 py-2 rounded-lg font-plus-jakarta transition-opacity ${
-                canAcceptBookings(mountain)
-                  ? 'bg-[#0FBD66] text-white hover:opacity-90'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              }`}
+              className="bg-[#0FBD66] text-white text-sm font-medium leading-[18px] px-4 py-2 rounded-lg font-plus-jakarta hover:opacity-90 transition-opacity"
             >
-              {canAcceptBookings(mountain) ? 'Pesan Sekarang' : 'Tidak Tersedia'}
+              Pesan Sekarang
             </button>
           </div>
         </div>
@@ -124,49 +113,64 @@ const MountainDetailPage: React.FC<MountainDetailPageProps> = ({ mountain }) => 
             Deskripsi
           </h2>
           <p className="text-base font-normal leading-6 text-global-1 font-plus-jakarta">
-            {mountain.deskripsi}
+            {mountain.description}
           </p>
         </section>
 
-        {/* Gallery Section - Placeholder for now */}
+        {/* Gallery Section */}
         <section className="mb-8">
           <h2 className="text-2xl font-bold leading-7 text-global-1 font-plus-jakarta mb-6">
             Galeri
           </h2>
           <div className="flex gap-4 overflow-x-auto">
-            <div className="cursor-pointer flex-shrink-0">
-              <Image
-                src={mountain.urlGambar || '/placeholder.svg'}
-                alt="Gallery image"
-                width={301}
-                height={169}
-                className="rounded-lg object-cover hover:opacity-80 transition-opacity"
-                onClick={() => handleImageClick(mountain.urlGambar)}
-              />
-            </div>
+            {mountain.galleryImages.map((image, index) => (
+              <div
+                key={index}
+                className="cursor-pointer flex-shrink-0"
+                onClick={() => handleImageClick(image)}
+              >
+                <Image
+                  src={image || '/placeholder.svg'}
+                  alt={`Gallery image ${index + 1}`}
+                  width={301}
+                  height={169}
+                  className="rounded-lg object-cover hover:opacity-80 transition-opacity"
+                />
+              </div>
+            ))}
           </div>
         </section>
 
-        {/* Available Trails Section - Placeholder for now */}
+        {/* Available Trails Section */}
         <section className="mb-8">
           <h2 className="text-2xl font-bold leading-7 text-global-1 font-plus-jakarta mb-6">
             Jalur Tersedia
           </h2>
           <div className="space-y-4">
-            <div className="bg-global-1 p-4 rounded-lg flex items-start gap-4 border border-gray-200">
-              <div className="bg-global-2 p-3 rounded-lg flex-shrink-0">
-                <Route className="w-6 h-6 text-global-1" />
+            {mountain.trailDetails.map((trail, index) => (
+              <div
+                key={index}
+                className="bg-global-1 p-4 rounded-lg flex items-start gap-4 border border-gray-200"
+              >
+                <div className="bg-global-2 p-3 rounded-lg flex-shrink-0">
+                  <Image
+                    src={trail.icon || '/placeholder.svg'}
+                    alt="Trail icon"
+                    width={24}
+                    height={24}
+                    className="w-6 h-6"
+                  />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-base font-medium leading-[21px] text-global-1 font-plus-jakarta mb-1">
+                    {trail.name}
+                  </h3>
+                  <p className="text-sm font-normal leading-[21px] text-global-2 font-plus-jakarta">
+                    {trail.description}
+                  </p>
+                </div>
               </div>
-
-              <div className="flex-1">
-                <h3 className="text-base font-medium leading-[21px] text-global-1 font-plus-jakarta mb-1">
-                  Jalur Utama
-                </h3>
-                <p className="text-sm font-normal leading-[21px] text-global-2 font-plus-jakarta">
-                  Jalur pendakian utama dengan pemandangan yang indah dan fasilitas yang lengkap.
-                </p>
-              </div>
-            </div>
+            ))}
           </div>
         </section>
       </main>

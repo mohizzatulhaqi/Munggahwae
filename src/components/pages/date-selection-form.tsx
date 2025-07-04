@@ -1,24 +1,17 @@
-'use client';
+"use client"
 
-import type React from 'react';
+import type React from "react"
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Calendar, MapPin, Clock, Users, Route, AlertCircle, Info } from 'lucide-react';
-import Image from 'next/image';
-import { mountainsData } from '@/lib/mountain-data';
-import { useParams } from 'next/navigation';
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Calendar, MapPin, Clock, Users } from "lucide-react"
+import Image from "next/image"
+import { mountainsData } from "@/lib/mountain-data"
+import { useParams } from "next/navigation"
 
 interface DateSelectionFormProps {
   onSubmit: (dates: {
@@ -261,40 +254,37 @@ export default function DateSelectionForm({ onSubmit, mountain }: DateSelectionF
     console.log('DEBUG: validateForm', { availableQuota, numberOfBookers, selectedTrail, entryDate, exitDate });
 
     if (!entryDate) {
-      newErrors.entryDate = 'Tanggal masuk harus diisi';
+      newErrors.entryDate = "Tanggal masuk harus diisi"
     }
 
     if (!exitDate) {
-      newErrors.exitDate = 'Tanggal keluar harus diisi';
-    }
-
-    if (!selectedTrail) {
-      newErrors.selectedTrail = 'Jalur pendakian harus dipilih';
+      newErrors.exitDate = "Tanggal keluar harus diisi"
     }
 
     if (numberOfBookers < 1) {
-      newErrors.numberOfBookers = 'Jumlah pemesan minimal 1';
+      newErrors.numberOfBookers = "Jumlah pemesan minimal 1"
     } else if (numberOfBookers > 10) {
-      newErrors.numberOfBookers = 'Jumlah pemesan maksimal 10';
+      newErrors.numberOfBookers = "Jumlah pemesan maksimal 10"
     }
 
-    if (selectedTrail && numberOfBookers > 0 && entryDate && exitDate) {
-      if (numberOfBookers > availableQuota) {
-        newErrors.numberOfBookers = `Jumlah pemesan melebihi kuota tersedia (${availableQuota} orang)`;
+    if (entryDate && exitDate) {
+      const entry = new Date(entryDate)
+      const exit = new Date(exitDate)
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+
+      if (entry < today) {
+        newErrors.entryDate = "Tanggal masuk tidak boleh kurang dari hari ini"
       }
 
-      // Check duration again in case it was bypassed
-      const durationInDays = Math.ceil(
-        (new Date(exitDate).getTime() - new Date(entryDate).getTime()) / (1000 * 60 * 60 * 24)
-      );
-      if (durationInDays > 3) {
-        newErrors.exitDate = 'Durasi pendakian maksimal 3 hari';
+      if (exit <= entry) {
+        newErrors.exitDate = "Tanggal keluar harus setelah tanggal masuk"
       }
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
 
   const selectedTrailInfo = trails.find((trail) => trail.name === selectedTrail);
 
@@ -330,53 +320,54 @@ export default function DateSelectionForm({ onSubmit, mountain }: DateSelectionF
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
+      
 
+      {/* Full-width Mountain Image */}
       <div className="relative h-96 w-full">
-        <Image
-          src="/images/gunung-rinjani.png"
-          alt="Gunung Rinjani"
-          fill
-          className="object-cover"
-          priority
-        />
+        <Image src="/images/gunung-rinjani.png" alt="Gunung Rinjani" fill className="object-cover" priority />
         <div className="absolute inset-0 bg-black bg-opacity-20"></div>
         <div className="absolute bottom-6 left-6 text-white">
           <h1 className="text-4xl font-bold mb-2">Gunung {mountain?.name}</h1>
           <div className="flex items-center gap-4 text-lg">
             <div className="flex items-center gap-2">
               <MapPin className="w-5 h-5" />
-              <span>
-                {mountain?.location}, {mountain?.province}
-              </span>
+              <span>{mountain?.location}, {mountain?.province}</span>
             </div>
+            
           </div>
+          
         </div>
+        
       </div>
 
+
+      {/* Content Container */}
       <div className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* Description Card */}
         <Card className="mb-6">
           <CardHeader>
             <h3 className="text-xl font-semibold">Deskripsi</h3>
           </CardHeader>
           <CardContent className="text-gray-600 leading-relaxed">
-            <p>{mountain?.description}</p>
+            <p>
+              {mountain?.description}
+            </p>
+            
           </CardContent>
         </Card>
 
+        
+
+        {/* Booking Form */}
         <Card className="max-w-2xl mx-auto">
           <CardHeader className="text-center">
-            <h2 className="text-2xl font-semibold">Pilih Tanggal & Jalur Pendakian</h2>
-            <p className="text-gray-600">
-              Tentukan tanggal, jalur, dan jumlah pendaki (maksimal 3 hari)
-            </p>
+            <h2 className="text-2xl font-semibold">Pilih Tanggal Pendakian</h2>
+            <p className="text-gray-600">Tentukan tanggal masuk dan keluar pendakian Anda</p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <Label
-                  htmlFor="entryDate"
-                  className="flex items-center gap-2 text-base font-medium"
-                >
+                <Label htmlFor="entryDate" className="flex items-center gap-2 text-base font-medium">
                   <Calendar className="w-5 h-5" />
                   Tanggal Masuk *
                 </Label>
@@ -384,19 +375,10 @@ export default function DateSelectionForm({ onSubmit, mountain }: DateSelectionF
                   id="entryDate"
                   type="date"
                   value={entryDate}
-                  onChange={(e) => {
-                    setEntryDate(e.target.value);
-                    validateDates();
-                  }}
-                  className={`h-12 ${errors.entryDate || dateWarnings.entryDate ? 'border-red-500' : ''}`}
+                  onChange={(e) => setEntryDate(e.target.value)}
+                  className={`h-12 ${errors.entryDate ? "border-red-500" : ""}`}
                 />
                 {errors.entryDate && <p className="text-sm text-red-600">{errors.entryDate}</p>}
-                {dateWarnings.entryDate && !errors.entryDate && (
-                  <p className="text-sm text-yellow-600 flex items-center gap-1">
-                    <AlertCircle className="w-4 h-4" />
-                    {dateWarnings.entryDate}
-                  </p>
-                )}
               </div>
 
               <div className="space-y-2">
@@ -408,35 +390,49 @@ export default function DateSelectionForm({ onSubmit, mountain }: DateSelectionF
                   id="exitDate"
                   type="date"
                   value={exitDate}
-                  onChange={(e) => {
-                    setExitDate(e.target.value);
-                    validateDates();
-                  }}
-                  className={`h-12 ${errors.exitDate || dateWarnings.exitDate ? 'border-red-500' : ''}`}
+                  onChange={(e) => setExitDate(e.target.value)}
+                  className={`h-12 ${errors.exitDate ? "border-red-500" : ""}`}
                 />
                 {errors.exitDate && <p className="text-sm text-red-600">{errors.exitDate}</p>}
-                {dateWarnings.exitDate && !errors.exitDate && (
-                  <p className="text-sm text-yellow-600 flex items-center gap-1">
-                    <AlertCircle className="w-4 h-4" />
-                    {dateWarnings.exitDate}
-                  </p>
-                )}
               </div>
 
-              {!areDatesValidForTrailSelection() &&
-                (dateWarnings.entryDate || dateWarnings.exitDate) && (
-                  <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
-                    <div className="flex">
-                      <div className="flex-shrink-0">
-                        <AlertCircle className="h-5 w-5 text-yellow-400" />
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-sm text-yellow-700">
-                          {dateWarnings.exitDate?.includes('maksimal 3 hari')
-                            ? 'Durasi pendakian maksimal 3 hari. Harap perbaiki tanggal keluar.'
-                            : 'Harap perbaiki tanggal yang dipilih sebelum memilih jalur pendakian'}
-                        </p>
-                      </div>
+              <div className="space-y-2">
+                <Label htmlFor="numberOfBookers" className="flex items-center gap-2 text-base font-medium">
+                  <Users className="w-5 h-5" />
+                  Jumlah Pemesan *
+                </Label>
+                <Input
+                  id="numberOfBookers"
+                  type="number"
+                  min="1"
+                  max="10"
+                  value={numberOfBookers}
+                  onChange={(e) => setNumberOfBookers(Number.parseInt(e.target.value) || 1)}
+                  className={`h-12 ${errors.numberOfBookers ? "border-red-500" : ""}`}
+                />
+                {errors.numberOfBookers && <p className="text-sm text-red-600">{errors.numberOfBookers}</p>}
+                <p className="text-sm text-gray-500">Maksimal 10 orang per pendaftaran</p>
+              </div>
+
+              {entryDate && exitDate && !errors.entryDate && !errors.exitDate && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <div className="flex items-center gap-3 text-green-800">
+                    <Clock className="w-5 h-5" />
+                    <div>
+                      <p className="font-medium">
+                        Durasi Pendakian:{" "}
+                        {Math.ceil(
+                          (new Date(exitDate).getTime() - new Date(entryDate).getTime()) / (1000 * 60 * 60 * 24),
+                        )}{" "}
+                        hari
+                      </p>
+                      <p className="text-sm text-green-700">
+                        {numberOfBookers} orang ×{" "}
+                        {Math.ceil(
+                          (new Date(exitDate).getTime() - new Date(entryDate).getTime()) / (1000 * 60 * 60 * 24),
+                        )}{" "}
+                        hari
+                      </p>
                     </div>
                   </div>
                 )}
@@ -712,5 +708,7 @@ export default function DateSelectionForm({ onSubmit, mountain }: DateSelectionF
         <Footer />
       </div>
     </div>
-  );
+    
+  )
+  
 }
