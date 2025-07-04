@@ -40,5 +40,9 @@ export class SupabaseUserRepository implements IUserRepository {
     if (error) throw new Error('Failed to delete user');
   }
 
-  // TODO: Implement other methods from IUserRepository as needed
+  async createUser(data: any): Promise<any> {
+    const { data: created, error } = await this.supabase.from('user').insert([data]).select().single();
+    if (error) throw error;
+    return created;
+  }
 } 

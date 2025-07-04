@@ -1,22 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { CreateBookingUseCase, CreateBookingInput } from '../../application/use-cases/CreateBookingUseCase';
-import { SupabaseUserRepository } from '../../infrastructure/repositories/SupabaseUserRepository';
-import { SupabaseGunungRepository } from '../../infrastructure/repositories/SupabaseGunungRepository';
+import { GetBookingByIdUseCase } from '../../application/use-cases/GetBookingByIdUseCase';
 import { SupabaseBookingRepository } from '../../infrastructure/repositories/SupabaseBookingRepository';
 
 export class BookingController {
   private createBookingUseCase: CreateBookingUseCase;
+  private getBookingByIdUseCase: GetBookingByIdUseCase;
 
   constructor() {
+    const { SupabaseUserRepository } = require('../../infrastructure/repositories/SupabaseUserRepository');
+    const { SupabaseGunungRepository } = require('../../infrastructure/repositories/SupabaseGunungRepository');
     const userRepository = new SupabaseUserRepository();
     const gunungRepository = new SupabaseGunungRepository();
     const bookingRepository = new SupabaseBookingRepository();
-    
     this.createBookingUseCase = new CreateBookingUseCase(
       userRepository,
       gunungRepository,
       bookingRepository
     );
+    this.getBookingByIdUseCase = new GetBookingByIdUseCase(bookingRepository);
   }
 
   async createBooking(request: NextRequest): Promise<NextResponse> {
@@ -78,170 +80,32 @@ export class BookingController {
     }
   }
 
-  async getBookings(request: NextRequest): Promise<NextResponse> {
-    try {
-      const { searchParams } = new URL(request.url);
-      const userId = searchParams.get('userId');
-      const mountainId = searchParams.get('mountainId');
-      const status = searchParams.get('status');
-
-      const bookingRepository = new SupabaseBookingRepository();
-      let bookings;
-
-      if (userId) {
-        bookings = await bookingRepository.findByUserId(userId);
-      } else if (mountainId) {
-        bookings = await bookingRepository.findByMountainId(mountainId);
-      } else if (status) {
-        bookings = await bookingRepository.findByStatus(status);
-      } else {
-        bookings = await bookingRepository.findAll();
-      }
-
-      return NextResponse.json({
-        success: true,
-        bookings: bookings.map((booking: any) => booking.toJSON()),
-        total: bookings.length,
-      });
-
-    } catch (error) {
-      console.error('Get bookings error:', error);
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Internal server error' 
-        },
-        { status: 500 }
-      );
-    }
-  }
+  // getBookings: refactor ke use-case jika diperlukan, atau hapus jika tidak dipakai endpoint
 
   async getBookingById(request: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse> {
     try {
-      const bookingRepository = new SupabaseBookingRepository();
-      const booking = await bookingRepository.findById(params.id);
-
+      const booking = await this.getBookingByIdUseCase.execute(params.id);
       if (!booking) {
         return NextResponse.json(
-          { 
-            success: false, 
-            error: 'Booking tidak ditemukan' 
-          },
+          { success: false, error: 'Booking tidak ditemukan' },
           { status: 404 }
         );
       }
-
-      return NextResponse.json({
-        success: true,
-        booking: booking.toJSON(),
-      });
-
+      return NextResponse.json({ success: true, booking: booking.toJSON() });
     } catch (error) {
       console.error('Get booking error:', error);
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Internal server error' 
-        },
+        { success: false, error: 'Internal server error' },
         { status: 500 }
       );
     }
   }
 
-  async confirmBooking(request: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse> {
-    try {
-      const bookingRepository = new SupabaseBookingRepository();
-      const gunungRepository = new SupabaseGunungRepository();
-      const userRepository = new SupabaseUserRepository();
-      
-      const bookingService = new (await import('../../domain/services/BookingService')).BookingService(
-        bookingRepository,
-        gunungRepository,
-        userRepository
-      );
+  // confirmBooking: refactor ke use-case, hapus logic repository/service di sini
 
-      const booking = await bookingService.confirmBooking(params.id);
+  // cancelBooking: refactor ke use-case, hapus logic repository/service di sini
 
-      return NextResponse.json({
-        success: true,
-        booking: booking.toJSON(),
-        message: 'Booking berhasil dikonfirmasi',
-      });
-
-    } catch (error) {
-      console.error('Confirm booking error:', error);
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: error instanceof Error ? error.message : 'Internal server error' 
-        },
-        { status: 400 }
-      );
-    }
-  }
-
-  async cancelBooking(request: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse> {
-    try {
-      const bookingRepository = new SupabaseBookingRepository();
-      const gunungRepository = new SupabaseGunungRepository();
-      const userRepository = new SupabaseUserRepository();
-      
-      const bookingService = new (await import('../../domain/services/BookingService')).BookingService(
-        bookingRepository,
-        gunungRepository,
-        userRepository
-      );
-
-      const booking = await bookingService.cancelBooking(params.id);
-
-      return NextResponse.json({
-        success: true,
-        booking: booking.toJSON(),
-        message: 'Booking berhasil dibatalkan',
-      });
-
-    } catch (error) {
-      console.error('Cancel booking error:', error);
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: error instanceof Error ? error.message : 'Internal server error' 
-        },
-        { status: 400 }
-      );
-    }
-  }
-
-  async getBookingStatistics(request: NextRequest): Promise<NextResponse> {
-    try {
-      const bookingRepository = new SupabaseBookingRepository();
-      const gunungRepository = new SupabaseGunungRepository();
-      const userRepository = new SupabaseUserRepository();
-      
-      const bookingService = new (await import('../../domain/services/BookingService')).BookingService(
-        bookingRepository,
-        gunungRepository,
-        userRepository
-      );
-
-      const statistics = await bookingService.getBookingStatistics();
-
-      return NextResponse.json({
-        success: true,
-        statistics,
-      });
-
-    } catch (error) {
-      console.error('Get booking statistics error:', error);
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Internal server error' 
-        },
-        { status: 500 }
-      );
-    }
-  }
+  // getBookingStatistics: refactor ke use-case, hapus logic repository/service di sini
 
   private isValidCreateBookingRequest(body: any): body is CreateBookingInput {
     return (

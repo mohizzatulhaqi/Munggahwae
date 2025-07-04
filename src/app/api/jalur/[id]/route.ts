@@ -1,36 +1,16 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/client';
+import { SupabaseJalurRepository } from '@/infrastructure/repositories/SupabaseJalurRepository';
+import { GetJalurByGunungIdUseCase } from '@/application/use-cases/GetJalurByGunungIdUseCase';
 
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = createClient();
     const { id } = params;
-
-    // Query semua jalur untuk gunung dengan id tertentu
-    const { data: trails, error } = await supabase
-    .from('Jalur')
-    .select('*')
-    .eq('gunungId', id)
-    .order('name', { ascending: true });
-  
-  if (error) {
-    console.error('Supabase error:', error); // debug error detail
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch trails' },  
-      { status: 500 }
-    );
-  }
-
-    if (error) {
-      return NextResponse.json(
-        { success: false, error: 'Failed to fetch trails' },
-        { status: 500 }
-      );
-    }
-
+    const jalurRepository = new SupabaseJalurRepository();
+    const getJalurByGunungIdUseCase = new GetJalurByGunungIdUseCase(jalurRepository);
+    const trails = await getJalurByGunungIdUseCase.execute(id);
     return NextResponse.json({
       success: true,
       trails: trails || []
@@ -41,4 +21,4 @@ export async function GET(
       { status: 500 }
     );
   }
-} 
+}

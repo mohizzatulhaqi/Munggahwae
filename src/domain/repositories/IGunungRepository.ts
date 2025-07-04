@@ -10,4 +10,5 @@ export interface IGunungRepository {
   findByStatus(status: string): Promise<Gunung[]>;
   findActiveMountains(): Promise<Gunung[]>;
   findAvailableMountains(): Promise<Gunung[]>;
+  createGunung(data: any): Promise<any>;
 } 

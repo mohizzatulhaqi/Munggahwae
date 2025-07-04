@@ -5,6 +5,47 @@ import { createClient } from '../../utils/supabase/server';
 export class SupabaseBookingRepository implements IBookingRepository {
   private supabase = createClient();
 
+  async markAsPaid(id: string): Promise<Booking> {
+    const { data, error } = await this.supabase
+      .from('booking')
+      .update({ paymentStatus: 'paid', status: 'confirmed', updatedAt: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single();
+    if (error || !data) throw new Error('Failed to mark booking as paid');
+    return this.mapToBooking(data);
+  }
+
+  async confirmBooking(id: string): Promise<Booking> {
+    const { data, error } = await this.supabase
+      .from('booking')
+      .update({ status: 'confirmed', updatedAt: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single();
+    if (error || !data) throw new Error('Failed to confirm booking');
+    return this.mapToBooking(data);
+  }
+
+  async cancelBooking(id: string): Promise<Booking> {
+    const { data, error } = await this.supabase
+      .from('booking')
+      .update({ status: 'cancelled', updatedAt: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single();
+    if (error || !data) throw new Error('Failed to cancel booking');
+    return this.mapToBooking(data);
+  }
+
+  async getBookingsByUserId(userId: string) {
+    const { data: bookings, error } = await this.supabase
+      .from('bookings')
+      .select(`*, mountains (name, location, image_url)`)
+      .eq('user_id', userId);
+    if (error) throw error;
+    return bookings;
+  }
   async findById(id: string): Promise<Booking | null> {
     const { data, error } = await this.supabase
       .from('booking')

@@ -5,6 +5,12 @@ import { createClient } from '../../utils/supabase/server';
 export class SupabaseGunungRepository implements IGunungRepository {
   private supabase = createClient();
 
+  async createGunung(data: any): Promise<any> {
+    const { data: created, error } = await this.supabase.from('gunung').insert([data]).select().single();
+    if (error) throw error;
+    return created;
+  }
+
   async findById(id: string): Promise<Gunung | null> {
     const { data, error } = await this.supabase.from('gunung').select('*').eq('id', id).single();
     if (error || !data) return null;

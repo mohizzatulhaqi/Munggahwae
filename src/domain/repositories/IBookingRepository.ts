@@ -14,4 +14,8 @@ export interface IBookingRepository {
   findPendingBookings(): Promise<Booking[]>;
   findConfirmedBookings(): Promise<Booking[]>;
   findUnpaidBookings(): Promise<Booking[]>;
+  getBookingsByUserId(userId: string): Promise<any[]>;
+  markAsPaid(id: string): Promise<Booking>;
+  confirmBooking(id: string): Promise<Booking>;
+  cancelBooking(id: string): Promise<Booking>;
 } 
