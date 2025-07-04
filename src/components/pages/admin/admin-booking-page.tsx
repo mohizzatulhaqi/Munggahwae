@@ -92,8 +92,9 @@ const AdminBookingsPage = () => {
           setBookings(result.bookings.map((b: any) => ({
             id: b.id,
             bookingCode: b.booking_code || b.bookingCode || b.id || '-',
-            mountain: b.mountain || '-',
-            location: b.location || '-',
+            mountain: b.Gunung?.nama || b.nama_gunung || '-',
+            location: b.Gunung?.lokasi || b.lokasi_gunung || '-',
+
             route: b.route || '-',
             user: {
               name: b.user_name || '-',
@@ -104,12 +105,12 @@ const AdminBookingsPage = () => {
               birthPlace: b.user_birth_place || '-',
               gender: b.user_gender || '-',
             },
-            entryDate: b.entry_date || '-',
-            exitDate: b.exit_date || '-',
-            numberOfBookers: b.number_of_bookers || 0,
-            totalAmount: b.total_amount || '-',
+            entryDate: b.tanggalMasuk || '-',
+            exitDate: b.tanggalKeluar || '-',
+            totalAmount: b.totalHarga || '-',
+            numberOfBookers: b.jumlahPemesan || 0,
             status: b.status || '-',
-            bookingDate: b.booking_date || '-',
+            bookingDate: b.tanggalPemesanan || '-',
             paymentStatus: b.payment_status || '-',
             paymentMethod: b.payment_method || '-',
             paymentDate: b.payment_date || '-',
@@ -388,8 +389,8 @@ const AdminBookingsPage = () => {
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4 text-gray-400" />
                           <div>
-                            <p className="text-sm text-gray-900">{booking.entryDate}</p>
-                            <p className="text-sm text-gray-500">s/d {booking.exitDate}</p>
+                          <p className="text-sm text-gray-900">{booking.entryDate?.slice(0, 10)}</p>
+                          <p className="text-sm text-gray-500">s/d {booking.exitDate?.slice(0, 10)}</p>
                           </div>
                         </div>
                       </td>

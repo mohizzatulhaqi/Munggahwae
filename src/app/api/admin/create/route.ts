@@ -42,11 +42,6 @@ export async function POST(req: NextRequest) {
           status: 'aktif',
           kuotaPerHari: Number(kuotaPerHari),
           hargaPerOrang: Number(hargaPerOrang),
-<<<<<<< HEAD
-=======
-
-         
->>>>>>> 64a4382be1d82219dd0cae209fe9016443749c89
         }
       ])
       .select();

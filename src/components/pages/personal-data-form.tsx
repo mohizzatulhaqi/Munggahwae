@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox"
 import { ArrowLeft, Upload, FileText, Check, ChevronLeft, ChevronRight, AlertTriangle } from "lucide-react"
 import { PersonalData } from "@/app/mountain/[id]/booking-terms/booking-form/page"
+import { useParams, useRouter } from "next/navigation"
 
 interface PersonalDataFormProps {
   onSubmit: (data: PersonalData) => void
@@ -55,6 +56,9 @@ export default function PersonalDataForm({
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
   const [ageValidationWarning, setAgeValidationWarning] = useState<string>("")
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [healthCertificateFile, setHealthCertificateFile] = useState<File | null>(null)
+  const router = useRouter()
+  const mountainId = useParams().id
 
   // Calculate age from birth date
   const calculateAge = (birthDate: string): number => {
@@ -170,6 +174,7 @@ export default function PersonalDataForm({
         alert('Harap selesaikan pengisian data semua pemesan untuk memvalidasi aturan pendamping.');
         return;
       }
+
       // Integrasi API personal-data
       const formPayload = new FormData();
       formPayload.append('email', formData.email);

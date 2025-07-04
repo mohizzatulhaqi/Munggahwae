@@ -80,7 +80,7 @@ export default function BookingFormPage() {
 
     // Navigate to the personal data form page with the first booker
     console.log('Redirecting to', `/mountain/${mountainId}/booking-terms/booking-form/personal-data/0`);
-    router.push(`/mountain/${mountain?.id}/booking-terms/booking-form/personal-data/0`)
+    router.push(`/mountain/${mountainId}/booking-terms/booking-form/personal-data/0`)
   }
 
   if (loading) return <div>Loading...</div>;

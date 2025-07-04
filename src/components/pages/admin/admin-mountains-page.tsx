@@ -137,10 +137,10 @@ const AdminMountainsPage = () => {
     if (isNaN(Number(formData.quota))) newErrors.quota = 'Harus berupa angka';
     if (isNaN(Number(formData.price))) newErrors.price = 'Harus berupa angka';
 
-    // Gallery validation
-    if (formData.galleryImages.length < 3) {
-      newErrors.gallery = 'Harap unggah 3 gambar galeri';
-    }
+    // // Gallery validation
+    // if (formData.galleryImages.length < 3) {
+    //   newErrors.gallery = 'Harap unggah 3 gambar galeri';
+    // }
 
     // Trail details validation
     formData.trailDetails.forEach((trail: any, index: number) => {

@@ -3,15 +3,15 @@
 import type React from "react"
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Calendar, MapPin, Clock, Users } from "lucide-react"
+import { Calendar, MapPin, Clock, Users, Route, Info, AlertCircle } from "lucide-react"
 import Image from "next/image"
-import { mountainsData } from "@/lib/mountain-data"
 import { useParams } from "next/navigation"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 interface DateSelectionFormProps {
   onSubmit: (dates: {
@@ -435,8 +435,8 @@ export default function DateSelectionForm({ onSubmit, mountain }: DateSelectionF
                       </p>
                     </div>
                   </div>
-                )}
-
+                </div>
+              )}
               {areDatesValidForTrailSelection() ? (
                 <div className="space-y-2">
                   <Label

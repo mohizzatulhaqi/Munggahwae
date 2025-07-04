@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import type { BookingData } from '@/app/mountain/[id]/booking-terms/booking-form/page';
-import { Mountain, mountainsData } from '@/lib/mountain-data';
+import { Mountain } from '@/lib/mountain-data';
 import { useParams } from 'next/navigation';
 interface PaymentPageProps {
   bookingData: BookingData;
@@ -114,14 +114,8 @@ export default function PaymentPage({
   }, []); // Empty dependency array ensures this only runs once
   const params = useParams();
   const mountainId = params?.id as string;
-  const mountain = mountainsData.find((m) => m.id === mountainId) as Mountain | undefined;
-
-// Gunakan harga dari data gunung, fallback ke 350000 jika tidak ada
-  const selectedTrailInfo = mountain?.trailDetails.find(
-  (trail) => trail.name.toLowerCase() === bookingData.selectedTrail.toLowerCase()
-);
-
-const baseCost = selectedTrailInfo?.price ?? 350000;
+  // For now, we'll use a fixed base cost since mountain data is not available
+  const baseCost = 350000;
 
   // Calculate costs
   const days = Math.ceil(
@@ -147,21 +141,27 @@ const baseCost = selectedTrailInfo?.price ?? 350000;
   const handlePayment = async () => {
     setIsProcessing(true);
 
-    // Simulate payment processing
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    if (selectedMethod === 'bank_transfer' || selectedMethod === 'qris') {
-      setShowPaymentDetails(true);
-      // Reset timer when showing payment details
-      if (selectedMethod === 'qris') {
-        setTimeLeft(15 * 60); // Reset to 15 minutes
+    try {
+      // In a real implementation, you would first create a booking
+      // and then use the booking ID for payment
+      // For now, we'll simulate the payment process
+      
+      if (selectedMethod === 'bank_transfer' || selectedMethod === 'qris') {
+        setShowPaymentDetails(true);
+        // Reset timer when showing payment details
+        if (selectedMethod === 'qris') {
+          setTimeLeft(15 * 60); // Reset to 15 minutes
+        }
+      } else {
+        // For other methods, simulate immediate success
+        onPaymentSuccess();
       }
-    } else {
-      // For other methods, simulate immediate success
-      onPaymentSuccess();
+    } catch (error) {
+      console.error('Payment error:', error);
+      alert('Terjadi kesalahan saat memproses pembayaran');
+    } finally {
+      setIsProcessing(false);
     }
-
-    setIsProcessing(false);
   };
 
   // Timer effect for QRIS countdown
