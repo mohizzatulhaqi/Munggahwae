@@ -16,7 +16,6 @@ import {
   Users,
   Calendar,
   Upload,
-  ImageIcon,
   DollarSign,
   Check,
 } from 'lucide-react';
@@ -43,7 +42,7 @@ const AdminMountainsPage = () => {
   const [selectedProvince, setSelectedProvince] = useState('Semua Provinsi');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [uploadedGalleryFiles, setUploadedGalleryFiles] = useState<(File | null)[]>([]);
+
 
   const [mountainForm, setMountainForm] = useState({
     name: '',
@@ -53,7 +52,6 @@ const AdminMountainsPage = () => {
     price: '',
     description: '',
     heroImage: null as File | null,
-    galleryImages: [] as File[],
     trailDetails: [
       {
         name: '',
@@ -97,11 +95,11 @@ const AdminMountainsPage = () => {
             id: mountain.id,
             name: mountain.nama,
             location: mountain.lokasi,
-            province: mountain.provinsi,
-            quota: mountain.kuota,
+            province: mountain.provinsi || '',
+            quota: mountain.kuotaPerHari,
             price: mountain.harga,
-            description: mountain.deskripsi,
-            image: mountain.gambar,
+            description: mountain.deskripsi || '',
+            image: mountain.gambar || '',
             trailCount: mountain.jalur,
           }));
           setMountains(transformedData);
@@ -139,23 +137,6 @@ const AdminMountainsPage = () => {
     if (isNaN(Number(formData.quota))) newErrors.quota = 'Harus berupa angka';
     if (isNaN(Number(formData.price))) newErrors.price = 'Harus berupa angka';
 
-    // Gallery validation - make it optional for now
-    // if (formData.galleryImages.length < 3) {
-    //   newErrors.gallery = 'Harap unggah 3 gambar galeri';
-    // }
-
-    // Trail details validation - make it optional for now
-    // formData.trailDetails.forEach((trail: any, index: number) => {
-    //   if (!trail.name.trim()) newErrors[`trailName-${index}`] = 'Nama jalur wajib diisi';
-    //   if (!trail.description.trim())
-    //     newErrors[`trailDesc-${index}`] = 'Deskripsi jalur wajib diisi';
-    //   if (isNaN(Number(trail.quota))) newErrors[`trailQuota-${index}`] = 'Harus berupa angka';
-    // });
-
-    // Terms validation - make it optional for now
-    // formData.bookingTerms.forEach((term: string, index: number) => {
-    //   if (!term.trim()) newErrors[`term-${index}`] = 'Syarat tidak boleh kosong';
-    // });
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -194,7 +175,6 @@ const AdminMountainsPage = () => {
     });
     setShowEditModal(true);
     setUploadedFile(null);
-    setUploadedGalleryFiles([]);
     setErrors({});
   };
 
@@ -217,11 +197,11 @@ const AdminMountainsPage = () => {
               id: mountain.id,
               name: mountain.nama,
               location: mountain.lokasi,
-              province: mountain.provinsi,
-              quota: mountain.kuota,
+              province: mountain.provinsi || '',
+              quota: mountain.kuotaPerHari,
               price: mountain.harga,
-              description: mountain.deskripsi,
-              image: mountain.gambar,
+              description: mountain.deskripsi || '',
+              image: mountain.gambar || '',
               trailCount: mountain.jalur,
             }));
             setMountains(transformedData);
@@ -315,42 +295,7 @@ const AdminMountainsPage = () => {
     }
   };
 
-  const handleGalleryUpload = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number,
-    isEdit: boolean
-  ) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (isEdit) {
-        setEditForm((prev) => {
-          const newGallery = [...prev.galleryImages];
-          newGallery[index] = file;
-          return { ...prev, galleryImages: newGallery };
-        });
-      } else {
-        setMountainForm((prev) => {
-          const newGallery = [...prev.galleryImages];
-          newGallery[index] = file;
-          return { ...prev, galleryImages: newGallery };
-        });
-      }
 
-      // Update uploaded gallery files state
-      setUploadedGalleryFiles((prev) => {
-        const newFiles = [...prev];
-        newFiles[index] = file;
-        return newFiles;
-      });
-
-      if (
-        errors.gallery &&
-        (isEdit ? editForm.galleryImages.length >= 2 : mountainForm.galleryImages.length >= 2)
-      ) {
-        setErrors((prev) => ({ ...prev, gallery: '' }));
-      }
-    }
-  };
 
   const handleSaveEdit = async () => {
     if (!validateForm(editForm, true)) return;
@@ -395,7 +340,7 @@ const AdminMountainsPage = () => {
             name: mountain.nama,
             location: mountain.lokasi,
             province: mountain.provinsi,
-            quota: mountain.kuota,
+            quota: mountain.kuotaPerHari,
             price: mountain.harga,
             description: mountain.deskripsi,
             image: mountain.gambar,
@@ -407,7 +352,6 @@ const AdminMountainsPage = () => {
         setShowEditModal(false);
         setSelectedMountain(null);
         setUploadedFile(null);
-        setUploadedGalleryFiles([]);
         setErrors({});
         
         // Show success message
@@ -463,7 +407,7 @@ const AdminMountainsPage = () => {
             name: mountain.nama,
             location: mountain.lokasi,
             province: mountain.provinsi,
-            quota: mountain.kuota,
+            quota: mountain.kuotaPerHari,
             price: mountain.harga,
             description: mountain.deskripsi,
             image: mountain.gambar,
@@ -481,7 +425,6 @@ const AdminMountainsPage = () => {
           price: '',
           description: '',
           heroImage: null,
-          galleryImages: [],
           trailDetails: [
             {
               name: '',
@@ -495,7 +438,6 @@ const AdminMountainsPage = () => {
           bookingTerms: [''],
         });
         setUploadedFile(null);
-        setUploadedGalleryFiles([]);
         setErrors({});
         
         // Show success message
@@ -679,55 +621,7 @@ const AdminMountainsPage = () => {
         {errors.heroImage && <p className="text-red-500 text-sm mt-1">{errors.heroImage}</p>}
       </div>
 
-      {/* Gallery */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium text-global-1 font-plus-jakarta">
-          Galeri <span className="text-red-500">*</span>
-        </h3>
-        {errors.gallery && <p className="text-red-500 text-sm -mt-2">{errors.gallery}</p>}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[0, 1, 2].map((index) => (
-            <div key={index}>
-              {uploadedGalleryFiles[index] ? (
-                <div className="flex items-center justify-center space-x-3 text-green-600 p-4 border border-green-200 rounded-lg bg-green-50">
-                  <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                    <Check className="w-5 h-5" />
-                  </div>
-                  <div className="text-left flex-1 min-w-0">
-                    <p className="font-medium text-sm truncate">File berhasil diupload</p>
-                    <p className="text-xs text-gray-600 truncate">
-                      {uploadedGalleryFiles[index]?.name}
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div
-                  className={`border-2 border-dashed rounded-lg p-6 ${
-                    errors.gallery ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                >
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleGalleryUpload(e, index, isEdit)}
-                    className="hidden"
-                    id={`${isEdit ? 'edit-' : ''}gallery-${index}`}
-                  />
-                  <label
-                    htmlFor={`${isEdit ? 'edit-' : ''}gallery-${index}`}
-                    className="cursor-pointer"
-                  >
-                    <div className="text-center">
-                      <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                      <p className="text-sm text-gray-600">Gallery image {index + 1}</p>
-                    </div>
-                  </label>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
+
 
       {/* Trail Details */}
       <div className="space-y-4">
@@ -983,11 +877,11 @@ const AdminMountainsPage = () => {
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Users className="w-4 h-4" />
-                    <span>{mountain.quota}</span>
+                    <span>Kuota: {mountain.quota} pendaki/hari</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Calendar className="w-4 h-4" />
-                    <span>{mountain.trails}</span>
+                    <span>Jalur: {mountain.trailCount || 0} jalur</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <DollarSign className="w-4 h-4" />
@@ -997,10 +891,6 @@ const AdminMountainsPage = () => {
 
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-green-600">{mountain.available}</span>
-                  <Button size="sm" variant="outline">
-                    <Eye className="w-4 h-4 mr-2" />
-                    Detail
-                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -1025,7 +915,6 @@ const AdminMountainsPage = () => {
                     onClick={() => {
                       setShowAddModal(false);
                       setUploadedFile(null);
-                      setUploadedGalleryFiles([]);
                       setErrors({});
                     }}
                   >
@@ -1062,7 +951,6 @@ const AdminMountainsPage = () => {
                       }
                       setShowEditModal(false);
                       setUploadedFile(null);
-                      setUploadedGalleryFiles([]);
                       setErrors({});
                     }}
                   >

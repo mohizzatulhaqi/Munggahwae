@@ -7,13 +7,14 @@ type Gunung = {
   kuotaPerHari: number;
   harga: number;
   jalur: number;
+  lokasi: string;
 };
 
 export async function GET() {
   // Ambil data gunung
   const { data: gunungData, error: gunungError } = await supabase
     .from('Gunung')
-    .select('id, nama, kuotaPerHari, harga');
+    .select('id, nama, kuotaPerHari, harga, lokasi');
 
   if (gunungError) {
     return NextResponse.json({ success: false, message: gunungError.message }, { status: 500 });
@@ -24,6 +25,7 @@ export async function GET() {
     nama: string;
     kuotaPerHari: number;
     harga: number;
+    lokasi: string;
   }>;
 
   // Ambil semua jalur berdasarkan gunungId yang ada
