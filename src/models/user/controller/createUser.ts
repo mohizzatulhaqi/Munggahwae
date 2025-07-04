@@ -1,12 +1,24 @@
-import prisma from '@/lib/prisma'
-import { NextRequest, NextResponse } from 'next/server'
+export const createUser = async ({
+  id,
+  namaLengkap,
+  email,
+  password,
+}: {
+  id: string
+  namaLengkap: string
+  email: string
+  password?: string
+}) => {
+  try {
+    const response = await fetch("/api/user/create-user", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, namaLengkap, email, password }),
+    })
 
-export async function createUser(req: NextRequest) {
-  const { id, namaLengkap, email, password } = await req.json()
-  const data = { id, namaLengkap, email, password }
-
-  const created = await prisma.user.create({ data })
-
-  if (!created) return NextResponse.json({ status: 500, isCreated: false })
-  return NextResponse.json({ status: 200, isCreated: true })
+    return await response.json()
+  } catch (err) {
+    console.error("Gagal fetch ke /api/create-user:", err)
+    return null
+  }
 }

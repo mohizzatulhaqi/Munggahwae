@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AdminLayout from './admin-layout';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -80,9 +80,46 @@ const AdminMountainsPage = () => {
     bookingTerms: [''],
   });
 
-  const mountains = getAllMountains();
+  const [mountains, setMountains] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
-  const validateForm = (formData: any) => {
+  useEffect(() => {
+    async function fetchMountains() {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/admin/list');
+        const result = await response.json();
+        
+        if (result.success) {
+          // Transform data to match the expected format
+          const transformedData = result.gunung.map((mountain: any) => ({
+            id: mountain.id,
+            name: mountain.nama,
+            location: mountain.lokasi,
+            province: mountain.provinsi,
+            quota: mountain.kuota,
+            price: mountain.harga,
+            description: mountain.deskripsi,
+            image: mountain.gambar,
+            trailCount: mountain.jalur,
+          }));
+          setMountains(transformedData);
+        } else {
+          setFetchError(result.message || 'Terjadi kesalahan saat mengambil data');
+        }
+      } catch (error: any) {
+        setFetchError(error.message || 'Terjadi kesalahan saat mengambil data');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchMountains();
+  }, []);
+
+
+  const validateForm = (formData: any, isEdit = false) => {
     const newErrors: Record<string, string> = {};
 
     // Basic fields validation
@@ -92,29 +129,33 @@ const AdminMountainsPage = () => {
     if (!formData.quota.trim()) newErrors.quota = 'Kuota wajib diisi';
     if (!formData.price.trim()) newErrors.price = 'Harga wajib diisi';
     if (!formData.description.trim()) newErrors.description = 'Deskripsi wajib diisi';
-    if (!formData.heroImage) newErrors.heroImage = 'Foto utama wajib diupload';
+    
+    // Only require heroImage for new mountains
+    if (!isEdit && !formData.heroImage) {
+      newErrors.heroImage = 'Foto utama wajib diupload';
+    }
 
     // Numeric validation
     if (isNaN(Number(formData.quota))) newErrors.quota = 'Harus berupa angka';
     if (isNaN(Number(formData.price))) newErrors.price = 'Harus berupa angka';
 
-    // Gallery validation
-    if (formData.galleryImages.length < 3) {
-      newErrors.gallery = 'Harap unggah 3 gambar galeri';
-    }
+    // Gallery validation - make it optional for now
+    // if (formData.galleryImages.length < 3) {
+    //   newErrors.gallery = 'Harap unggah 3 gambar galeri';
+    // }
 
-    // Trail details validation
-    formData.trailDetails.forEach((trail: any, index: number) => {
-      if (!trail.name.trim()) newErrors[`trailName-${index}`] = 'Nama jalur wajib diisi';
-      if (!trail.description.trim())
-        newErrors[`trailDesc-${index}`] = 'Deskripsi jalur wajib diisi';
-      if (isNaN(Number(trail.quota))) newErrors[`trailQuota-${index}`] = 'Harus berupa angka';
-    });
+    // Trail details validation - make it optional for now
+    // formData.trailDetails.forEach((trail: any, index: number) => {
+    //   if (!trail.name.trim()) newErrors[`trailName-${index}`] = 'Nama jalur wajib diisi';
+    //   if (!trail.description.trim())
+    //     newErrors[`trailDesc-${index}`] = 'Deskripsi jalur wajib diisi';
+    //   if (isNaN(Number(trail.quota))) newErrors[`trailQuota-${index}`] = 'Harus berupa angka';
+    // });
 
-    // Terms validation
-    formData.bookingTerms.forEach((term: string, index: number) => {
-      if (!term.trim()) newErrors[`term-${index}`] = 'Syarat tidak boleh kosong';
-    });
+    // Terms validation - make it optional for now
+    // formData.bookingTerms.forEach((term: string, index: number) => {
+    //   if (!term.trim()) newErrors[`term-${index}`] = 'Syarat tidak boleh kosong';
+    // });
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -122,9 +163,9 @@ const AdminMountainsPage = () => {
 
   const filteredMountains = mountains.filter(
     (mountain) =>
-      (mountain.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        mountain.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        mountain.province.toLowerCase().includes(searchQuery.toLowerCase())) &&
+      (mountain.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        mountain.location?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        mountain.province?.toLowerCase().includes(searchQuery.toLowerCase())) &&
       (selectedProvince === 'Semua Provinsi' || mountain.province === selectedProvince)
   );
 
@@ -157,9 +198,44 @@ const AdminMountainsPage = () => {
     setErrors({});
   };
 
-  const handleDelete = (mountainId: string) => {
+  const handleDelete = async (mountainId: string) => {
     if (confirm('Apakah Anda yakin ingin menghapus gunung ini?')) {
-      console.log('Deleting mountain:', mountainId);
+      try {
+        const response = await fetch(`/api/admin/delete?id=${mountainId}`, {
+          method: 'DELETE',
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          // Refresh the mountains list
+          const refreshResponse = await fetch('/api/admin/list');
+          const refreshResult = await refreshResponse.json();
+          
+          if (refreshResult.success) {
+            const transformedData = refreshResult.gunung.map((mountain: any) => ({
+              id: mountain.id,
+              name: mountain.nama,
+              location: mountain.lokasi,
+              province: mountain.provinsi,
+              quota: mountain.kuota,
+              price: mountain.harga,
+              description: mountain.deskripsi,
+              image: mountain.gambar,
+              trailCount: mountain.jalur,
+            }));
+            setMountains(transformedData);
+          }
+          
+          // Show success message
+          alert('Gunung berhasil dihapus!');
+        } else {
+          alert('Gagal menghapus gunung: ' + result.message);
+        }
+      } catch (error) {
+        console.error('Error deleting mountain:', error);
+        alert('Terjadi kesalahan saat menghapus gunung');
+      }
     }
   };
 
@@ -276,46 +352,161 @@ const AdminMountainsPage = () => {
     }
   };
 
-  const handleSaveEdit = () => {
-    if (!validateForm(editForm)) return;
+  const handleSaveEdit = async () => {
+    if (!validateForm(editForm, true)) return;
 
-    console.log('Updating mountain:', selectedMountain.id, editForm);
-    setShowEditModal(false);
-    setSelectedMountain(null);
-    setUploadedFile(null);
-    setUploadedGalleryFiles([]);
-    setErrors({});
+    try {
+      // Convert image file to base64 or upload to storage
+      let imageUrl = selectedMountain.image || '';
+      if (uploadedFile) {
+        // For now, we'll use a placeholder. In production, you'd upload to Supabase Storage
+        imageUrl = '/images/img_depth_7_frame_0.png';
+      }
+
+      const mountainData = {
+        id: selectedMountain.id,
+        nama: editForm.name,
+        kuota: parseInt(editForm.quota),
+        harga: parseInt(editForm.price),
+        deskripsi: editForm.description,
+        gambar: imageUrl,
+        provinsi: editForm.province,
+        lokasi: editForm.location,
+      };
+
+      const response = await fetch('/api/admin/update', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(mountainData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Refresh the mountains list
+        const refreshResponse = await fetch('/api/admin/list');
+        const refreshResult = await refreshResponse.json();
+        
+        if (refreshResult.success) {
+          const transformedData = refreshResult.gunung.map((mountain: any) => ({
+            id: mountain.id,
+            name: mountain.nama,
+            location: mountain.lokasi,
+            province: mountain.provinsi,
+            quota: mountain.kuota,
+            price: mountain.harga,
+            description: mountain.deskripsi,
+            image: mountain.gambar,
+            trailCount: mountain.jalur,
+          }));
+          setMountains(transformedData);
+        }
+        
+        setShowEditModal(false);
+        setSelectedMountain(null);
+        setUploadedFile(null);
+        setUploadedGalleryFiles([]);
+        setErrors({});
+        
+        // Show success message
+        alert('Gunung berhasil diupdate!');
+      } else {
+        alert('Gagal mengupdate gunung: ' + result.message);
+      }
+    } catch (error) {
+      console.error('Error updating mountain:', error);
+      alert('Terjadi kesalahan saat mengupdate gunung');
+    }
   };
 
-  const handleSaveAdd = () => {
-    if (!validateForm(mountainForm)) return;
+  const handleSaveAdd = async () => {
+    if (!validateForm(mountainForm, false)) return;
 
-    console.log('Adding new mountain:', mountainForm);
-    setShowAddModal(false);
-    setMountainForm({
-      name: '',
-      location: '',
-      province: '',
-      quota: '',
-      price: '',
-      description: '',
-      heroImage: null,
-      galleryImages: [],
-      trailDetails: [
-        {
-          name: '',
-          description: '',
-          icon: '/placeholder.svg?height=24&width=24',
-          quota: 0,
-          available: 0,
-          dailyQuotas: {},
+    try {
+      // Convert image file to base64 or upload to storage
+      let imageUrl = '';
+      if (mountainForm.heroImage) {
+        // For now, we'll use a placeholder. In production, you'd upload to Supabase Storage
+        imageUrl = '/images/img_depth_7_frame_0.png';
+      }
+
+      const mountainData = {
+        nama: mountainForm.name,
+        kuota: parseInt(mountainForm.quota),
+        harga: parseInt(mountainForm.price),
+        deskripsi: mountainForm.description,
+        gambar: imageUrl,
+        provinsi: mountainForm.province,
+        lokasi: mountainForm.location,
+      };
+
+      const response = await fetch('/api/admin/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      ],
-      bookingTerms: [''],
-    });
-    setUploadedFile(null);
-    setUploadedGalleryFiles([]);
-    setErrors({});
+        body: JSON.stringify(mountainData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Refresh the mountains list
+        const refreshResponse = await fetch('/api/admin/list');
+        const refreshResult = await refreshResponse.json();
+        
+        if (refreshResult.success) {
+          const transformedData = refreshResult.gunung.map((mountain: any) => ({
+            id: mountain.id,
+            name: mountain.nama,
+            location: mountain.lokasi,
+            province: mountain.provinsi,
+            quota: mountain.kuota,
+            price: mountain.harga,
+            description: mountain.deskripsi,
+            image: mountain.gambar,
+            trailCount: mountain.jalur,
+          }));
+          setMountains(transformedData);
+        }
+        
+        setShowAddModal(false);
+        setMountainForm({
+          name: '',
+          location: '',
+          province: '',
+          quota: '',
+          price: '',
+          description: '',
+          heroImage: null,
+          galleryImages: [],
+          trailDetails: [
+            {
+              name: '',
+              description: '',
+              icon: '/placeholder.svg?height=24&width=24',
+              quota: 0,
+              available: 0,
+              dailyQuotas: {},
+            },
+          ],
+          bookingTerms: [''],
+        });
+        setUploadedFile(null);
+        setUploadedGalleryFiles([]);
+        setErrors({});
+        
+        // Show success message
+        alert('Gunung berhasil ditambahkan!');
+      } else {
+        alert('Gagal menambahkan gunung: ' + result.message);
+      }
+    } catch (error) {
+      console.error('Error adding mountain:', error);
+      alert('Terjadi kesalahan saat menambahkan gunung');
+    }
   };
 
   const renderMountainForm = (form: any, setForm: any, isEdit = false) => (

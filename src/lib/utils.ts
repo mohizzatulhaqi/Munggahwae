@@ -1,4 +1,4 @@
-import { type ClassValue, clsx } from "clsx"
+import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
@@ -18,4 +18,12 @@ export function formatCurrencyDetailed(amount: number): string {
   const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".")
   const decimalPart = parts[1] ? `.${parts[1]}` : ""
   return `Rp${integerPart}${decimalPart}`
+}
+
+function convertBigIntToString(obj: any) {
+  return JSON.parse(
+    JSON.stringify(obj, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value
+    )
+  );
 }

@@ -1,301 +1,80 @@
 'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
   Mountain,
   Calendar,
   TrendingUp,
   Eye,
-  Plus,
   ArrowUpRight,
   MapPin,
   Clock,
   Users,
 } from 'lucide-react';
-import AdminLayout from './admin-layout';
-import { useRouter } from 'next/navigation';
+import AdminLayout from '@/components/pages/admin/admin-layout';
 
-interface Booker {
-  name: string;
-  email: string;
-  phone: string;
-  idNumber: string;
-  age: number;
-  gender: string;
-  isCompanion: boolean;
-  idCardFile: string;
-  healthCertificateFile: string;
-}
-
-interface User {
-  name: string;
-  email: string;
-  phone: string;
-  idNumber: string;
-  birthDate: string;
-  birthPlace: string;
-  gender: string;
-}
-
-interface Booking {
+interface SupabaseBooking {
   id: string;
-  bookingCode: string;
-  mountain: string;
-  location: string;
-  user: User;
-  entryDate: string;
-  exitDate: string;
-  numberOfBookers: number;
-  totalAmount: string;
-  status: 'confirmed' | 'pending' | 'cancelled';
-  bookingDate: string;
+  tanggalMasuk: string;
+  tanggalKeluar: string;
+  jumlahPemesan: number;
+  totalHarga: number;
+  status: string;
   paymentStatus: string;
-  paymentMethod: string;
-  paymentDate: string;
-  duration: string;
-  bookersData: Booker[];
+  jalurId: string;
+  penggunaId: string;
+  gunungId: string;
+  alasan_tolak: string | null;
+  nama_gunung?: string; // Tambahkan properti ini untuk nama gunung
+  lokasi_gunung?: string; // Tambahkan properti ini untuk lokasi gunung
 }
-
-const bookings: Booking[] = [
-  {
-    id: 'BK001',
-    bookingCode: 'MNG-2025-001',
-    mountain: 'Gunung Rinjani',
-    location: 'Lombok, NTB',
-    user: {
-      name: 'Ahmad Fauzi',
-      email: 'ahmad.fauzi@email.com',
-      phone: '081234567890',
-      idNumber: '3273012345670001',
-      birthDate: '1990-05-15',
-      birthPlace: 'Jakarta',
-      gender: 'male',
-    },
-    entryDate: '2025-02-15',
-    exitDate: '2025-02-17',
-    numberOfBookers: 2,
-    totalAmount: 'Rp 700,000',
-    status: 'confirmed',
-    bookingDate: '2025-01-20',
-    paymentStatus: 'paid',
-    paymentMethod: 'Bank Transfer',
-    paymentDate: '2025-01-20 14:30:00',
-    duration: '3 hari 2 malam',
-    bookersData: [
-      {
-        name: 'Ahmad Fauzi',
-        email: 'ahmad.fauzi@email.com',
-        phone: '081234567890',
-        idNumber: '3273012345670001',
-        age: 34,
-        gender: 'Laki-laki',
-        isCompanion: false,
-        idCardFile: '/uploads/ktp-ahmad-fauzi.pdf',
-        healthCertificateFile: '/uploads/surat-sehat-ahmad-fauzi.pdf',
-      },
-      {
-        name: 'Siti Aminah',
-        email: 'siti.aminah@email.com',
-        phone: '081234567891',
-        idNumber: '3273012345670002',
-        age: 32,
-        gender: 'Perempuan',
-        isCompanion: false,
-        idCardFile: '/uploads/ktp-siti-aminah.pdf',
-        healthCertificateFile: '/uploads/surat-sehat-siti-aminah.pdf',
-      },
-    ],
-  },
-  {
-    id: 'BK002',
-    bookingCode: 'MNG-2025-002',
-    mountain: 'Gunung Semeru',
-    location: 'Lumajang, Jawa Timur',
-    user: {
-      name: 'Budi Santoso',
-      email: 'budi.santoso@email.com',
-      phone: '082134567890',
-      idNumber: '3578012309870001',
-      birthDate: '1988-11-20',
-      birthPlace: 'Surabaya',
-      gender: 'male',
-    },
-    entryDate: '2025-03-10',
-    exitDate: '2025-03-12',
-    numberOfBookers: 4,
-    totalAmount: 'Rp 3.200.000',
-    status: 'pending',
-    bookingDate: '2025-02-15',
-    paymentStatus: 'pending',
-    paymentMethod: 'Bank Transfer',
-    paymentDate: '',
-    duration: '3 hari 2 malam',
-    bookersData: [
-      {
-        name: 'Budi Santoso',
-        email: 'budi.santoso@email.com',
-        phone: '082134567890',
-        idNumber: '3578012309870001',
-        age: 36,
-        gender: 'Laki-laki',
-        isCompanion: false,
-        idCardFile: '/uploads/ktp-budi-santoso.pdf',
-        healthCertificateFile: '/uploads/surat-sehat-budi-santoso.pdf',
-      },
-      {
-        name: 'Dewi Lestari',
-        email: 'dewi.lestari@email.com',
-        phone: '082134567891',
-        idNumber: '3578012309870002',
-        age: 35,
-        gender: 'Perempuan',
-        isCompanion: false,
-        idCardFile: '/uploads/ktp-dewi-lestari.pdf',
-        healthCertificateFile: '/uploads/surat-sehat-dewi-lestari.pdf',
-      },
-      {
-        name: 'Rudi Hermawan',
-        email: 'rudi.hermawan@email.com',
-        phone: '082134567892',
-        idNumber: '3578012309870003',
-        age: 28,
-        gender: 'Laki-laki',
-        isCompanion: false,
-        idCardFile: '/uploads/ktp-rudi-hermawan.pdf',
-        healthCertificateFile: '/uploads/surat-sehat-rudi-hermawan.pdf',
-      },
-      {
-        name: 'Ani Wijaya',
-        email: 'ani.wijaya@email.com',
-        phone: '082134567893',
-        idNumber: '3578012309870004',
-        age: 25,
-        gender: 'Perempuan',
-        isCompanion: false,
-        idCardFile: '/uploads/ktp-ani-wijaya.pdf',
-        healthCertificateFile: '/uploads/surat-sehat-ani-wijaya.pdf',
-      },
-    ],
-  },
-  {
-    id: 'BK003',
-    bookingCode: 'MNG-2025-003',
-    mountain: 'Gunung Bromo',
-    location: 'Probolinggo, Jawa Timur',
-    user: {
-      name: 'Siti Nurhaliza',
-      email: 'siti.nurhaliza@email.com',
-      phone: '081345678901',
-      idNumber: '3501012345670001',
-      birthDate: '1992-08-10',
-      birthPlace: 'Malang',
-      gender: 'female',
-    },
-    entryDate: '2025-02-28',
-    exitDate: '2025-03-02',
-    numberOfBookers: 1,
-    totalAmount: 'Rp 450,000',
-    status: 'confirmed',
-    bookingDate: '2025-01-25',
-    paymentStatus: 'paid',
-    paymentMethod: 'E-Wallet',
-    paymentDate: '2025-01-25 10:15:00',
-    duration: '3 hari 2 malam',
-    bookersData: [
-      {
-        name: 'Siti Nurhaliza',
-        email: 'siti.nurhaliza@email.com',
-        phone: '081345678901',
-        idNumber: '3501012345670001',
-        age: 32,
-        gender: 'Perempuan',
-        isCompanion: false,
-        idCardFile: '/uploads/ktp-siti-nurhaliza.pdf',
-        healthCertificateFile: '/uploads/surat-sehat-siti-nurhaliza.pdf',
-      },
-    ],
-  },
-  {
-    id: 'BK004',
-    bookingCode: 'MNG-2025-004',
-    mountain: 'Gunung Merbabu',
-    location: 'Magelang, Jawa Tengah',
-    user: {
-      name: 'Maya Sari',
-      email: 'maya.sari@email.com',
-      phone: '082456789012',
-      idNumber: '3371012345670001',
-      birthDate: '1995-03-22',
-      birthPlace: 'Semarang',
-      gender: 'female',
-    },
-    entryDate: '2025-03-05',
-    exitDate: '2025-03-07',
-    numberOfBookers: 3,
-    totalAmount: 'Rp 1.350.000',
-    status: 'cancelled',
-    bookingDate: '2025-02-10',
-    paymentStatus: 'refunded',
-    paymentMethod: 'Bank Transfer',
-    paymentDate: '2025-02-10 16:45:00',
-    duration: '3 hari 2 malam',
-    bookersData: [
-      {
-        name: 'Maya Sari',
-        email: 'maya.sari@email.com',
-        phone: '082456789012',
-        idNumber: '3371012345670001',
-        age: 29,
-        gender: 'Perempuan',
-        isCompanion: false,
-        idCardFile: '/uploads/ktp-maya-sari.pdf',
-        healthCertificateFile: '/uploads/surat-sehat-maya-sari.pdf',
-      },
-      {
-        name: 'Dian Pratama',
-        email: 'dian.pratama@email.com',
-        phone: '082456789013',
-        idNumber: '3371012345670002',
-        age: 30,
-        gender: 'Laki-laki',
-        isCompanion: false,
-        idCardFile: '/uploads/ktp-dian-pratama.pdf',
-        healthCertificateFile: '/uploads/surat-sehat-dian-pratama.pdf',
-      },
-      {
-        name: 'Rina Wulandari',
-        email: 'rina.wulandari@email.com',
-        phone: '082456789014',
-        idNumber: '3371012345670003',
-        age: 27,
-        gender: 'Perempuan',
-        isCompanion: false,
-        idCardFile: '/uploads/ktp-rina-wulandari.pdf',
-        healthCertificateFile: '/uploads/surat-sehat-rina-wulandari.pdf',
-      },
-    ],
-  },
-];
 
 const AdminDashboardPage = () => {
-  // Calculate statistics from real data
+  const [bookings, setBookings] = useState<SupabaseBooking[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    async function fetchBookings() {
+      try {
+        const res = await fetch('/api/admin/bookings/list');
+        const result = await res.json();
+        if (!result.success) throw new Error(result.message);
+        setBookings(result.bookings);
+      } catch (err: any) {
+        setError(err.message || 'Gagal mengambil data booking');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchBookings();
+  }, []);
+
+  if (loading) return <AdminLayout><p>Memuat data booking...</p></AdminLayout>;
+  if (error) return <AdminLayout><p className="text-red-500">Error: {error}</p></AdminLayout>;
+
   const totalBookings = bookings.length;
   const confirmedBookings = bookings.filter((b) => b.status === 'confirmed').length;
   const pendingBookings = bookings.filter((b) => b.status === 'pending').length;
   const cancelledBookings = bookings.filter((b) => b.status === 'cancelled').length;
 
-  // Calculate total revenue from confirmed bookings
   const totalRevenue = bookings
     .filter((b) => b.status === 'confirmed')
-    .reduce((sum, booking) => {
-      const amount = parseInt(booking.totalAmount.replace(/[^\d]/g, ''));
-      return sum + amount;
-    }, 0);
+    .reduce((sum, b) => sum + (b.totalHarga || 0), 0);
 
-  // Get recent bookings (latest 4)
-  const recentBookings = bookings
-    .sort((a, b) => new Date(b.bookingDate).getTime() - new Date(a.bookingDate).getTime())
+  const recentBookings = [...bookings]
+    .sort((a, b) => new Date(b.tanggalMasuk).getTime() - new Date(a.tanggalMasuk).getTime())
     .slice(0, 4);
 
   const stats = [
@@ -325,14 +104,11 @@ const AdminDashboardPage = () => {
     },
   ];
 
-  // Today's statistics from real data
   const todayStats = {
     newBookings: pendingBookings,
-    activeUsers: bookings.reduce((sum, booking) => sum + booking.numberOfBookers, 0),
-    popularMountain: 'Rinjani', // Could be calculated from data
+    activeUsers: bookings.reduce((sum, b) => sum + b.jumlahPemesan, 0),
+    popularMountain: 'Rinjani', // statis (bisa dihitung dari gunungId terbanyak)
   };
-
-  const router = useRouter();
 
   return (
     <AdminLayout>
@@ -355,7 +131,7 @@ const AdminDashboardPage = () => {
           </div>
         </div>
 
-        {/* Stats Grid */}
+        {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {stats.map((stat, index) => (
             <Card
@@ -398,7 +174,7 @@ const AdminDashboardPage = () => {
                     <CardTitle className="text-xl font-bold text-gray-900">
                       Booking Terbaru
                     </CardTitle>
-                    <CardDescription>Daftar booking yang baru masuk hari ini</CardDescription>
+                    <CardDescription>Daftar booking yang baru masuk</CardDescription>
                   </div>
                 </div>
               </CardHeader>
@@ -407,23 +183,26 @@ const AdminDashboardPage = () => {
                   {recentBookings.map((booking, index) => (
                     <div
                       key={booking.id}
-                      className={`p-6 ${index !== recentBookings.length - 1 ? 'border-b border-gray-100' : ''}`}
+                      className={`p-6 ${
+                        index !== recentBookings.length - 1
+                          ? 'border-b border-gray-100'
+                          : ''
+                      }`}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                           <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
                             <span className="text-sm font-semibold text-green-600">
-                              {booking.user.name
-                                .split(' ')
-                                .map((n) => n[0])
-                                .join('')}
+                              {booking.penggunaId?.slice(0, 2).toUpperCase() || 'US'}
                             </span>
                           </div>
                           <div>
-                            <p className="font-semibold text-gray-900">{booking.user.name}</p>
+                            <p className="font-semibold text-gray-900">
+                              Nama Gunung: {booking.nama_gunung || 'Tidak diketahui'}
+                            </p>
                             <div className="flex items-center gap-2 text-sm text-gray-600">
                               <MapPin className="w-3 h-3" />
-                              {booking.mountain}
+                              Lokasi: {booking.lokasi_gunung || 'Tidak diketahui'}
                             </div>
                           </div>
                         </div>
@@ -432,28 +211,32 @@ const AdminDashboardPage = () => {
                             <p className="text-sm text-gray-600">Jumlah Pendaki</p>
                             <p className="font-semibold text-gray-900 flex items-center gap-1">
                               <Users className="w-4 h-4" />
-                              {booking.numberOfBookers}
+                              {booking.jumlahPemesan}
                             </p>
                           </div>
                           <div className="text-right">
                             <div className="flex items-center gap-2 text-sm text-gray-600 mb-1">
                               <Clock className="w-3 h-3" />
-                              {new Date(booking.entryDate).toLocaleDateString('id-ID')}
+                              {new Date(booking.tanggalMasuk).toLocaleDateString('id-ID')}
                             </div>
                             <span
                               className={`px-3 py-1 rounded-full text-xs font-medium ${
                                 booking.status === 'confirmed'
                                   ? 'bg-green-100 text-green-700'
                                   : booking.status === 'pending'
-                                    ? 'bg-yellow-100 text-yellow-700'
-                                    : 'bg-red-100 text-red-700'
+                                  ? 'bg-yellow-100 text-yellow-700'
+                                  : booking.status === 'cancelled'
+                                  ? 'bg-red-100 text-red-700'
+                                  : 'bg-gray-100 text-gray-700'
                               }`}
                             >
                               {booking.status === 'confirmed'
                                 ? 'Dikonfirmasi'
                                 : booking.status === 'pending'
-                                  ? 'Menunggu'
-                                  : 'Dibatalkan'}
+                                ? 'Menunggu'
+                                : booking.status === 'cancelled'
+                                ? 'Dibatalkan'
+                                : booking.status}
                             </span>
                           </div>
                         </div>
@@ -465,12 +248,12 @@ const AdminDashboardPage = () => {
             </Card>
           </div>
 
-          {/* Quick Actions */}
+          {/* Quick Actions & Today Stats */}
           <div className="space-y-6">
             <Card className="border-0 shadow-lg">
               <CardHeader>
                 <CardTitle className="text-xl font-bold text-gray-900">Aksi Cepat</CardTitle>
-                <CardDescription>Shortcut untuk tugas admin yang sering dilakukan</CardDescription>
+                <CardDescription>Shortcut untuk tugas admin</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button
@@ -480,7 +263,6 @@ const AdminDashboardPage = () => {
                   <Mountain className="w-5 h-5" />
                   Tambah Gunung
                 </Button>
-
                 <Button
                   variant="outline"
                   onClick={() => router.push('/admin/bookings')}

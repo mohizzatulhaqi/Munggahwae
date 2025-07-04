@@ -6,6 +6,8 @@ import Link from "next/link"
 import Image from "next/image"
 import Header from "@/components/common/Header"
 import Footer from "@/components/common/Footer"
+import { supabase } from "@/app/api/supabaseClient"
+import { createUser } from "@/models/user/controller/createUser"
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -28,6 +30,8 @@ const RegisterPage = () => {
     }))
   }
 
+  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -41,15 +45,42 @@ const RegisterPage = () => {
       return
     }
 
+    console.log(formData.email, formData.fullName, formData.confirmPassword, formData.agreeToTerms, formData.password, formData.phone)
+
     setIsLoading(true)
 
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Register data:", formData)
-      alert("Pendaftaran berhasil! Silakan cek email untuk verifikasi.")
-      setIsLoading(false)
-    }, 1500)
+    const { data, error } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            full_name: formData.fullName,
+          },
+    },
+  })
+
+  if (error) {
+    alert(`Gagal daftar: ${error.message}`)
+  } else {
+    alert("Pendaftaran berhasil! Silakan cek login.")
+    try {
+      const res = await createUser({  
+        id: data.user?.id ?? "",
+        namaLengkap: formData.fullName,
+        email: formData.email,
+        password: formData.password, // opsional
+      })
+
+      console.log(res);
+    } catch (e: any) {
+      console.error("Gagal simpan data user:", e)
+      alert("Akun berhasil dibuat, tapi gagal menyimpan data tambahan.")
+    }  
   }
+
+  setIsLoading(false)
+}
+
 
   return (
     <div className="min-h-screen bg-global-1">

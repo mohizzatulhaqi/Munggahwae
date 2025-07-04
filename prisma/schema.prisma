@@ -17,9 +17,17 @@ datasource db {
 model User {
   id           String   @id @default(uuid())
   namaLengkap  String
+  namaLengkap  String
+  password     String
   email        String   @unique
   password     String
   // Relasi ke tiket bisa ditambahkan nanti
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  // Relations
+  bookings     Booking[]
+  notifications Notifikasi[]
 }
 
 model Gunung {
@@ -30,6 +38,8 @@ model Gunung {
   deskripsi  String
   gambar     String       // bisa URL gambar
   harga      Int
+  provinsi   String
+  lokasi     String
   peraturan  Peraturan[]  // Relasi ke banyak peraturan
   // Relasi ke jadwal pendakian bisa ditambahkan nanti
 }
