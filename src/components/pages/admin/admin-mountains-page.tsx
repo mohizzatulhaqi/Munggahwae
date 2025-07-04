@@ -137,6 +137,23 @@ const AdminMountainsPage = () => {
     if (isNaN(Number(formData.quota))) newErrors.quota = 'Harus berupa angka';
     if (isNaN(Number(formData.price))) newErrors.price = 'Harus berupa angka';
 
+    // Gallery validation
+    if (formData.galleryImages.length < 3) {
+      newErrors.gallery = 'Harap unggah 3 gambar galeri';
+    }
+
+    // Trail details validation
+    formData.trailDetails.forEach((trail: any, index: number) => {
+      if (!trail.name.trim()) newErrors[`trailName-${index}`] = 'Nama jalur wajib diisi';
+      if (!trail.description.trim())
+        newErrors[`trailDesc-${index}`] = 'Deskripsi jalur wajib diisi';
+      if (isNaN(Number(trail.quota))) newErrors[`trailQuota-${index}`] = 'Harus berupa angka';
+    });
+
+    // Terms validation
+    formData.bookingTerms.forEach((term: string, index: number) => {
+      if (!term.trim()) newErrors[`term-${index}`] = 'Syarat tidak boleh kosong';
+    });
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -178,44 +195,9 @@ const AdminMountainsPage = () => {
     setErrors({});
   };
 
-  const handleDelete = async (mountainId: string) => {
+  const handleDelete = (mountainId: string) => {
     if (confirm('Apakah Anda yakin ingin menghapus gunung ini?')) {
-      try {
-        const response = await fetch(`/api/admin/delete?id=${mountainId}`, {
-          method: 'DELETE',
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-          // Refresh the mountains list
-          const refreshResponse = await fetch('/api/admin/list');
-          const refreshResult = await refreshResponse.json();
-          
-          if (refreshResult.success) {
-            const transformedData = refreshResult.gunung.map((mountain: any) => ({
-              id: mountain.id,
-              name: mountain.nama,
-              location: mountain.lokasi,
-              province: mountain.provinsi || '',
-              quota: mountain.kuotaPerHari,
-              price: mountain.harga,
-              description: mountain.deskripsi || '',
-              image: mountain.gambar || '',
-              trailCount: mountain.jalur,
-            }));
-            setMountains(transformedData);
-          }
-          
-          // Show success message
-          alert('Gunung berhasil dihapus!');
-        } else {
-          alert('Gagal menghapus gunung: ' + result.message);
-        }
-      } catch (error) {
-        console.error('Error deleting mountain:', error);
-        alert('Terjadi kesalahan saat menghapus gunung');
-      }
+      console.log('Deleting mountain:', mountainId);
     }
   };
 
