@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id           String   @id @default(uuid())
+  namaLengkap  String
+  namaLengkap  String
+  password     String
+  email        String   @unique
+  password     String
+  // Relasi ke tiket bisa ditambahkan nanti
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  // Relations
+  bookings     Booking[]
+  notifications Notifikasi[]
+}
+
+model Gunung {
+  id         String       @id @default(uuid())
+  nama       String       
+  kuota      Int
+  jalur      String[]
+  deskripsi  String
+  gambar     String       // bisa URL gambar
+  harga      Int
+  provinsi   String
+  lokasi     String
+  peraturan  Peraturan[]  // Relasi ke banyak peraturan
+  // Relasi ke jadwal pendakian bisa ditambahkan nanti
+}
+
+model Peraturan {
+  id        String   @id @default(uuid())
+  isi       String   // isi atau deskripsi peraturan
+  gunungId  String
+  gunung    Gunung   @relation(fields: [gunungId], references: [id])
+}
+
+model Pemesanan {
+  id              String           @id @default(uuid())
+  tanggalMasuk    DateTime
+  tanggalKeluar   DateTime
+  jumlahPemesan   Int
+
+  anggotaPemesan  AnggotaPemesan[] // Relasi one-to-many
+}
+
+model AnggotaPemesan {
+  id              String     @id @default(uuid())
+  pemesananId     String
+  pemesanan       Pemesanan  @relation(fields: [pemesananId], references: [id])
+
+  email           String
+  nama            String
+  noIdentitas     String
+  kewarganegaraan String
+  jenisKelamin    String     // Misal: "Laki-laki", "Perempuan"
+  tempatLahir     String?
+  tanggalLahir    DateTime?
+  fileKtp         String?    // Path file KTP (opsional)
+}
+
+

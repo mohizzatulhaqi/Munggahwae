@@ -1,81 +1,91 @@
-"use client"
+'use client';
+import React, { useState } from 'react';
+import Image from 'next/image';
+import Header from '@/components/common/Header';
+import Footer from '@/components/common/Footer';
+import ChipView from '@/components/ui/ChipView';
+import Pagination from '@/components/ui/Pagination';
 
-import { useState, useEffect } from 'react'
-import { mountainApi, GetMountainsResponse } from '@/lib/api/mountainApi'
-import MountainDiscoveryPage from '@/components/pages/mountain-discovery-page'
-import { Gunung } from '@/domain/entities/Gunung'
+interface Mountain {
+  id: string;
+  name: string;
+  location: string;
+  image: string;
+}
 
-export default function MountainDiscovery() {
-  const [mountains, setMountains] = useState<Gunung[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [selectedProvinsi, setSelectedProvinsi] = useState<string>('')
+const MountainDiscoveryPage: React.FC = () => {
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
-  useEffect(() => {
-    loadMountains()
-  }, [selectedProvinsi])
+  const mountains: Mountain[] = [
+    { id: '1', name: 'Gunung Agung', location: 'Bali', image: '/images/img_depth_7_frame_0.png' },
+    {
+      id: '2',
+      name: 'Gunung Rinjani',
+      location: 'Lombok',
+      image: '/images/img_depth_7_frame_0_99x176.png',
+    },
+    {
+      id: '3',
+      name: 'Gunung Bromo',
+      location: 'Jawa Timur',
+      image: '/images/img_depth_7_frame_0_1.png',
+    },
+    {
+      id: '4',
+      name: 'Gunung Semeru',
+      location: 'Jawa Timur',
+      image: '/images/img_depth_7_frame_0_2.png',
+    },
+    {
+      id: '5',
+      name: 'Gunung Merbabu',
+      location: 'Jawa Tengah',
+      image: '/images/img_depth_7_frame_0_3.png',
+    },
+    {
+      id: '6',
+      name: 'Gunung Arjuna',
+      location: 'Jawa Timur',
+      image: '/images/img_depth_7_frame_0_4.png',
+    },
+    {
+      id: '7',
+      name: 'Gunung Gede',
+      location: 'Jawa Barat',
+      image: '/images/img_depth_7_frame_0_4.png',
+    },
+    {
+      id: '8',
+      name: 'Gunung Kerinci',
+      location: 'Sumatera',
+      image: '/images/img_depth_7_frame_0_4.png',
+    },
+    {
+      id: '9',
+      name: 'Gunung Argopuro',
+      location: 'Jawa Timur',
+      image: '/images/img_depth_7_frame_0_4.png',
+    },
+    {
+      id: '10',
+      name: 'Gunung Slamet',
+      location: 'Jawa Tengah',
+      image: '/images/img_depth_7_frame_0_4.png',
+    },
+  ];
 
-  const loadMountains = async () => {
-    console.log('window:', typeof window);
-    console.log('Fetching mountains...');
-    try {
-      setLoading(true)
-      setError(null)
+  const handleSearch = () => {
+    console.log('Searching for:', searchQuery);
+    // Implement search functionality
+  };
 
-      const params = selectedProvinsi ? { provinsi: selectedProvinsi } : {}
-      console.log('Before fetch');
+ 
 
-      const response: GetMountainsResponse = await mountainApi.getMountains(params)
-      console.log('After fetch', response);
-      if (response.success) {
-        setMountains(response.mountains)
-      } else {
-        setError(response.error || 'Failed to load mountains')
-      }
-    } catch (err) {
-      console.error('Error loading mountains:', err)
-      setError('An unexpected error occurred')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleProvinsiChange = (provinsi: string) => {
-    setSelectedProvinsi(provinsi)
-  }
-
-  const handleRefresh = () => {
-    loadMountains()
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading mountains...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-red-500 text-xl mb-4">⚠️</div>
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">Error Loading Mountains</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <button
-            onClick={handleRefresh}
-            className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    )
-  }
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    console.log('Page changed to:', page);
+  };
 
   return (
     <MountainDiscoveryPage

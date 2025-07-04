@@ -9,7 +9,6 @@ export interface BookingData {
   exitDate: string
   numberOfBookers: number
   bookers: PersonalData[]
-  selectedTrail: string
 }
 
 export interface PersonalData {
@@ -22,26 +21,24 @@ export interface PersonalData {
   birthPlace: string
   idCardFile?: File
   isCompanion?: boolean // New field for companion role
-  healthCertificateFile?: File 
   age?: number // Calculated age
 }
 
 // Create a global store to persist data between pages
 // In a real app, you might use localStorage, cookies, or a state management library
 let globalBookingData: BookingData = {
-  entryDate: "",
-  exitDate: "",
+  entryDate: '',
+  exitDate: '',
   numberOfBookers: 1,
   bookers: [],
-  selectedTrail: "",
 }
 
 export function getGlobalBookingData() {
-  return globalBookingData
+  return globalBookingData;
 }
 
 export function updateGlobalBookingData(data: Partial<BookingData>) {
-  globalBookingData = { ...globalBookingData, ...data }
+  globalBookingData = { ...globalBookingData, ...data };
 }
 
 export default function BookingFormPage() {
@@ -73,17 +70,13 @@ export default function BookingFormPage() {
       gender: "male" as const,
       birthDate: "",
       birthPlace: "",
-      idCardFile: undefined,
-      healthCertificateFile: undefined, // ← Tambahkan ini
-      isCompanion: false,
-      age: undefined,
     }))
 
     // Update global state
     updateGlobalBookingData({
       ...dates,
       bookers: emptyBookers,
-    })
+    });
 
     // Navigate to the personal data form page with the first booker
     console.log('Redirecting to', `/mountain/${mountainId}/booking-terms/booking-form/personal-data/0`);
@@ -97,5 +90,5 @@ export default function BookingFormPage() {
     <div className="min-h-screen bg-gray-50">
       <DateSelectionForm mountain={mountain} onSubmit={handleDateSubmit} />
     </div>
-  )
+  );
 }

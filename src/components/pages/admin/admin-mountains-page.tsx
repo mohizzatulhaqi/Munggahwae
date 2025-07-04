@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AdminLayout from './admin-layout';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,7 +16,6 @@ import {
   Users,
   Calendar,
   Upload,
-  ImageIcon,
   DollarSign,
   Check,
 } from 'lucide-react';
@@ -43,7 +42,7 @@ const AdminMountainsPage = () => {
   const [selectedProvince, setSelectedProvince] = useState('Semua Provinsi');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [uploadedGalleryFiles, setUploadedGalleryFiles] = useState<(File | null)[]>([]);
+
 
   const [mountainForm, setMountainForm] = useState({
     name: '',
@@ -53,7 +52,6 @@ const AdminMountainsPage = () => {
     price: '',
     description: '',
     heroImage: null as File | null,
-    galleryImages: [] as File[],
     trailDetails: [
       {
         name: '',
@@ -80,9 +78,46 @@ const AdminMountainsPage = () => {
     bookingTerms: [''],
   });
 
-  const mountains = getAllMountains();
+  const [mountains, setMountains] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
-  const validateForm = (formData: any) => {
+  useEffect(() => {
+    async function fetchMountains() {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/admin/list');
+        const result = await response.json();
+        
+        if (result.success) {
+          // Transform data to match the expected format
+          const transformedData = result.gunung.map((mountain: any) => ({
+            id: mountain.id,
+            name: mountain.nama,
+            location: mountain.lokasi,
+            province: mountain.provinsi || '',
+            quota: mountain.kuotaPerHari,
+            price: mountain.harga,
+            description: mountain.deskripsi || '',
+            image: mountain.gambar || '',
+            trailCount: mountain.jalur,
+          }));
+          setMountains(transformedData);
+        } else {
+          setFetchError(result.message || 'Terjadi kesalahan saat mengambil data');
+        }
+      } catch (error: any) {
+        setFetchError(error.message || 'Terjadi kesalahan saat mengambil data');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchMountains();
+  }, []);
+
+
+  const validateForm = (formData: any, isEdit = false) => {
     const newErrors: Record<string, string> = {};
 
     // Basic fields validation
@@ -92,7 +127,11 @@ const AdminMountainsPage = () => {
     if (!formData.quota.trim()) newErrors.quota = 'Kuota wajib diisi';
     if (!formData.price.trim()) newErrors.price = 'Harga wajib diisi';
     if (!formData.description.trim()) newErrors.description = 'Deskripsi wajib diisi';
-    if (!formData.heroImage) newErrors.heroImage = 'Foto utama wajib diupload';
+    
+    // Only require heroImage for new mountains
+    if (!isEdit && !formData.heroImage) {
+      newErrors.heroImage = 'Foto utama wajib diupload';
+    }
 
     // Numeric validation
     if (isNaN(Number(formData.quota))) newErrors.quota = 'Harus berupa angka';
@@ -122,9 +161,9 @@ const AdminMountainsPage = () => {
 
   const filteredMountains = mountains.filter(
     (mountain) =>
-      (mountain.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        mountain.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        mountain.province.toLowerCase().includes(searchQuery.toLowerCase())) &&
+      (mountain.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        mountain.location?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        mountain.province?.toLowerCase().includes(searchQuery.toLowerCase())) &&
       (selectedProvince === 'Semua Provinsi' || mountain.province === selectedProvince)
   );
 
@@ -153,7 +192,6 @@ const AdminMountainsPage = () => {
     });
     setShowEditModal(true);
     setUploadedFile(null);
-    setUploadedGalleryFiles([]);
     setErrors({});
   };
 
@@ -239,83 +277,160 @@ const AdminMountainsPage = () => {
     }
   };
 
-  const handleGalleryUpload = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number,
-    isEdit: boolean
-  ) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (isEdit) {
-        setEditForm((prev) => {
-          const newGallery = [...prev.galleryImages];
-          newGallery[index] = file;
-          return { ...prev, galleryImages: newGallery };
-        });
-      } else {
-        setMountainForm((prev) => {
-          const newGallery = [...prev.galleryImages];
-          newGallery[index] = file;
-          return { ...prev, galleryImages: newGallery };
-        });
+
+
+  const handleSaveEdit = async () => {
+    if (!validateForm(editForm, true)) return;
+
+    try {
+      // Convert image file to base64 or upload to storage
+      let imageUrl = selectedMountain.image || '';
+      if (uploadedFile) {
+        // For now, we'll use a placeholder. In production, you'd upload to Supabase Storage
+        imageUrl = '/images/img_depth_7_frame_0.png';
       }
 
-      // Update uploaded gallery files state
-      setUploadedGalleryFiles((prev) => {
-        const newFiles = [...prev];
-        newFiles[index] = file;
-        return newFiles;
+      const mountainData = {
+        id: selectedMountain.id,
+        nama: editForm.name,
+        kuota: parseInt(editForm.quota),
+        harga: parseInt(editForm.price),
+        deskripsi: editForm.description,
+        gambar: imageUrl,
+        provinsi: editForm.province,
+        lokasi: editForm.location,
+      };
+
+      const response = await fetch('/api/admin/update', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(mountainData),
       });
 
-      if (
-        errors.gallery &&
-        (isEdit ? editForm.galleryImages.length >= 2 : mountainForm.galleryImages.length >= 2)
-      ) {
-        setErrors((prev) => ({ ...prev, gallery: '' }));
+      const result = await response.json();
+
+      if (result.success) {
+        // Refresh the mountains list
+        const refreshResponse = await fetch('/api/admin/list');
+        const refreshResult = await refreshResponse.json();
+        
+        if (refreshResult.success) {
+          const transformedData = refreshResult.gunung.map((mountain: any) => ({
+            id: mountain.id,
+            name: mountain.nama,
+            location: mountain.lokasi,
+            province: mountain.provinsi,
+            quota: mountain.kuotaPerHari,
+            price: mountain.harga,
+            description: mountain.deskripsi,
+            image: mountain.gambar,
+            trailCount: mountain.jalur,
+          }));
+          setMountains(transformedData);
+        }
+        
+        setShowEditModal(false);
+        setSelectedMountain(null);
+        setUploadedFile(null);
+        setErrors({});
+        
+        // Show success message
+        alert('Gunung berhasil diupdate!');
+      } else {
+        alert('Gagal mengupdate gunung: ' + result.message);
       }
+    } catch (error) {
+      console.error('Error updating mountain:', error);
+      alert('Terjadi kesalahan saat mengupdate gunung');
     }
   };
 
-  const handleSaveEdit = () => {
-    if (!validateForm(editForm)) return;
+  const handleSaveAdd = async () => {
+    if (!validateForm(mountainForm, false)) return;
 
-    console.log('Updating mountain:', selectedMountain.id, editForm);
-    setShowEditModal(false);
-    setSelectedMountain(null);
-    setUploadedFile(null);
-    setUploadedGalleryFiles([]);
-    setErrors({});
-  };
+    try {
+      // Convert image file to base64 or upload to storage
+      let imageUrl = '';
+      if (mountainForm.heroImage) {
+        // For now, we'll use a placeholder. In production, you'd upload to Supabase Storage
+        imageUrl = '/images/img_depth_7_frame_0.png';
+      }
 
-  const handleSaveAdd = () => {
-    if (!validateForm(mountainForm)) return;
+      const mountainData = {
+        nama: mountainForm.name,
+        kuota: parseInt(mountainForm.quota),
+        harga: parseInt(mountainForm.price),
+        deskripsi: mountainForm.description,
+        gambar: imageUrl,
+        provinsi: mountainForm.province,
+        lokasi: mountainForm.location,
+      };
 
-    console.log('Adding new mountain:', mountainForm);
-    setShowAddModal(false);
-    setMountainForm({
-      name: '',
-      location: '',
-      province: '',
-      quota: '',
-      price: '',
-      description: '',
-      heroImage: null,
-      galleryImages: [],
-      trailDetails: [
-        {
-          name: '',
-          description: '',
-          icon: '/placeholder.svg?height=24&width=24',
-          quota: 0,
-          available: 0,
-          dailyQuotas: {},
+      const response = await fetch('/api/admin/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      ],
-      bookingTerms: [''],
-    });
-    setUploadedFile(null);
-    setUploadedGalleryFiles([]);
-    setErrors({});
+        body: JSON.stringify(mountainData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Refresh the mountains list
+        const refreshResponse = await fetch('/api/admin/list');
+        const refreshResult = await refreshResponse.json();
+        
+        if (refreshResult.success) {
+          const transformedData = refreshResult.gunung.map((mountain: any) => ({
+            id: mountain.id,
+            name: mountain.nama,
+            location: mountain.lokasi,
+            province: mountain.provinsi,
+            quota: mountain.kuotaPerHari,
+            price: mountain.harga,
+            description: mountain.deskripsi,
+            image: mountain.gambar,
+            trailCount: mountain.jalur,
+          }));
+          setMountains(transformedData);
+        }
+        
+        setShowAddModal(false);
+        setMountainForm({
+          name: '',
+          location: '',
+          province: '',
+          quota: '',
+          price: '',
+          description: '',
+          heroImage: null,
+          trailDetails: [
+            {
+              name: '',
+              description: '',
+              icon: '/placeholder.svg?height=24&width=24',
+              quota: 0,
+              available: 0,
+              dailyQuotas: {},
+            },
+          ],
+          bookingTerms: [''],
+        });
+        setUploadedFile(null);
+        setErrors({});
+        
+        // Show success message
+        alert('Gunung berhasil ditambahkan!');
+      } else {
+        alert('Gagal menambahkan gunung: ' + result.message);
+      }
+    } catch (error) {
+      console.error('Error adding mountain:', error);
+      alert('Terjadi kesalahan saat menambahkan gunung');
+    }
   };
 
   const renderMountainForm = (form: any, setForm: any, isEdit = false) => (
@@ -488,55 +603,7 @@ const AdminMountainsPage = () => {
         {errors.heroImage && <p className="text-red-500 text-sm mt-1">{errors.heroImage}</p>}
       </div>
 
-      {/* Gallery */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium text-global-1 font-plus-jakarta">
-          Galeri <span className="text-red-500">*</span>
-        </h3>
-        {errors.gallery && <p className="text-red-500 text-sm -mt-2">{errors.gallery}</p>}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[0, 1, 2].map((index) => (
-            <div key={index}>
-              {uploadedGalleryFiles[index] ? (
-                <div className="flex items-center justify-center space-x-3 text-green-600 p-4 border border-green-200 rounded-lg bg-green-50">
-                  <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                    <Check className="w-5 h-5" />
-                  </div>
-                  <div className="text-left flex-1 min-w-0">
-                    <p className="font-medium text-sm truncate">File berhasil diupload</p>
-                    <p className="text-xs text-gray-600 truncate">
-                      {uploadedGalleryFiles[index]?.name}
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div
-                  className={`border-2 border-dashed rounded-lg p-6 ${
-                    errors.gallery ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                >
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleGalleryUpload(e, index, isEdit)}
-                    className="hidden"
-                    id={`${isEdit ? 'edit-' : ''}gallery-${index}`}
-                  />
-                  <label
-                    htmlFor={`${isEdit ? 'edit-' : ''}gallery-${index}`}
-                    className="cursor-pointer"
-                  >
-                    <div className="text-center">
-                      <ImageIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                      <p className="text-sm text-gray-600">Gallery image {index + 1}</p>
-                    </div>
-                  </label>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
+
 
       {/* Trail Details */}
       <div className="space-y-4">
@@ -792,11 +859,11 @@ const AdminMountainsPage = () => {
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Users className="w-4 h-4" />
-                    <span>{mountain.quota}</span>
+                    <span>Kuota: {mountain.quota} pendaki/hari</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Calendar className="w-4 h-4" />
-                    <span>{mountain.trails}</span>
+                    <span>Jalur: {mountain.trailCount || 0} jalur</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <DollarSign className="w-4 h-4" />
@@ -806,10 +873,6 @@ const AdminMountainsPage = () => {
 
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-green-600">{mountain.available}</span>
-                  <Button size="sm" variant="outline">
-                    <Eye className="w-4 h-4 mr-2" />
-                    Detail
-                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -834,7 +897,6 @@ const AdminMountainsPage = () => {
                     onClick={() => {
                       setShowAddModal(false);
                       setUploadedFile(null);
-                      setUploadedGalleryFiles([]);
                       setErrors({});
                     }}
                   >
@@ -871,7 +933,6 @@ const AdminMountainsPage = () => {
                       }
                       setShowEditModal(false);
                       setUploadedFile(null);
-                      setUploadedGalleryFiles([]);
                       setErrors({});
                     }}
                   >

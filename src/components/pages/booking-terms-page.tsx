@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type React from 'react';
 
 import { useRouter } from 'next/navigation';
@@ -14,35 +14,11 @@ interface BookingTermsPageProps {
 
 const BookingTermsPage: React.FC<BookingTermsPageProps> = ({ mountain }) => {
   const [isAgreed, setIsAgreed] = useState(false);
-  const [rules, setRules] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-
-  useEffect(() => {
-    const fetchRules = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await fetch(`/api/peraturan/${mountain.id}`);
-        const data = await res.json();
-        if (data.success) {
-          setRules(data.rules);
-        } else {
-          setError(data.error || 'Gagal memuat peraturan');
-        }
-      } catch (err) {
-        setError('Gagal memuat peraturan');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchRules();
-  }, [mountain.id]);
 
   const handleContinue = () => {
     if (isAgreed) {
-      router.push(`/mountain/${mountain.id}/booking-terms/booking-form`); // Adjust the path as needed
+       router.push(`/mountain/${mountain.id}/booking-terms/booking-form`); // Adjust the path as needed
     } else {
       alert('Silakan centang persetujuan terlebih dahulu');
     }
@@ -67,22 +43,14 @@ const BookingTermsPage: React.FC<BookingTermsPageProps> = ({ mountain }) => {
           </h2>
 
           <div className="space-y-4 mb-8">
-            {loading ? (
-              <div className="text-center text-gray-500">Memuat syarat booking...</div>
-            ) : error ? (
-              <div className="text-red-500">{error}</div>
-            ) : rules.length > 0 ? (
-              rules.map((term: any, index: number) => (
-                <div key={term.id || index} className="flex gap-4">
-                  <span className="text-global-2 font-medium font-plus-jakarta flex-shrink-0">
-                    {index + 1}.
-                  </span>
-                  <span>{term.isi || ''}</span>
-                </div>
-              ))
-            ) : (
-              <div className="text-gray-500">Syarat booking belum tersedia.</div>
-            )}
+            {mountain.bookingTerms.map((term, index) => (
+              <div key={index} className="flex gap-4">
+                <span className="text-global-2 font-medium font-plus-jakarta flex-shrink-0">
+                  {index + 1}.
+                </span>
+                <p className="text-global-1 font-plus-jakarta leading-relaxed">{term}</p>
+              </div>
+            ))}
           </div>
 
           <div className="border-t border-gray-200 pt-6">
