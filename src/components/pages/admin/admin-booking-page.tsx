@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -76,132 +76,101 @@ const AdminBookingsPage = () => {
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [bookingToReject, setBookingToReject] = useState<string | null>(null);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
-  // Mock booking data with PDF files for both KTP and health certificates
-  const bookings: Booking[] = [
-    {
-      id: 'BK001',
-      bookingCode: 'MNG-2025-001',
-      mountain: 'Gunung Rinjani',
-      location: 'Lombok, NTB',
-      route: 'Jalur Sembalun',
-      user: {
-        name: 'Ahmad Fauzi',
-        email: 'ahmad.fauzi@email.com',
-        phone: '081234567890',
-        idNumber: '3273012345670001',
-        birthDate: '1990-05-15',
-        birthPlace: 'Jakarta',
-        gender: 'male',
-      },
-      entryDate: '2025-02-15',
-      exitDate: '2025-02-17',
-      numberOfBookers: 2,
-      totalAmount: 'Rp 700,000',
-      status: 'confirmed',
-      bookingDate: '2025-01-20',
-      paymentStatus: 'paid',
-      paymentMethod: 'Bank Transfer',
-      paymentDate: '2025-01-20 14:30:00',
-      duration: '3 hari 2 malam',
-      bookersData: [
-        {
-          name: 'Ahmad Fauzi',
-          email: 'ahmad.fauzi@email.com',
-          phone: '081234567890',
-          idNumber: '3273012345670001',
-          age: 34,
-          gender: 'Laki-laki',
-          isCompanion: false,
-          idCardFile: '/uploads/ktp-ahmad-fauzi.pdf',
-          healthCertificateFile: '/uploads/surat-sehat-ahmad-fauzi.pdf',
-        },
-        {
-          name: 'Siti Aminah',
-          email: 'siti.aminah@email.com',
-          phone: '081234567891',
-          idNumber: '3273012345670002',
-          age: 32,
-          gender: 'Perempuan',
-          isCompanion: false,
-          idCardFile: '/uploads/ktp-siti-aminah.pdf',
-          healthCertificateFile: '/uploads/surat-sehat-siti-aminah.pdf',
-        },
-      ],
-    },
-    {
-      id: 'BK002',
-      bookingCode: 'MNG-2025-002',
-      mountain: 'Gunung Semeru',
-      location: 'Lumajang, Jawa Timur',
-      route: 'Jalur Ranu Pani',
-      user: {
-        name: 'Budi Santoso',
-        email: 'budi.santoso@email.com',
-        phone: '082134567890',
-        idNumber: '3578012309870001',
-        birthDate: '1988-11-20',
-        birthPlace: 'Surabaya',
-        gender: 'male',
-      },
-      entryDate: '2025-03-10',
-      exitDate: '2025-03-12',
-      numberOfBookers: 4,
-      totalAmount: 'Rp 3.200.000',
-      status: 'pending',
-      bookingDate: '2025-02-15',
-      paymentStatus: 'pending',
-      paymentMethod: 'Bank Transfer',
-      paymentDate: '',
-      duration: '3 hari 2 malam',
-      bookersData: [
-        {
-          name: 'Budi Santoso',
-          email: 'budi.santoso@email.com',
-          phone: '082134567890',
-          idNumber: '3578012309870001',
-          age: 36,
-          gender: 'Laki-laki',
-          isCompanion: false,
-          idCardFile: '/uploads/ktp-budi-santoso.pdf',
-          healthCertificateFile: '/uploads/surat-sehat-budi-santoso.pdf',
-        },
-        {
-          name: 'Dewi Lestari',
-          email: 'dewi.lestari@email.com',
-          phone: '082134567891',
-          idNumber: '3578012309870002',
-          age: 35,
-          gender: 'Perempuan',
-          isCompanion: false,
-          idCardFile: '/uploads/ktp-dewi-lestari.pdf',
-          healthCertificateFile: '/uploads/surat-sehat-dewi-lestari.pdf',
-        },
-        {
-          name: 'Rudi Hermawan',
-          email: 'rudi.hermawan@email.com',
-          phone: '082134567892',
-          idNumber: '3578012309870003',
-          age: 28,
-          gender: 'Laki-laki',
-          isCompanion: false,
-          idCardFile: '/uploads/ktp-rudi-hermawan.pdf',
-          healthCertificateFile: '/uploads/surat-sehat-rudi-hermawan.pdf',
-        },
-        {
-          name: 'Ani Wijaya',
-          email: 'ani.wijaya@email.com',
-          phone: '082134567893',
-          idNumber: '3578012309870004',
-          age: 25,
-          gender: 'Perempuan',
-          isCompanion: false,
-          idCardFile: '/uploads/ktp-ani-wijaya.pdf',
-          healthCertificateFile: '/uploads/surat-sehat-ani-wijaya.pdf',
-        },
-      ],
-    },
-  ];
+  // Fetch bookings from API
+  useEffect(() => {
+    const fetchBookings = async () => {
+      setIsLoading(true);
+      setFetchError(null);
+      try {
+        const res = await fetch('/api/admin/bookings/list');
+        const result = await res.json();
+        if (result.success) {
+          setBookings(result.bookings.map((b: any) => ({
+            id: b.id,
+            bookingCode: b.booking_code || b.bookingCode || b.id || '-',
+            mountain: b.mountain || '-',
+            location: b.location || '-',
+            route: b.route || '-',
+            user: {
+              name: b.user_name || '-',
+              email: b.user_email || '-',
+              phone: b.user_phone || '-',
+              idNumber: b.user_id_number || '-',
+              birthDate: b.user_birth_date || '-',
+              birthPlace: b.user_birth_place || '-',
+              gender: b.user_gender || '-',
+            },
+            entryDate: b.entry_date || '-',
+            exitDate: b.exit_date || '-',
+            numberOfBookers: b.number_of_bookers || 0,
+            totalAmount: b.total_amount || '-',
+            status: b.status || '-',
+            bookingDate: b.booking_date || '-',
+            paymentStatus: b.payment_status || '-',
+            paymentMethod: b.payment_method || '-',
+            paymentDate: b.payment_date || '-',
+            duration: b.duration || '-',
+            bookersData: b.bookers_data || [],
+          })));
+        } else {
+          setFetchError(result.message || 'Gagal mengambil data booking');
+        }
+      } catch (err: any) {
+        setFetchError(err.message || 'Gagal mengambil data booking');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchBookings();
+  }, []);
+
+  const refreshBookings = async () => {
+    setIsLoading(true);
+    setFetchError(null);
+    try {
+      const res = await fetch('/api/admin/bookings/list');
+      const result = await res.json();
+      if (result.success) {
+        setBookings(result.bookings.map((b: any) => ({
+          id: b.id,
+          bookingCode: b.booking_code || b.bookingCode || b.id || '-',
+          mountain: b.mountain || '-',
+          location: b.location || '-',
+          route: b.route || '-',
+          user: {
+            name: b.user_name || '-',
+            email: b.user_email || '-',
+            phone: b.user_phone || '-',
+            idNumber: b.user_id_number || '-',
+            birthDate: b.user_birth_date || '-',
+            birthPlace: b.user_birth_place || '-',
+            gender: b.user_gender || '-',
+          },
+          entryDate: b.entry_date || '-',
+          exitDate: b.exit_date || '-',
+          numberOfBookers: b.number_of_bookers || 0,
+          totalAmount: b.total_amount || '-',
+          status: b.status || '-',
+          bookingDate: b.booking_date || '-',
+          paymentStatus: b.payment_status || '-',
+          paymentMethod: b.payment_method || '-',
+          paymentDate: b.payment_date || '-',
+          duration: b.duration || '-',
+          bookersData: b.bookers_data || [],
+        })));
+      } else {
+        setFetchError(result.message || 'Gagal mengambil data booking');
+      }
+    } catch (err: any) {
+      setFetchError(err.message || 'Gagal mengambil data booking');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const filteredBookings = bookings.filter((booking) => {
     const matchesSearch =
@@ -246,8 +215,24 @@ const AdminBookingsPage = () => {
     setShowDetailModal(true);
   };
 
-  const handleApprove = (bookingId: string) => {
-    console.log('Approving booking:', bookingId);
+  const handleApprove = async (bookingId: string) => {
+    if (!window.confirm('Konfirmasi booking ini?')) return;
+    try {
+      const res = await fetch('/api/admin/bookings/confirm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: bookingId }),
+      });
+      const result = await res.json();
+      if (result.success) {
+        alert('Booking berhasil dikonfirmasi!');
+        refreshBookings();
+      } else {
+        alert('Gagal konfirmasi booking: ' + result.message);
+      }
+    } catch (err: any) {
+      alert('Gagal konfirmasi booking: ' + err.message);
+    }
   };
 
   const handleReject = (bookingId: string) => {
@@ -255,16 +240,30 @@ const AdminBookingsPage = () => {
     setShowRejectModal(true);
   };
 
-  const confirmReject = () => {
+  const confirmReject = async () => {
     if (rejectReason.trim() === '') {
       alert('Harap masukkan alasan penolakan');
       return;
     }
-    console.log('Rejecting booking:', bookingToReject, 'with reason:', rejectReason);
-    // Here you would typically make an API call to update the booking status
-    setShowRejectModal(false);
-    setRejectReason('');
-    setBookingToReject(null);
+    try {
+      const res = await fetch('/api/admin/bookings/reject', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: bookingToReject, reason: rejectReason }),
+      });
+      const result = await res.json();
+      if (result.success) {
+        alert('Booking berhasil ditolak!');
+        setShowRejectModal(false);
+        setRejectReason('');
+        setBookingToReject(null);
+        refreshBookings();
+      } else {
+        alert('Gagal menolak booking: ' + result.message);
+      }
+    } catch (err: any) {
+      alert('Gagal menolak booking: ' + err.message);
+    }
   };
 
   const handleExport = () => {

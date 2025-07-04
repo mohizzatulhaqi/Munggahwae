@@ -2,35 +2,65 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/app/api/supabaseClient';
 
 export async function POST(req: NextRequest) {
-  const { email, password, fullName } = await req.json();
-  if (!email || !password || !fullName) {
-    return NextResponse.json({ success: false, message: 'Data tidak lengkap' }, { status: 400 });
-  }
-  // Register ke Supabase Auth
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: { full_name: fullName, role: 'admin' },
-    },
-  });
-  if (error || !data.user) {
-    return NextResponse.json({ success: false, message: error?.message || 'Gagal daftar' }, { status: 400 });
-  }
+  try {
+    const body = await req.json();
+    const { nama, kuota, harga, deskripsi, provinsi, lokasi, kuotaPerHari, hargaPerOrang } = body;
 
-  // Insert ke tabel User
-  const { error: insertError } = await supabase.from('User').insert([
-    {
-      id: data.user.id,
-      namaLengkap: fullName,
-      email,
-      password: '', // Jangan simpan plain password
-      role: 'admin',
-    },
-  ]);
-  if (insertError) {
-    return NextResponse.json({ success: false, message: insertError.message }, { status: 500 });
-  }
+    
+    if (!nama || !kuota || !harga || !deskripsi) {
+      return NextResponse.json({
+        success: false,
+        message: 'Data tidak lengkap. Nama, kuota, harga, deskripsi, dan gambar wajib diisi.'
+      }, { status: 400 });
+    }
 
-  return NextResponse.json({ success: true, user: data.user }, { status: 201 });
-} 
+    if (isNaN(Number(kuota)) || Number(kuota) <= 0) {
+      return NextResponse.json({
+        success: false,
+        message: 'Kuota harus berupa angka positif'
+      }, { status: 400 });
+    }
+
+    if (isNaN(Number(harga)) || Number(harga) <= 0) {
+      return NextResponse.json({
+        success: false,
+        message: 'Harga harus berupa angka positif'
+      }, { status: 400 });
+    }
+
+    const { data, error } = await supabase
+      .from('Gunung') // pastikan lowercase
+      .insert([
+        {
+          nama: nama,
+          kuota: Number(kuota),
+          harga: Number(harga),
+          deskripsi: deskripsi,
+          provinsi: provinsi || '',
+          lokasi: lokasi || '',
+          urlGambar: '',
+          status: 'aktif',
+          kuotaPerHari: Number(kuotaPerHari),
+          hargaPerOrang: Number(hargaPerOrang),
+
+         
+        }
+      ])
+      .select();
+
+    
+
+    return NextResponse.json({
+      success: true,
+      message: 'Gunung berhasil ditambahkan',
+      gunung: data?.[0]
+    }, { status: 201 });
+
+  } catch (error: any) {
+    console.error('Unexpected error:', error);
+    return NextResponse.json({
+      success: false,
+      message: error.message || 'Terjadi kesalahan internal server'
+    }, { status: 500 });
+  }
+}

@@ -38,6 +38,8 @@ model Gunung {
   deskripsi  String
   gambar     String       // bisa URL gambar
   harga      Int
+  provinsi   String
+  lokasi     String
   peraturan  Peraturan[]  // Relasi ke banyak peraturan
   // Relasi ke jadwal pendakian bisa ditambahkan nanti
 }
