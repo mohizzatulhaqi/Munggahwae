@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { CreateGunungUseCase } from '@/application/use-cases/CreateGunungUseCase';
+import { SupabaseGunungRepository } from '@/infrastructure/repositories/SupabaseGunungRepository';
 import { createClient } from '@/utils/supabase/client';
 
 function convertBigIntToString(obj: any) {
@@ -7,6 +9,20 @@ function convertBigIntToString(obj: any) {
       typeof value === 'bigint' ? value.toString() : value
     )
   );
+}
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const gunungRepository = new SupabaseGunungRepository();
+    const createGunungUseCase = new CreateGunungUseCase(gunungRepository);
+    const created = await createGunungUseCase.execute(body);
+    if (!created) {
+      return NextResponse.json({ status: 500, isCreated: false });
+    }
+    return NextResponse.json({ status: 200, isCreated: true, data: created });
+  } catch (error) {
+    return NextResponse.json({ status: 500, isCreated: false, error: (error as any)?.message || String(error) });
+  }
 }
 
 export async function GET(request: Request) {
@@ -27,7 +43,7 @@ export async function GET(request: Request) {
     let query = supabase
       .from('Gunung')
       .select(`*, Jalur(*), GaleriGunung(*)`, { count: 'exact' })
-      .order('createdAt', { ascending: false })
+      .order('nama', { ascending: true })
       .range(from, to);
 
     if (searchQuery) {

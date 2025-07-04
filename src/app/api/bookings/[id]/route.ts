@@ -1,13 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { BookingController } from '../../../../presentation/controllers/BookingController';
+import { MarkBookingAsPaidUseCase } from '../../../../application/use-cases/MarkBookingAsPaidUseCase';
+import { SupabaseBookingRepository } from '../../../../infrastructure/repositories/SupabaseBookingRepository';
+import { SupabaseGunungRepository } from '../../../../infrastructure/repositories/SupabaseGunungRepository';
+import { SupabaseUserRepository } from '../../../../infrastructure/repositories/SupabaseUserRepository';
 
-const bookingController = new BookingController();
+
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  return bookingController.getBookingById(request, { params });
+  // TODO: Refactor to use GetBookingByIdUseCase directly if needed
+  const bookingRepository = new SupabaseBookingRepository();
+  const booking = await bookingRepository.findById(params.id);
+  if (!booking) {
+    return NextResponse.json({ success: false, error: 'Booking tidak ditemukan' }, { status: 404 });
+  }
+  return NextResponse.json({ success: true, booking: booking.toJSON() });
 }
 
 export async function PATCH(
@@ -15,50 +24,52 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   const body = await request.json();
-  
-  if (body.action === 'confirm') {
-    return bookingController.confirmBooking(request, { params });
+  if (body.action === 'markAsPaid') {
+    try {
+      const bookingRepository = new SupabaseBookingRepository();
+      const gunungRepository = new SupabaseGunungRepository();
+      const userRepository = new SupabaseUserRepository();
+      const useCase = new MarkBookingAsPaidUseCase(bookingRepository, gunungRepository, userRepository);
+      const booking = await useCase.execute(params.id);
+      return NextResponse.json({
+        success: true,
+        booking: booking.toJSON(),
+        message: 'Booking berhasil ditandai sebagai dibayar',
+      });
+    } catch (error) {
+      return NextResponse.json({ success: false, error: error instanceof Error ? error.message : 'Internal server error' }, { status: 400 });
+    }
+  } else if (body.action === 'confirm') {
+    try {
+      const bookingRepository = new SupabaseBookingRepository();
+      const gunungRepository = new SupabaseGunungRepository();
+      const userRepository = new SupabaseUserRepository();
+      const useCase = new (await import('../../../../application/use-cases/ConfirmBookingUseCase')).ConfirmBookingUseCase(bookingRepository, gunungRepository, userRepository);
+      const booking = await useCase.execute(params.id);
+      return NextResponse.json({
+        success: true,
+        booking: booking.toJSON(),
+        message: 'Booking berhasil dikonfirmasi',
+      });
+    } catch (error) {
+      return NextResponse.json({ success: false, error: error instanceof Error ? error.message : 'Internal server error' }, { status: 400 });
+    }
   } else if (body.action === 'cancel') {
-    return bookingController.cancelBooking(request, { params });
-  } else if (body.action === 'markAsPaid') {
-    return markBookingAsPaid(request, { params });
+    try {
+      const bookingRepository = new SupabaseBookingRepository();
+      const gunungRepository = new SupabaseGunungRepository();
+      const userRepository = new SupabaseUserRepository();
+      const useCase = new (await import('../../../../application/use-cases/CancelBookingUseCase')).CancelBookingUseCase(bookingRepository, gunungRepository, userRepository);
+      const booking = await useCase.execute(params.id);
+      return NextResponse.json({
+        success: true,
+        booking: booking.toJSON(),
+        message: 'Booking berhasil dibatalkan',
+      });
+    } catch (error) {
+      return NextResponse.json({ success: false, error: error instanceof Error ? error.message : 'Internal server error' }, { status: 400 });
+    }
   }
-  
-  return NextResponse.json(
-    { success: false, error: 'Invalid action' },
-    { status: 400 }
-  );
+  return NextResponse.json({ success: false, error: 'Invalid action' }, { status: 400 });
 }
 
-// Helper method for marking booking as paid
-async function markBookingAsPaid(request: NextRequest, { params }: { params: { id: string } }) {
-  try {
-    const bookingRepository = new (await import('../../../../infrastructure/repositories/PrismaBookingRepository')).PrismaBookingRepository(new (await import('@prisma/client')).PrismaClient());
-    const gunungRepository = new (await import('../../../../infrastructure/repositories/PrismaGunungRepository')).PrismaGunungRepository(new (await import('@prisma/client')).PrismaClient());
-    const userRepository = new (await import('../../../../infrastructure/repositories/PrismaUserRepository')).PrismaUserRepository(new (await import('@prisma/client')).PrismaClient());
-    
-    const bookingService = new (await import('../../../../domain/services/BookingService')).BookingService(
-      bookingRepository,
-      gunungRepository,
-      userRepository
-    );
-
-    const booking = await bookingService.markBookingAsPaid(params.id);
-
-    return NextResponse.json({
-      success: true,
-      booking: booking.toJSON(),
-      message: 'Booking berhasil ditandai sebagai dibayar',
-    });
-
-  } catch (error) {
-    console.error('Mark booking as paid error:', error);
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Internal server error' 
-      },
-      { status: 400 }
-    );
-  }
-} 
