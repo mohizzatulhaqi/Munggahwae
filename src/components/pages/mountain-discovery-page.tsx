@@ -160,9 +160,11 @@ const MountainDiscoveryPage: React.FC = () => {
                     <Link key={mountain.id} href={`/mountain/${mountain.id}`}>
                       <div className="flex flex-col items-center w-full cursor-pointer hover:transform hover:scale-105 transition-transform">
                         <div className="w-full h-[156px]">
-                          <Image
+                          <img
                             src={mountain.urlGambar || '/placeholder.svg'}
-                            alt={mountain.nama}
+                            alt={mountain.nama} 
+                            width={176}
+                            height={99}
                             className="w-full h-[99px] object-cover rounded-xl"
                           />
                           <h3 className="mt-3 text-base font-medium leading-[21px] text-global-1 font-plus-jakarta text-center">
