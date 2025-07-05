@@ -13,20 +13,12 @@ const PrivacyPolicyPage: React.FC = () => {
         {/* Main Content */}
         <main className="flex flex-col items-center w-full max-w-[1200px] mx-auto px-4 py-8">
           {/* Hero Section */}
-          <div
-            className="relative flex flex-col w-full h-[400px] rounded-xl overflow-hidden mb-12"
-            style={{
-              background:
-                'linear-gradient(90deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.5) 100%), url(/placeholder.svg?height=400&width=1200)',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-            }}
-          >
+          <div className="relative flex flex-col w-full h-[400px] rounded-xl overflow-hidden mb-12 bg-global-4">
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
-              <h1 className="text-5xl font-extrabold leading-[61px] text-global-4 font-plus-jakarta mb-4">
+              <h1 className="text-5xl font-extrabold leading-[61px] text-white font-plus-jakarta mb-4">
                 Kebijakan Privasi
               </h1>
-              <p className="text-lg font-normal leading-7 text-global-4 font-plus-jakarta max-w-[800px]">
+              <p className="text-lg font-normal leading-7 text-white font-plus-jakarta max-w-[800px]">
                 Pelajari bagaimana MunggahWae melindungi dan menggunakan data pribadi Anda saat
                 menggunakan layanan kami
               </p>
@@ -47,15 +39,15 @@ const PrivacyPolicyPage: React.FC = () => {
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
                   <li className="text-base font-normal leading-7 text-global-2 font-plus-jakarta">
-                    <span className="font-bold text-global-2">Data Identitas:</span> Nama lengkap,
-                    alamat email, nomor telepon, dan tanggal lahir
+                    <span className="text-global-2">Data Identitas:</span> Nama lengkap, alamat
+                    email, nomor telepon, dan tanggal lahir
                   </li>
                   <li className="text-base font-normal leading-7 text-global-2 font-plus-jakarta">
-                    <span className="font-bold text-global-2">Data Transaksi:</span> Informasi
+                    <span className="text-global-2">Data Transaksi:</span> Informasi
                     pemesanan, metode pembayaran, dan riwayat transaksi
                   </li>
                   <li className="text-base font-normal leading-7 text-global-2 font-plus-jakarta">
-                    <span className="font-bold text-global-2">Data Teknis:</span> Alamat IP, jenis
+                    <span className="text-global-2">Data Teknis:</span> Alamat IP, jenis
                     perangkat, browser, dan aktivitas penggunaan platform
                   </li>
                 </ul>
@@ -130,15 +122,15 @@ const PrivacyPolicyPage: React.FC = () => {
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
                   <li className="text-base font-normal leading-7 text-global-2 font-plus-jakarta">
-                    <span className="font-bold text-global-2">Penyedia Layanan:</span> Untuk
+                    <span className="text-global-2">Penyedia Layanan:</span> Untuk
                     keperluan pembayaran, pengiriman email, dan layanan teknis
                   </li>
                   <li className="text-base font-normal leading-7 text-global-2 font-plus-jakarta">
-                    <span className="font-bold text-global-2">Pengelola Gunung:</span> Informasi
+                    <span className="text-global-2">Pengelola Gunung:</span> Informasi
                     yang diperlukan untuk validasi tiket dan keamanan pendakian
                   </li>
                   <li className="text-base font-normal leading-7 text-global-2 font-plus-jakarta">
-                    <span className="font-bold text-global-2">Kepatuhan Hukum:</span> Ketika diminta
+                    <span className="text-global-2">Kepatuhan Hukum:</span> Ketika diminta
                     oleh otoritas yang berwenang sesuai peraturan
                   </li>
                 </ul>
@@ -156,15 +148,15 @@ const PrivacyPolicyPage: React.FC = () => {
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
                   <li className="text-base font-normal leading-7 text-global-2 font-plus-jakarta">
-                    <span className="font-bold text-global-2">Cookie Esensial:</span> Diperlukan
+                    <span className="text-global-2">Cookie Esensial:</span> Diperlukan
                     untuk fungsi dasar platform
                   </li>
                   <li className="text-base font-normal leading-7 text-global-2 font-plus-jakarta">
-                    <span className="font-bold text-global-2">Cookie Fungsional:</span> Menyimpan
+                    <span className="text-global-2">Cookie Fungsional:</span> Menyimpan
                     preferensi dan pengaturan Anda
                   </li>
                   <li className="text-base font-normal leading-7 text-global-2 font-plus-jakarta">
-                    <span className="font-bold text-global-2">Cookie Analitik:</span> Membantu kami
+                    <span className="text-global-2">Cookie Analitik:</span> Membantu kami
                     memahami penggunaan platform
                   </li>
                 </ul>
@@ -184,23 +176,23 @@ const PrivacyPolicyPage: React.FC = () => {
                 </p>
                 <ul className="list-disc pl-6 space-y-2">
                   <li className="text-base font-normal leading-7 text-global-2 font-plus-jakarta">
-                    <span className="font-bold text-global-2">Hak Akses:</span> Meminta informasi
+                    <span className="text-global-2">Hak Akses:</span> Meminta informasi
                     tentang data yang kami miliki
                   </li>
                   <li className="text-base font-normal leading-7 text-global-2 font-plus-jakarta">
-                    <span className="font-bold text-global-2">Hak Pembetulan:</span> Memperbarui
+                    <span className="text-global-2">Hak Pembetulan:</span> Memperbarui
                     atau mengoreksi data yang tidak akurat
                   </li>
                   <li className="text-base font-normal leading-7 text-global-2 font-plus-jakarta">
-                    <span className="font-bold text-global-2">Hak Penghapusan:</span> Meminta
+                    <span className="text-global-2">Hak Penghapusan:</span> Meminta
                     penghapusan data dalam kondisi tertentu
                   </li>
                   <li className="text-base font-normal leading-7 text-global-2 font-plus-jakarta">
-                    <span className="font-bold text-global-2">Hak Portabilitas:</span> Meminta data
+                    <span className="text-global-2">Hak Portabilitas:</span> Meminta data
                     dalam format yang dapat dipindahkan
                   </li>
                   <li className="text-base font-normal leading-7 text-global-2 font-plus-jakarta">
-                    <span className="font-bold text-global-2">Hak Keberatan:</span> Menolak
+                    <span className="text-global-2">Hak Keberatan:</span> Menolak
                     pemrosesan data untuk tujuan tertentu
                   </li>
                 </ul>

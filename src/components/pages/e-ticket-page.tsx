@@ -7,8 +7,8 @@ import { ArrowLeft, Download, Printer, Phone, Mail } from 'lucide-react';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import { formatCurrency } from '@/lib/utils';
-import { QRCodeSVG as QRCode } from 'qrcode.react';
-import { jsPDF } from 'jspdf';
+import QRCode from 'qrcode.react';
+import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
 interface ETicketData {
