@@ -14,20 +14,12 @@ const TermsConditionsPage: React.FC = () => {
         {/* Main Content */}
         <main className="flex flex-col items-center w-full max-w-[1200px] mx-auto px-4 py-8">
           {/* Hero Section */}
-          <div
-            className="relative flex flex-col w-full h-[400px] rounded-xl overflow-hidden mb-12"
-            style={{
-              background:
-                'linear-gradient(90deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.5) 100%), url(/placeholder.svg?height=400&width=1200)',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-            }}
-          >
+          <div className="relative flex flex-col w-full h-[400px] rounded-xl overflow-hidden mb-12 bg-global-4">
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
-              <h1 className="text-5xl font-extrabold leading-[61px] text-global-4 font-plus-jakarta mb-4">
+              <h1 className="text-5xl font-extrabold leading-[61px] text-white font-plus-jakarta mb-4">
                 Syarat & Ketentuan
               </h1>
-              <p className="text-lg font-normal leading-7 text-global-4 font-plus-jakarta max-w-[800px]">
+              <p className="text-lg font-normal leading-7 text-white font-plus-jakarta max-w-[800px]">
                 Ketentuan penggunaan platform Munggahwae yang perlu Anda pahami sebelum menggunakan
                 layanan kami
               </p>
@@ -43,11 +35,11 @@ const TermsConditionsPage: React.FC = () => {
               </h3>
               <div className="space-y-4">
                 <p className="text-base font-normal leading-7 text-global-2 font-plus-jakarta">
-                  <span className="font-bold text-global-2">"Pengguna"</span> adalah setiap individu
+                  <span className="text-global-2">"Pengguna"</span> adalah setiap individu
                   yang mengakses dan menggunakan platform Munggahwae.
                 </p>
                 <p className="text-base font-normal leading-7 text-global-2 font-plus-jakarta">
-                  <span className="font-bold text-global-2">"Layanan"</span> mencakup semua fitur
+                  <span className="text-global-2">"Layanan"</span> mencakup semua fitur
                   yang disediakan oleh platform termasuk pemesanan tiket, informasi gunung, dan
                   layanan terkait lainnya.
                 </p>

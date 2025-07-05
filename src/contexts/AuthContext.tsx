@@ -4,6 +4,8 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 
 interface User {
+  username: any;
+  name: any;
   id: string;
   email: string;
   nama_lengkap: string;

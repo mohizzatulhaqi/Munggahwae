@@ -1,12 +1,12 @@
 'use client';
 import type React from 'react';
-import { useState, useMemo, useEffect } from 'react';
-import Image from 'next/image';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import Pagination from '@/components/ui/Pagination';
 import ProvinceFilter from '../ui/ProvinceFilter';
+import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const MountainDiscoveryPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -72,6 +72,13 @@ const MountainDiscoveryPage: React.FC = () => {
     setCurrentPage(page);
   };
 
+  useEffect(() => {
+    if (searchQuery.trim() === '') {
+      setAppliedSearchQuery('');
+      setCurrentPage(1);
+    }
+  }, [searchQuery]);
+
   return (
     <div className="flex flex-col min-h-screen bg-global-2">
       <div className="flex flex-col flex-1 bg-global-1">
@@ -97,12 +104,7 @@ const MountainDiscoveryPage: React.FC = () => {
 
               <div className="flex flex-row w-full max-w-[480px] h-16 mt-12">
                 <div className="flex items-center justify-center w-16 h-16 bg-global-1 border border-[#cee8db] rounded-l-xl">
-                  <Image
-                    src="/placeholder.svg?height=20&width=20"
-                    alt="Search"
-                    width={20}
-                    height={20}
-                  />
+                  <Search size={20} className="text-global-2" />
                 </div>
                 <input
                   type="text"
@@ -114,7 +116,11 @@ const MountainDiscoveryPage: React.FC = () => {
                 />
                 <button
                   onClick={handleSearch}
-                  className="w-[92px] h-16 text-base font-bold leading-[21px] text-center text-global-3 font-plus-jakarta bg-global-1 border border-[#cee8db] rounded-r-xl hover:bg-global-3 hover:text-global-1 transition-colors"
+                  className="w-[92px] h-16 text-base font-bold leading-[21px] text-center font-plus-jakarta
+           bg-global-4 text-global-1 border border-global-4 rounded-r-xl
+           hover:bg-global-4 hover:border-global-4 hover:text-global-4
+           hover:scale-[1.02] hover:shadow-md transform
+           transition-all duration-300 ease-in-out"
                 >
                   Cari
                 </button>
@@ -152,11 +158,9 @@ const MountainDiscoveryPage: React.FC = () => {
                     <Link key={mountain.id} href={`/mountain/${mountain.id}`}>
                       <div className="flex flex-col items-center w-full cursor-pointer hover:transform hover:scale-105 transition-transform">
                         <div className="w-full h-[156px]">
-                          <Image
+                          <img
                             src={mountain.gambar || '/placeholder.svg'}
                             alt={mountain.nama}
-                            width={176}
-                            height={99}
                             className="w-full h-[99px] object-cover rounded-xl"
                           />
                           <h3 className="mt-3 text-base font-medium leading-[21px] text-global-1 font-plus-jakarta text-center">
@@ -189,13 +193,7 @@ const MountainDiscoveryPage: React.FC = () => {
                     disabled={currentPage === 1}
                     className="disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <Image
-                      src="/placeholder.svg?height=40&width=40"
-                      alt="Previous"
-                      width={40}
-                      height={40}
-                      className="cursor-pointer"
-                    />
+                    <ChevronLeft size={40} className="text-global-2" />
                   </button>
                   <Pagination
                     currentPage={currentPage}
@@ -207,13 +205,7 @@ const MountainDiscoveryPage: React.FC = () => {
                     disabled={currentPage === totalPages}
                     className="disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <Image
-                      src="/placeholder.svg?height=40&width=40"
-                      alt="Next"
-                      width={40}
-                      height={40}
-                      className="cursor-pointer"
-                    />
+                    <ChevronRight size={40} className="text-global-2" />
                   </button>
                 </div>
               )}
