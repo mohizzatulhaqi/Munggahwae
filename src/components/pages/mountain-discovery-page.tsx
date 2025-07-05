@@ -33,6 +33,8 @@ const MountainDiscoveryPage: React.FC = () => {
         if (selectedProvince !== 'Semua Provinsi') params.append('provinsi', selectedProvince);
         const res = await fetch(`/api/gunung?${params.toString()}`);
         const data = await res.json();
+        console.log('Data gunung:', data.mountains); // 👈 Tambahkan ini di sini
+
         if (data.success) {
           setMountains(data.mountains || []);
           setTotalMountains(data.meta?.total || 0);
@@ -153,7 +155,7 @@ const MountainDiscoveryPage: React.FC = () => {
                       <div className="flex flex-col items-center w-full cursor-pointer hover:transform hover:scale-105 transition-transform">
                         <div className="w-full h-[156px]">
                           <Image
-                            src={mountain.gambar || '/placeholder.svg'}
+                            src={mountain.urlGambar || '/placeholder.svg'}
                             alt={mountain.nama}
                             width={176}
                             height={99}

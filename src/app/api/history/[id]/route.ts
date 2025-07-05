@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
+import { AnggotaPemesan } from '@/domain/entities/Booking';
 
 // GET /api/history/[id]
 // Mendapatkan detail pemesanan berdasarkan ID
@@ -124,7 +125,7 @@ export async function GET(
         kuotaHarian: booking.mountains?.quota_per_day,
         hargaPerOrang: booking.mountains?.price_per_person,
       },
-      jalur: booking.trails ? {
+      Jalur: booking.trails ? {
         id: booking.trails.id,
         nama: booking.trails.name,
         deskripsi: booking.trails.description,
@@ -132,7 +133,7 @@ export async function GET(
         estimasiDurasi: booking.trails.estimated_duration_hours,
         ketinggianMaksimal: booking.trails.max_altitude,
       } : null,
-      anggotaPendaki: booking.booking_members?.map((member: any) => ({
+      AnggotaPemesan: booking.booking_members?.map((member: any) => ({
         id: member.id,
         email: member.email,
         nama: member.nama,
