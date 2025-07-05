@@ -24,6 +24,7 @@ export async function GET(request: NextRequest) {
     const history = await getUserHistoryUseCase.execute(user.id, status, search, page, limit);
     return NextResponse.json({ success: true, history });
   } catch (error) {
+    console.error(' Error fetching history:', error); // ← Tambahkan ini
     return NextResponse.json(
       { success: false, error: 'Failed to fetch history' },
       { status: 500 }

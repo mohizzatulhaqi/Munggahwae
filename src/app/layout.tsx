@@ -1,6 +1,8 @@
+
 import type React from 'react';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
+import { AuthProvider } from '@/contexts/AuthContext';
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -23,7 +25,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id">
-      <body className={`${plusJakarta.variable} font-plus-jakarta`}>{children}</body>
+      <body className={`${plusJakarta.variable} font-plus-jakarta`}>
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+      </body>
     </html>
   );
 }

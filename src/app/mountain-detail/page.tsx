@@ -8,10 +8,21 @@ interface TrailInfo {
   description: string;
   icon: string;
 }
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
+
 const GunungRinjaniPage: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const { user } = useAuth();
+  const router = useRouter();
   const handleBookingClick = () => {
+    if (!user) {
+      alert('Anda harus login untuk memesan tiket!');
+      router.push('/login');
+      return;
+    }
     alert('Terima kasih! Anda akan diarahkan ke halaman pembayaran.');
+    // router.push('/payment'); // aktifkan jika ingin redirect ke halaman pembayaran
   };
   const handleImageClick = (imageSrc: string) => {
     setSelectedImage(imageSrc);

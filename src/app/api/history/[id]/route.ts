@@ -29,27 +29,27 @@ export async function GET(
 
     // 2. Ambil data booking dengan join ke mountains, trails, dan booking members
     const { data: booking, error } = await supabase
-      .from('bookings')
+      .from('booking')
       .select(`
         *,
-        mountains (
+        Gunung (
           id,
-          name,
-          location,
-          province,
-          description,
-          image_url,
-          hero_image_url,
-          quota_per_day,
-          price_per_person
+          nama,
+          lokasi,
+          provinsi,
+          deskripsi,
+          urlGambar,
+          heroImageUrl,
+          kuotaHarian,
+          hargaPerOrang
         ),
-        trails (
+        Jalur (
           id,
-          name,
-          description,
-          difficulty_level,
-          estimated_duration_hours,
-          max_altitude
+          nama,
+          deskripsi,
+          tingkatKesulitan,
+          estimasiDurasi,
+          ketinggianMaksimal
         ),
         booking_members (
           id,

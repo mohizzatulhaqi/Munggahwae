@@ -1,6 +1,7 @@
 "use client"
 import { useState } from "react"
 import type React from "react"
+import { useRouter } from "next/navigation"
 
 import Link from "next/link"
 import Image from "next/image"
@@ -15,6 +16,7 @@ const LoginPage = () => {
   })
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -44,6 +46,7 @@ const LoginPage = () => {
       alert("Login berhasil!")
       console.log("User data:", data)
       // TODO: simpan session/token bila perlu
+      router.push("/dashboard"); // Redirect ke dashboard setelah login
     }
 
     setIsLoading(false)

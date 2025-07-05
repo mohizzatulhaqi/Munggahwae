@@ -142,7 +142,7 @@ export default function BookingHistoryPage({
           <p className="text-gray-600">Lihat semua riwayat pemesanan pendakian gunung Anda</p>
         </div>
 
-        {bookings.length === 0 ? (
+{!bookings || bookings.length === 0 ? (
           <EmptyState />
         ) : (
           <>

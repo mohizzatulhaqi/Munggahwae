@@ -50,33 +50,21 @@ const RegisterPage = () => {
     setIsLoading(true)
 
     const { data, error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          data: {
-            full_name: formData.fullName,
-          },
-    },
-  })
+      email: formData.email,
+      password: formData.password,
+      options: {
+        data: {
+          namaLengkap: formData.fullName,
+        },
+      },
+    });
 
-  if (error) {
-    alert(`Gagal daftar: ${error.message}`)
-  } else {
-    alert("Pendaftaran berhasil! Silakan cek login.")
-    try {
-      const res = await createUser({  
-        id: data.user?.id ?? "",
-        namaLengkap: formData.fullName,
-        email: formData.email,
-        password: formData.password, // opsional
-      })
-
-      console.log(res);
-    } catch (e: any) {
-      console.error("Gagal simpan data user:", e)
-      alert("Akun berhasil dibuat, tapi gagal menyimpan data tambahan.")
-    }  
-  }
+    if (error) {
+      alert(`Gagal daftar: ${error.message}`);
+    } else {
+      alert("Pendaftaran berhasil! Silakan cek email untuk verifikasi dan login.");
+      // Tidak perlu insert manual ke tabel Pengguna, data sudah di Supabase Auth
+    }
 
   setIsLoading(false)
 }

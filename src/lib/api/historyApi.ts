@@ -116,37 +116,27 @@ class HistoryApiService {
   private baseUrl = '/api/history';
 
   async getHistory(params?: {
-    status?: string;
-    search?: string;
-    page?: number;
-    limit?: number;
-  }): Promise<GetHistoryResponse> {
-    try {
-      const url = new URL(this.baseUrl, window.location.origin);
-      
-      if (params?.status) url.searchParams.append('status', params.status);
-      if (params?.search) url.searchParams.append('search', params.search);
-      if (params?.page) url.searchParams.append('page', params.page.toString());
-      if (params?.limit) url.searchParams.append('limit', params.limit.toString());
+  status?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
+}): Promise<GetHistoryResponse> {
+  try {
+    const url = new URL(this.baseUrl, window.location.origin);
 
-      const response = await fetch(url.toString());
-      const data = await response.json();
+    if (params?.status) url.searchParams.append('status', params.status);
+    if (params?.search) url.searchParams.append('search', params.search);
+    if (params?.page) url.searchParams.append('page', params.page.toString());
+    if (params?.limit) url.searchParams.append('limit', params.limit.toString());
 
-      if (!response.ok) {
-        return {
-          success: false,
-          bookings: [],
-          total: 0,
-          page: 1,
-          limit: 10,
-          totalPages: 0,
-          error: data.error || 'Failed to fetch history',
-        };
-      }
+    const response = await fetch(url.toString(), {
+      method: 'GET',
+      credentials: 'include', // ✅ WAJIB untuk bawa cookie Supabase!
+    });
 
-      return data;
-    } catch (error) {
-      console.error('Error fetching history:', error);
+    const data = await response.json();
+
+    if (!response.ok) {
       return {
         success: false,
         bookings: [],
@@ -154,10 +144,24 @@ class HistoryApiService {
         page: 1,
         limit: 10,
         totalPages: 0,
-        error: 'Network error occurred while fetching history',
+        error: data.error || 'Failed to fetch history',
       };
     }
+
+    return data;
+  } catch (error) {
+    console.error('Error fetching history:', error);
+    return {
+      success: false,
+      bookings: [],
+      total: 0,
+      page: 1,
+      limit: 10,
+      totalPages: 0,
+      error: 'Network error occurred while fetching history',
+    };
   }
+}
 
   async getBookingDetail(id: string): Promise<GetBookingDetailResponse> {
     try {

@@ -1,10 +1,14 @@
 "use client"
 
 import { useState, useEffect } from 'react'
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import { historyApi, GetHistoryResponse, BookingWithMountain } from '@/lib/api/historyApi'
 import BookingHistoryPage from '@/components/pages/booking-history-page'
 
 export default function History() {
+  const { user, loading: authLoading } = useAuth();
+  const router = useRouter();
   const [bookings, setBookings] = useState<BookingWithMountain[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -14,10 +18,15 @@ export default function History() {
     total: 0,
     totalPages: 0,
   })
-
+  
   useEffect(() => {
-    loadBookings()
-  }, [])
+    if (!authLoading && !user) {
+      router.push('/login');
+    } else if (user) {
+      loadBookings();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authLoading, user]);
 
   const loadBookings = async (page = 1, status?: string, search?: string) => {
     try {
@@ -66,7 +75,8 @@ export default function History() {
     loadBookings(1, undefined, searchTerm || undefined)
   }
 
-  if (loading) {
+
+  if (authLoading || loading || !user) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
