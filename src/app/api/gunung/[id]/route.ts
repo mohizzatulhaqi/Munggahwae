@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/client';
 
+export const revalidate = 0; // Ensures data is always fresh
+
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }

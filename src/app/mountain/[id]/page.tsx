@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams, notFound } from "next/navigation";
 import MountainDetailPage from "@/components/pages/mountain-detail-page";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function MountainPage() {
   const params = useParams();
@@ -9,6 +10,7 @@ export default function MountainPage() {
   const [mountain, setMountain] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { user, loading: authLoading } = useAuth();
 
   useEffect(() => {
     const fetchMountain = async () => {
@@ -50,5 +52,6 @@ export default function MountainPage() {
   if (loading) return <div className="w-full text-center py-12">Memuat data gunung...</div>;
   if (error || !mountain) return notFound();
 
-  return <MountainDetailPage mountain={mountain} />;
+  if (authLoading) return <div className="w-full text-center py-12">Memuat autentikasi...</div>;
+  return <MountainDetailPage mountain={mountain} user={user} />;
 }

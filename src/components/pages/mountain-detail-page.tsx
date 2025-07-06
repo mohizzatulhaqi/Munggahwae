@@ -8,9 +8,11 @@ import Footer from '@/components/common/Footer';
 import BackButton from '@/components/ui/BackButton';
 import { Gunung } from '@/domain/entities/Gunung';
 import { Route } from 'lucide-react';
+import { User as AuthUser } from '@/contexts/AuthContext';
 
 interface MountainDetailPageProps {
   mountain: Gunung;
+  user: AuthUser | null;
 }
 
 function canAcceptBookings(mountain: any) {
@@ -18,7 +20,7 @@ function canAcceptBookings(mountain: any) {
   return mountain.status === 'active' && mountain.kuota > 0;
 }
 
-const MountainDetailPage: React.FC<MountainDetailPageProps> = ({ mountain }) => {
+const MountainDetailPage: React.FC<MountainDetailPageProps> = ({ mountain, user }) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const router = useRouter();
 
@@ -106,16 +108,21 @@ const MountainDetailPage: React.FC<MountainDetailPageProps> = ({ mountain }) => 
             </h2>
             <button
               onClick={handleBookingClick}
-              disabled={!canAcceptBookings(mountain)}
+              disabled={!canAcceptBookings(mountain) || !user}
               className={`text-sm font-medium leading-[18px] px-4 py-2 rounded-lg font-plus-jakarta transition-opacity ${
-                canAcceptBookings(mountain)
+                canAcceptBookings(mountain) && user
                   ? 'bg-[#0FBD66] text-white hover:opacity-90'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
             >
-              {canAcceptBookings(mountain) ? 'Pesan Sekarang' : 'Tidak Tersedia'}
+              {canAcceptBookings(mountain) && user ? 'Pesan Sekarang' : 'Tidak Tersedia'}
             </button>
           </div>
+          {!user && canAcceptBookings(mountain) && (
+            <p className="text-sm text-red-500 font-plus-jakarta mt-2 text-center">
+              Anda harus login untuk memesan tiket.
+            </p>
+          )}
         </div>
 
         {/* Description Section */}
