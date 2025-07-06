@@ -99,7 +99,7 @@ const AdminMountainsPage = () => {
             quota: mountain.kuotaPerHari,
             price: mountain.harga,
             description: mountain.deskripsi || '',
-            image: mountain.gambar || '',
+            image: mountain.urlGambar || '', // Use urlGambar from API response
             trailCount: mountain.jalur,
           }));
           setMountains(transformedData);
@@ -296,9 +296,11 @@ const AdminMountainsPage = () => {
         kuota: parseInt(editForm.quota),
         harga: parseInt(editForm.price),
         deskripsi: editForm.description,
-        gambar: imageUrl,
+        urlGambar: imageUrl, // Use urlGambar field
         provinsi: editForm.province,
         lokasi: editForm.location,
+        kuotaPerHari: parseInt(editForm.quota),
+        hargaPerOrang: parseInt(editForm.price),
       };
 
       const response = await fetch('/api/admin/update', {
@@ -363,9 +365,11 @@ const AdminMountainsPage = () => {
         kuota: parseInt(mountainForm.quota),
         harga: parseInt(mountainForm.price),
         deskripsi: mountainForm.description,
-        gambar: imageUrl,
+        urlGambar: imageUrl, // Use urlGambar field
         provinsi: mountainForm.province,
         lokasi: mountainForm.location,
+        kuotaPerHari: parseInt(mountainForm.quota),
+        hargaPerOrang: parseInt(mountainForm.price),
       };
 
       const response = await fetch('/api/admin/create', {
@@ -392,7 +396,7 @@ const AdminMountainsPage = () => {
             quota: mountain.kuotaPerHari,
             price: mountain.harga,
             description: mountain.deskripsi,
-            image: mountain.gambar,
+            image: mountain.urlGambar, // Use urlGambar from API response
             trailCount: mountain.jalur,
           }));
           setMountains(transformedData);
@@ -816,13 +820,18 @@ const AdminMountainsPage = () => {
               <div className="relative">
                 <div className="w-full h-48 rounded-t-lg overflow-hidden">
                   <Image
-                    src={mountain.image || '/placeholder.svg'}
+                    src={mountain.image || '/images/img_depth_7_frame_0.png'}
                     alt={mountain.name}
                     width={400}
                     height={200}
                     className="w-full h-48 object-cover"
                     style={{ objectFit: 'cover' }}
                     priority={false}
+                    onError={(e) => {
+                      // Fallback to placeholder if image fails to load
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/images/img_depth_7_frame_0.png';
+                    }}
                   />
                 </div>
                 <div className="absolute top-3 right-3 flex gap-2">

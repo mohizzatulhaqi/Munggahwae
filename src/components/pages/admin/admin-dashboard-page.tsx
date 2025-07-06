@@ -38,40 +38,92 @@ interface SupabaseBooking {
   lokasi_gunung?: string; // Tambahkan properti ini untuk lokasi gunung
 }
 
+interface DashboardStatistics {
+  newBookings: number;
+  activeUsers: number;
+  popularMountain: string;
+  totalBookings: number;
+  confirmedBookings: number;
+  pendingBookings: number;
+  cancelledBookings: number;
+  totalMountains: number;
+  totalRevenue: number;
+  averageBookingValue: number;
+  bookingSuccessRate: number;
+}
+
 const AdminDashboardPage = () => {
   const [bookings, setBookings] = useState<SupabaseBooking[]>([]);
+  const [statistics, setStatistics] = useState<DashboardStatistics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    async function fetchBookings() {
+    async function fetchData() {
       try {
-        const res = await fetch('/api/admin/bookings/list');
-        const result = await res.json();
-        if (!result.success) throw new Error(result.message);
-        setBookings(result.bookings);
+        setLoading(true);
+        
+        // Fetch bookings
+        const bookingsRes = await fetch('/api/admin/bookings/list');
+        const bookingsResult = await bookingsRes.json();
+        if (!bookingsResult.success) throw new Error(bookingsResult.message);
+        setBookings(bookingsResult.bookings);
+        
+        // Fetch statistics
+        const statsRes = await fetch('/api/admin/statistics');
+        const statsResult = await statsRes.json();
+        if (!statsResult.success) throw new Error(statsResult.message);
+        setStatistics(statsResult.statistics);
+        
       } catch (err: any) {
-        setError(err.message || 'Gagal mengambil data booking');
+        setError(err.message || 'Gagal mengambil data');
       } finally {
         setLoading(false);
       }
     }
 
-    fetchBookings();
+    fetchData();
   }, []);
 
-  if (loading) return <AdminLayout><p>Memuat data booking...</p></AdminLayout>;
+  if (loading) return <AdminLayout><p>Memuat data dashboard...</p></AdminLayout>;
   if (error) return <AdminLayout><p className="text-red-500">Error: {error}</p></AdminLayout>;
+  if (!statistics) return <AdminLayout><p>Data statistik tidak tersedia</p></AdminLayout>;
 
-  const totalBookings = bookings.length;
-  const confirmedBookings = bookings.filter((b) => b.status === 'confirmed').length;
-  const pendingBookings = bookings.filter((b) => b.status === 'pending').length;
-  const cancelledBookings = bookings.filter((b) => b.status === 'cancelled').length;
+  // Helper functions for status styling (consistent with admin-booking-page)
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'confirmed':
+      case 'dikonfirmasi':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'pending':
+      case 'menunggu':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'cancelled':
+      case 'ditolak':
+      case 'rejected':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
 
-  const totalRevenue = bookings
-    .filter((b) => b.status === 'confirmed')
-    .reduce((sum, b) => sum + (b.totalHarga || 0), 0);
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'confirmed':
+      case 'dikonfirmasi':
+        return 'Dikonfirmasi';
+      case 'pending':
+      case 'menunggu':
+        return 'Menunggu';
+      case 'cancelled':
+      case 'ditolak':
+      case 'rejected':
+        return 'Ditolak';
+      default:
+        return status;
+    }
+  };
 
   const recentBookings = [...bookings]
     .sort((a, b) => new Date(b.tanggalMasuk).getTime() - new Date(a.tanggalMasuk).getTime())
@@ -80,35 +132,29 @@ const AdminDashboardPage = () => {
   const stats = [
     {
       title: 'Total Gunung',
-      value: '15',
+      value: statistics.totalMountains.toString(),
       change: '+2',
       changeType: 'positive',
       icon: Mountain,
       color: 'bg-green-500',
     },
     {
-      title: 'Booking Bulan Ini',
-      value: totalBookings.toString(),
-      change: `+${pendingBookings}`,
+      title: 'Total Booking',
+      value: statistics.totalBookings.toString(),
+      change: `+${statistics.newBookings}`,
       changeType: 'positive',
       icon: Calendar,
       color: 'bg-purple-500',
     },
     {
       title: 'Pendapatan',
-      value: `Rp ${(totalRevenue / 1000000).toFixed(1)}M`,
+      value: `Rp ${(statistics.totalRevenue / 1000000).toFixed(1)}M`,
       change: '+18%',
       changeType: 'positive',
       icon: TrendingUp,
       color: 'bg-orange-500',
     },
   ];
-
-  const todayStats = {
-    newBookings: pendingBookings,
-    activeUsers: bookings.reduce((sum, b) => sum + b.jumlahPemesan, 0),
-    popularMountain: 'Rinjani', // statis (bisa dihitung dari gunungId terbanyak)
-  };
 
   return (
     <AdminLayout>
@@ -122,12 +168,6 @@ const AdminDashboardPage = () => {
             <p className="text-gray-600 mt-1">
               Selamat datang kembali! Berikut ringkasan platform Munggahwae hari ini.
             </p>
-          </div>
-          <div className="flex gap-3">
-            <Button variant="outline" className="gap-2">
-              <Eye className="w-4 h-4" />
-              Lihat Laporan
-            </Button>
           </div>
         </div>
 
@@ -220,23 +260,9 @@ const AdminDashboardPage = () => {
                               {new Date(booking.tanggalMasuk).toLocaleDateString('id-ID')}
                             </div>
                             <span
-                              className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                (booking.status === 'dikonfirmasi' || booking.status === 'confirmed')
-                                  ? 'bg-green-100 text-green-700'
-                                  : booking.status === 'pending'
-                                  ? 'bg-yellow-100 text-yellow-700'
-                                  : booking.status === 'cancelled'
-                                  ? 'bg-red-100 text-red-700'
-                                  : 'bg-gray-100 text-gray-700'
-                              }`}
+                              className={`inline-flex items-center justify-center px-3 py-1.5 rounded-full text-xs font-medium border min-w-[80px] ${getStatusColor(booking.status)}`}
                             >
-                              {(booking.status === 'dikonfirmasi' || booking.status === 'confirmed')
-                                ? 'Dikonfirmasi'
-                                : booking.status === 'pending'
-                                ? 'Menunggu'
-                                : booking.status === 'cancelled'
-                                ? 'Dibatalkan'
-                                : booking.status}
+                              {getStatusText(booking.status)}
                             </span>
                           </div>
                         </div>
@@ -283,23 +309,42 @@ const AdminDashboardPage = () => {
               <CardContent className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Booking Baru</span>
-                  <span className="font-semibold text-gray-900">{todayStats.newBookings}</span>
+                  <span className="font-semibold text-gray-900">{statistics.newBookings}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Total Pendaki</span>
-                  <span className="font-semibold text-gray-900">{todayStats.activeUsers}</span>
+                  <span className="font-semibold text-gray-900">{statistics.activeUsers}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Gunung Populer</span>
-                  <span className="font-semibold text-gray-900">{todayStats.popularMountain}</span>
+                  <span className="font-semibold text-gray-900">{statistics.popularMountain}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Booking Dikonfirmasi</span>
-                  <span className="font-semibold text-gray-900">{confirmedBookings}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-gray-900">{statistics.confirmedBookings}</span>
+                    <span className="inline-flex items-center justify-center px-2 py-1 rounded-full text-xs font-medium border min-w-[70px] bg-green-100 text-green-800 border-green-200">
+                      Dikonfirmasi
+                    </span>
+                  </div>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Booking Pending</span>
-                  <span className="font-semibold text-yellow-600">{pendingBookings}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-gray-900">{statistics.pendingBookings}</span>
+                    <span className="inline-flex items-center justify-center px-2 py-1 rounded-full text-xs font-medium border min-w-[70px] bg-yellow-100 text-yellow-800 border-yellow-200">
+                      Menunggu
+                    </span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Booking Ditolak</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-gray-900">{statistics.cancelledBookings}</span>
+                    <span className="inline-flex items-center justify-center px-2 py-1 rounded-full text-xs font-medium border min-w-[70px] bg-red-100 text-red-800 border-red-200">
+                      Ditolak
+                    </span>
+                  </div>
                 </div>
               </CardContent>
             </Card>

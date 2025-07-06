@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/app/api/supabaseClient';
 
 export async function PUT(req: NextRequest) {
-  const { id, nama, kuota, harga, deskripsi, provinsi, lokasi } = await req.json();
+  const { id, nama, kuota, harga, deskripsi, provinsi, lokasi, urlGambar} = await req.json();
   
   if (!nama || !kuota || !harga || !deskripsi) {
     return NextResponse.json({ 
@@ -37,6 +37,7 @@ export async function PUT(req: NextRequest) {
         deskripsi,
         provinsi: provinsi || '',
         lokasi: lokasi || '',
+        urlGambar: urlGambar || '',
       })
       .eq('id', id)
       .select();

@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type React from 'react';
 
 import Link from 'next/link';
@@ -24,8 +24,41 @@ interface AdminLayoutProps {
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [adminData, setAdminData] = useState({
+    nama: 'admin',
+    email: 'admin@munggahwae.com'
+  });
   const pathname = usePathname();
   const router = useRouter();
+
+  // Fetch admin data from API
+  useEffect(() => {
+    const fetchAdminData = async () => {
+      try {
+        console.log('Fetching admin data...'); // Debug log
+        const response = await fetch('/api/admin/user');
+        const result = await response.json();
+        
+        console.log('Response from admin API:', result); // Debug log
+        
+        if (result.success && result.admin) {
+          console.log('Setting admin data:', result.admin); // Debug log
+          // Ensure nama and email are not null/undefined
+          setAdminData({
+            nama: result.admin.nama || 'admin',
+            email: result.admin.email || 'admin@munggahwae.com'
+          });
+        } else {
+          console.log('No admin data in response or success is false');
+        }
+      } catch (error) {
+        console.error('Error fetching admin data:', error);
+        // Keep default values if API fails
+      }
+    };
+
+    fetchAdminData();
+  }, []);
 
   const navigation = [
     { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
@@ -105,11 +138,13 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           <div className="bg-green-50 rounded-xl p-4 mb-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0">
-                <span className="text-sm font-bold text-white">A</span>
+                <span className="text-sm font-bold text-white">
+                  {adminData.nama ? adminData.nama.charAt(0).toUpperCase() : 'A'}
+                </span>
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-gray-900 truncate">Admin User</p>
-                <p className="text-xs text-gray-500 truncate">admin@munggahwae.com</p>
+                <p className="text-sm font-semibold text-gray-900 truncate">{adminData.nama}</p>
+                <p className="text-xs text-gray-500 truncate">{adminData.email}</p>
               </div>
             </div>
           </div>

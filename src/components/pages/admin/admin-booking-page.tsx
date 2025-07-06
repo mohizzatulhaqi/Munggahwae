@@ -180,7 +180,10 @@ const AdminBookingsPage = () => {
       booking.user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       booking.user.email.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesStatus = statusFilter === 'all' || booking.status === statusFilter;
+    const matchesStatus = statusFilter === 'all' || 
+      (statusFilter === 'pending' && (booking.status === 'pending' || booking.status === 'menunggu')) ||
+      (statusFilter === 'confirmed' && (booking.status === 'confirmed' || booking.status === 'dikonfirmasi')) ||
+      (statusFilter === 'rejected' && (booking.status === 'rejected' || booking.status === 'ditolak'));
 
     return matchesSearch && matchesStatus;
   });
@@ -188,23 +191,29 @@ const AdminBookingsPage = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'confirmed':
-        return 'bg-green-100 text-green-800';
+      case 'dikonfirmasi':
+        return 'bg-green-100 text-green-800 border-green-200';
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'cancelled':
-        return 'bg-red-100 text-red-800';
+      case 'menunggu':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'rejected':
+      case 'ditolak':
+        return 'bg-red-100 text-red-800 border-red-200';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getStatusText = (status: string) => {
     switch (status) {
       case 'confirmed':
+      case 'dikonfirmasi':
         return 'Dikonfirmasi';
       case 'pending':
+      case 'menunggu':
         return 'Menunggu';
-      case 'cancelled':
+      case 'ditolak':
+      case 'rejected':
         return 'Ditolak';
       default:
         return status;
@@ -304,10 +313,6 @@ const AdminBookingsPage = () => {
             <h1 className="text-2xl font-bold text-gray-900">Kelola Booking</h1>
             <p className="text-gray-600">Kelola semua booking pendakian</p>
           </div>
-          <Button onClick={handleExport} variant="outline">
-            <Download className="w-4 h-4 mr-2" />
-            Export Data
-          </Button>
         </div>
 
         {/* Search and Filter */}
@@ -331,7 +336,7 @@ const AdminBookingsPage = () => {
                 <option value="all">Semua Status</option>
                 <option value="pending">Menunggu</option>
                 <option value="confirmed">Dikonfirmasi</option>
-                <option value="cancelled">Ditolak</option>
+                <option value="rejected">Ditolak</option>
               </select>
             </div>
           </CardContent>
@@ -402,7 +407,7 @@ const AdminBookingsPage = () => {
                       </td>
                       <td className="py-4 px-4">
                         <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(booking.status)}`}
+                          className={`inline-flex items-center justify-center px-3 py-1.5 rounded-full text-xs font-medium border min-w-[80px] ${getStatusColor(booking.status)}`}
                         >
                           {getStatusText(booking.status)}
                         </span>
@@ -416,7 +421,7 @@ const AdminBookingsPage = () => {
                           >
                             <Eye className="w-4 h-4" />
                           </Button>
-                          {booking.status === 'pending' && (
+                          {(booking.status === 'pending' || booking.status === 'menunggu') && (
                             <>
                               <Button
                                 size="sm"
@@ -503,7 +508,7 @@ const AdminBookingsPage = () => {
                       <div>
                         <p className="text-sm text-gray-600">Status</p>
                         <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(selectedBooking.status)}`}
+                          className={`inline-flex items-center justify-center px-3 py-1.5 rounded-full text-xs font-medium border min-w-[80px] ${getStatusColor(selectedBooking.status)}`}
                         >
                           {getStatusText(selectedBooking.status)}
                         </span>
@@ -663,7 +668,7 @@ const AdminBookingsPage = () => {
                 </Card>
 
                 {/* Action Buttons for Pending Bookings */}
-                {selectedBooking.status === 'pending' && (
+                {(selectedBooking.status === 'pending' || selectedBooking.status === 'menunggu') && (
                   <div className="flex gap-3 pt-4 border-t">
                     <Button
                       className="bg-green-600 hover:bg-green-700"
