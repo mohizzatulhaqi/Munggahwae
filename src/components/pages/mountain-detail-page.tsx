@@ -134,16 +134,25 @@ const MountainDetailPage: React.FC<MountainDetailPageProps> = ({ mountain }) => 
             Galeri
           </h2>
           <div className="flex gap-4 overflow-x-auto">
-            <div className="cursor-pointer flex-shrink-0">
-              <Image
-                src={mountain.urlGambar || '/placeholder.svg'}
-                alt="Gallery image"
-                width={301}
-                height={169}
-                className="rounded-lg object-cover hover:opacity-80 transition-opacity"
-                onClick={() => handleImageClick(mountain.urlGambar)}
-              />
-            </div>
+            {Array.isArray(mountain.galeriGunung) && mountain.galeriGunung.length > 0 ? (
+              mountain.galeriGunung.map((image: string, index: number) => (
+                <div
+                  key={index}
+                  className="cursor-pointer flex-shrink-0"
+                  onClick={() => handleImageClick(image)}
+                >
+                  <Image
+                    src={image || '/placeholder.svg'}
+                    alt={`Gallery image ${index + 1}`}
+                    width={301}
+                    height={169}
+                    className="rounded-lg object-cover hover:opacity-80 transition-opacity"
+                  />
+                </div>
+              ))
+            ) : (
+              <div className="text-global-2">Tidak ada gambar galeri tersedia.</div>
+            )}
           </div>
         </section>
 
@@ -153,20 +162,47 @@ const MountainDetailPage: React.FC<MountainDetailPageProps> = ({ mountain }) => 
             Jalur Tersedia
           </h2>
           <div className="space-y-4">
-            <div className="bg-global-1 p-4 rounded-lg flex items-start gap-4 border border-gray-200">
-              <div className="bg-global-2 p-3 rounded-lg flex-shrink-0">
-                <Route className="w-6 h-6 text-global-1" />
-              </div>
+            {Array.isArray(mountain.jalur) && mountain.jalur.length > 0 ? (
+              mountain.jalur.map((trail: any, index: number) => (
+                <div
+                  key={trail.id || index}
+                  className="bg-global-1 p-4 rounded-lg flex items-start gap-4 border border-gray-200"
+                >
+                  <div className="bg-global-2 p-3 rounded-lg flex-shrink-0">
+                    <Route className="w-6 h-6 text-global-1" />
+                  </div>
 
-              <div className="flex-1">
-                <h3 className="text-base font-medium leading-[21px] text-global-1 font-plus-jakarta mb-1">
-                  Jalur Utama
-                </h3>
-                <p className="text-sm font-normal leading-[21px] text-global-2 font-plus-jakarta">
-                  Jalur pendakian utama dengan pemandangan yang indah dan fasilitas yang lengkap.
-                </p>
-              </div>
-            </div>
+                  <div className="flex-1">
+                    <h3 className="text-base font-medium leading-[21px] text-global-1 font-plus-jakarta mb-1">
+                      {trail.name || `Jalur ${index + 1}`}
+                    </h3>
+                    <p className="text-sm font-normal leading-[21px] text-global-2 font-plus-jakarta">
+                      {trail.description || 'Detail jalur tidak tersedia.'}
+                    </p>
+                    {trail.difficultyLevel && (
+                      <p className="text-sm font-normal leading-[21px] text-global-2 font-plus-jakarta mt-1">
+                        Tingkat Kesulitan: {trail.difficultyLevel}
+                      </p>
+                    )}
+                    {trail.estimatedDurationHours && (
+                      <p className="text-sm font-normal leading-[21px] text-global-2 font-plus-jakarta mt-1">
+                        Estimasi Durasi: {trail.estimatedDurationHours} Jam
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-global-2">Belum ada data jalur tersedia.</div>
+            )}
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-sm font-normal leading-[18px] text-global-2 font-plus-jakarta">
+              Jumlah Jalur
+            </span>
+            <span className="text-sm font-normal leading-[18px] text-global-1 font-plus-jakarta">
+              {Array.isArray(mountain.jalur) ? mountain.jalur.length : 0}
+            </span>
           </div>
         </section>
       </main>

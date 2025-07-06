@@ -13,6 +13,7 @@ export interface GunungProps {
   createdAt?: Date;
   updatedAt?: Date;
   jalur?: any[]; // Assuming jalur is an array of objects, define its type accordingly
+  galeriGunung?: string[];
 }
 
 export class Gunung {
@@ -30,6 +31,7 @@ export class Gunung {
   private _createdAt: Date;
   private _updatedAt: Date;
   private _jalur: any[]; // Assuming jalur is an array of objects, define its type accordingly
+  private _galeriGunung: string[];
 
   constructor(props: GunungProps) {
     this.validateNama(props.nama);
@@ -51,6 +53,7 @@ export class Gunung {
     this._createdAt = props.createdAt || new Date();
     this._updatedAt = props.updatedAt || new Date();
     this._jalur = props.jalur || [];
+    this._galeriGunung = props.galeriGunung || [];
   }
 
   // Business Rules & Validations
@@ -192,6 +195,7 @@ export class Gunung {
   get createdAt(): Date { return this._createdAt; }
   get updatedAt(): Date { return this._updatedAt; }
   get jalur(): any[] { return this._jalur; }
+  get galeriGunung(): string[] { return this._galeriGunung; }
 
   public toJSON() {
     return {
@@ -208,6 +212,7 @@ export class Gunung {
       status: this._status,
       createdAt: this._createdAt,
       updatedAt: this._updatedAt,
+      galeriGunung: this._galeriGunung,
     };
   }
 } 

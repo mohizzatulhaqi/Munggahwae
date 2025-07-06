@@ -22,13 +22,18 @@ export default function MountainPage() {
           setMountain({
             id: data.mountain.id,
             name: data.mountain.nama,
-            quota: data.mountain.kuota,
-            description: data.mountain.deskripsi,
-            heroImage: data.mountain.gambar || '/placeholder.svg',
-            trails: Array.isArray(data.mountain.jalur) ? data.mountain.jalur.join(', ') : '',
-            available: data.mountain.kuota, // Atur sesuai kebutuhan
-            galleryImages: [], // Mapping jika ada galeri
-            trailDetails: [], // Mapping jika ada detail jalur
+            kuota: data.mountain.kuotaPerHari,
+            deskripsi: data.mountain.deskripsi,
+            urlGambar: data.mountain.urlGambar || '/placeholder.svg',
+            jalur: Array.isArray(data.mountain.jalur) ? data.mountain.jalur : [],
+            status: data.mountain.status, // Atur sesuai kebutuhan
+            galeriGunung: data.mountain.galeriGunung || [],
+            peraturan: data.mountain.peraturan || [],
+            harga: data.mountain.harga,
+            hargaPerOrang: data.mountain.hargaPerOrang,
+            kuotaPerHari: data.mountain.kuotaPerHari,
+            lokasi: data.mountain.lokasi,
+            provinsi: data.mountain.provinsi,
           });
         } else {
           setError("Gunung tidak ditemukan");
