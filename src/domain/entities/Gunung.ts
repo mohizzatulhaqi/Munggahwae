@@ -12,6 +12,7 @@ export interface GunungProps {
   status?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  jalur?: any[]; // Assuming jalur is an array of objects, define its type accordingly
 }
 
 export class Gunung {
@@ -28,6 +29,7 @@ export class Gunung {
   private _status: string;
   private _createdAt: Date;
   private _updatedAt: Date;
+  private _jalur: any[]; // Assuming jalur is an array of objects, define its type accordingly
 
   constructor(props: GunungProps) {
     this.validateNama(props.nama);
@@ -48,6 +50,7 @@ export class Gunung {
     this._status = props.status || 'active';
     this._createdAt = props.createdAt || new Date();
     this._updatedAt = props.updatedAt || new Date();
+    this._jalur = props.jalur || [];
   }
 
   // Business Rules & Validations
@@ -188,6 +191,7 @@ export class Gunung {
   get status(): string { return this._status; }
   get createdAt(): Date { return this._createdAt; }
   get updatedAt(): Date { return this._updatedAt; }
+  get jalur(): any[] { return this._jalur; }
 
   public toJSON() {
     return {

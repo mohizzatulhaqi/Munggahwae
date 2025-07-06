@@ -39,8 +39,27 @@ export async function GET(
 
     return NextResponse.json({
       success: true,
-      mountain: gunung
-    });
+      mountain: {
+    id: gunung.id,
+    name: gunung.nama,
+    description: gunung.deskripsi,
+    heroImage: gunung.heroImage,
+    galleryImages: gunung.GaleriGunung?.map((g: any) => g.imageUrl),
+    status: gunung.status,
+    quota: gunung.Jalur?.reduce((acc: number, j: any) => acc + (j.kuota || 0), 0),
+    hargaPerOrang: gunung.Jalur?.[0]?.hargaPerOrang || 0,
+    trails: gunung.Jalur?.length,
+    trailDetails: gunung.Jalur?.map((j: any) => ({
+      id: j.id,
+      name: j.nama,
+      description: j.deskripsi,
+      icon: j.icon,
+      status: j.status,
+      quota: j.kuota,
+      hargaPerOrang: j.hargaPerOrang,
+    })),
+    }
+  });
   } catch (error) {
     console.error('Error fetching gunung:', error);
     return NextResponse.json(
