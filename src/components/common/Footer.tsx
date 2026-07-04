@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import Image from 'next/image';
+import { Facebook, Twitter, Instagram } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -37,31 +37,13 @@ const Footer = () => {
         {/* Social Media Icons */}
         <div className="flex justify-center gap-6 mb-6">
           <a href="#" aria-label="Facebook">
-            <Image
-              src="/placeholder.svg?height=24&width=24"
-              alt="Facebook"
-              width={24}
-              height={24}
-              className="hover:opacity-80 transition-opacity"
-            />
+            <Facebook className="w-6 h-6 text-global-2 hover:opacity-80 transition-opacity" />
           </a>
           <a href="#" aria-label="Twitter">
-            <Image
-              src="/placeholder.svg?height=24&width=24"
-              alt="Twitter"
-              width={24}
-              height={24}
-              className="hover:opacity-80 transition-opacity"
-            />
+            <Twitter className="w-6 h-6 text-global-2 hover:opacity-80 transition-opacity" />
           </a>
           <a href="#" aria-label="Instagram">
-            <Image
-              src="/placeholder.svg?height=24&width=24"
-              alt="Instagram"
-              width={24}
-              height={24}
-              className="hover:opacity-80 transition-opacity"
-            />
+            <Instagram className="w-6 h-6 text-global-2 hover:opacity-80 transition-opacity" />
           </a>
         </div>
 

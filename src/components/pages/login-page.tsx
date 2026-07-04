@@ -3,7 +3,7 @@ import { useState } from "react"
 import type React from "react"
 
 import Link from "next/link"
-import Image from "next/image"
+import { Mountain, Eye, EyeOff } from "lucide-react"
 import Header from "@/components/common/Header"
 import Footer from "@/components/common/Footer"
 import { createClient } from "@/utils/supabase/client"
@@ -58,7 +58,7 @@ const LoginPage = () => {
           {/* Logo and Title */}
           <div className="text-center mb-8">
             <div className="flex items-center justify-center gap-2 mb-4">
-              <Image src="/placeholder.svg?height=32&width=32" alt="Logo" width={32} height={32} className="w-8 h-8" />
+              <Mountain className="w-8 h-8 text-green-600" />
               <span className="text-2xl font-bold text-global-1 font-plus-jakarta">Munggahwae</span>
             </div>
             <h1 className="text-2xl font-bold text-global-1 font-plus-jakarta mb-2">Selamat Datang Kembali</h1>
@@ -106,12 +106,7 @@ const LoginPage = () => {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
                   >
-                    <Image
-                      src="/placeholder.svg?height=20&width=20"
-                      alt={showPassword ? "Hide" : "Show"}
-                      width={20}
-                      height={20}
-                    />
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
               </div>

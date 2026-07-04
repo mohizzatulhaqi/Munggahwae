@@ -1,8 +1,8 @@
 'use client';
 import type React from 'react';
-import Image from 'next/image';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
+import { MapPin, Phone, Mail, Clock, Instagram, Facebook, Twitter, Youtube } from 'lucide-react';
 
 const ContactPage: React.FC = () => {
   return (
@@ -17,10 +17,7 @@ const ContactPage: React.FC = () => {
           <div
             className="relative flex flex-col w-full h-[400px] rounded-xl overflow-hidden mb-12"
             style={{
-              background:
-                'linear-gradient(90deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.5) 100%), url(/placeholder.svg?height=400&width=1200)',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
+              background: 'linear-gradient(135deg, #0FBD66 0%, #05603A 100%)',
             }}
           >
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
@@ -46,12 +43,7 @@ const ContactPage: React.FC = () => {
               {/* Address */}
               <div className="text-center">
                 <div className="flex items-center justify-center w-16 h-16 bg-global-3 rounded-full mb-6 mx-auto">
-                  <Image
-                    src="/placeholder.svg?height=32&width=32"
-                    alt="Location Icon"
-                    width={32}
-                    height={32}
-                  />
+                  <MapPin className="w-8 h-8 text-global-4" />
                 </div>
                 <h3 className="text-xl font-bold leading-[26px] text-global-1 font-plus-jakarta mb-4">
                   Alamat
@@ -65,12 +57,7 @@ const ContactPage: React.FC = () => {
               {/* Phone */}
               <div className="text-center">
                 <div className="flex items-center justify-center w-16 h-16 bg-global-3 rounded-full mb-6 mx-auto">
-                  <Image
-                    src="/placeholder.svg?height=32&width=32"
-                    alt="Phone Icon"
-                    width={32}
-                    height={32}
-                  />
+                  <Phone className="w-8 h-8 text-global-4" />
                 </div>
                 <h3 className="text-xl font-bold leading-[26px] text-global-1 font-plus-jakarta mb-4">
                   Telepon
@@ -85,12 +72,7 @@ const ContactPage: React.FC = () => {
               {/* Email */}
               <div className="text-center">
                 <div className="flex items-center justify-center w-16 h-16 bg-global-3 rounded-full mb-6 mx-auto">
-                  <Image
-                    src="/placeholder.svg?height=32&width=32"
-                    alt="Email Icon"
-                    width={32}
-                    height={32}
-                  />
+                  <Mail className="w-8 h-8 text-global-4" />
                 </div>
                 <h3 className="text-xl font-bold leading-[26px] text-global-1 font-plus-jakarta mb-4">
                   Email
@@ -105,12 +87,7 @@ const ContactPage: React.FC = () => {
               {/* Business Hours */}
               <div className="text-center">
                 <div className="flex items-center justify-center w-16 h-16 bg-global-3 rounded-full mb-6 mx-auto">
-                  <Image
-                    src="/placeholder.svg?height=32&width=32"
-                    alt="Clock Icon"
-                    width={32}
-                    height={32}
-                  />
+                  <Clock className="w-8 h-8 text-global-4" />
                 </div>
                 <h3 className="text-xl font-bold leading-[26px] text-global-1 font-plus-jakarta mb-4">
                   Jam Operasional
@@ -218,45 +195,25 @@ const ContactPage: React.FC = () => {
                   href="#"
                   className="flex items-center justify-center w-12 h-12 bg-global-3 rounded-full hover:bg-opacity-80 transition-all"
                 >
-                  <Image
-                    src="/placeholder.svg?height=24&width=24"
-                    alt="Instagram"
-                    width={24}
-                    height={24}
-                  />
+                  <Instagram className="w-6 h-6 text-global-4" />
                 </a>
                 <a
                   href="#"
                   className="flex items-center justify-center w-12 h-12 bg-global-3 rounded-full hover:bg-opacity-80 transition-all"
                 >
-                  <Image
-                    src="/placeholder.svg?height=24&width=24"
-                    alt="Facebook"
-                    width={24}
-                    height={24}
-                  />
+                  <Facebook className="w-6 h-6 text-global-4" />
                 </a>
                 <a
                   href="#"
                   className="flex items-center justify-center w-12 h-12 bg-global-3 rounded-full hover:bg-opacity-80 transition-all"
                 >
-                  <Image
-                    src="/placeholder.svg?height=24&width=24"
-                    alt="Twitter"
-                    width={24}
-                    height={24}
-                  />
+                  <Twitter className="w-6 h-6 text-global-4" />
                 </a>
                 <a
                   href="#"
                   className="flex items-center justify-center w-12 h-12 bg-global-3 rounded-full hover:bg-opacity-80 transition-all"
                 >
-                  <Image
-                    src="/placeholder.svg?height=24&width=24"
-                    alt="YouTube"
-                    width={24}
-                    height={24}
-                  />
+                  <Youtube className="w-6 h-6 text-global-4" />
                 </a>
               </div>
             </div>

@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import BackButton from '@/components/ui/BackButton';
+import ImagePlaceholder from '@/components/ui/ImagePlaceholder';
+import { Route } from 'lucide-react';
 import type { Mountain } from '@/lib/mountain-data';
 
 interface MountainDetailPageProps {
@@ -13,7 +15,8 @@ interface MountainDetailPageProps {
 }
 
 const MountainDetailPage: React.FC<MountainDetailPageProps> = ({ mountain }) => {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState('');
   const router = useRouter();
 
   const handleBookingClick = () => {
@@ -22,10 +25,11 @@ const MountainDetailPage: React.FC<MountainDetailPageProps> = ({ mountain }) => 
 
   const handleImageClick = (imageSrc: string) => {
     setSelectedImage(imageSrc);
+    setIsModalOpen(true);
   };
 
   const closeModal = () => {
-    setSelectedImage(null);
+    setIsModalOpen(false);
   };
 
   return (
@@ -40,13 +44,17 @@ const MountainDetailPage: React.FC<MountainDetailPageProps> = ({ mountain }) => 
       <main className="bg-global-1 px-4 md:px-44 py-8">
         {/* Hero Image */}
         <div className="mb-8">
-          <Image
-            src={mountain.heroImage || '/placeholder.svg'}
-            alt={mountain.name}
-            width={928}
-            height={320}
-            className="w-full h-80 object-cover rounded-lg"
-          />
+          {mountain.heroImage ? (
+            <Image
+              src={mountain.heroImage}
+              alt={mountain.name}
+              width={928}
+              height={320}
+              className="w-full h-80 object-cover rounded-lg"
+            />
+          ) : (
+            <ImagePlaceholder className="w-full h-80 rounded-lg" />
+          )}
         </div>
 
         {/* Title */}
@@ -119,13 +127,17 @@ const MountainDetailPage: React.FC<MountainDetailPageProps> = ({ mountain }) => 
                 className="cursor-pointer flex-shrink-0"
                 onClick={() => handleImageClick(image)}
               >
-                <Image
-                  src={image || '/placeholder.svg'}
-                  alt={`Gallery image ${index + 1}`}
-                  width={301}
-                  height={169}
-                  className="rounded-lg object-cover hover:opacity-80 transition-opacity"
-                />
+                {image ? (
+                  <Image
+                    src={image}
+                    alt={`Gallery image ${index + 1}`}
+                    width={301}
+                    height={169}
+                    className="rounded-lg object-cover hover:opacity-80 transition-opacity"
+                  />
+                ) : (
+                  <ImagePlaceholder className="w-[301px] h-[169px] rounded-lg hover:opacity-80 transition-opacity" />
+                )}
               </div>
             ))}
           </div>
@@ -143,13 +155,7 @@ const MountainDetailPage: React.FC<MountainDetailPageProps> = ({ mountain }) => 
                 className="bg-global-1 p-4 rounded-lg flex items-start gap-4 border border-gray-200"
               >
                 <div className="bg-global-2 p-3 rounded-lg flex-shrink-0">
-                  <Image
-                    src={trail.icon || '/placeholder.svg'}
-                    alt="Trail icon"
-                    width={24}
-                    height={24}
-                    className="w-6 h-6"
-                  />
+                  <Route className="w-6 h-6 text-global-1" />
                 </div>
                 <div className="flex-1">
                   <h3 className="text-base font-medium leading-[21px] text-global-1 font-plus-jakarta mb-1">
@@ -168,19 +174,23 @@ const MountainDetailPage: React.FC<MountainDetailPageProps> = ({ mountain }) => 
       <Footer />
 
       {/* Image Modal */}
-      {selectedImage && (
+      {isModalOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
           onClick={closeModal}
         >
           <div className="relative max-w-4xl max-h-full p-4">
-            <Image
-              src={selectedImage || '/placeholder.svg'}
-              alt="Gallery image enlarged"
-              width={800}
-              height={600}
-              className="max-w-full max-h-full object-contain rounded-lg"
-            />
+            {selectedImage ? (
+              <Image
+                src={selectedImage}
+                alt="Gallery image enlarged"
+                width={800}
+                height={600}
+                className="max-w-full max-h-full object-contain rounded-lg"
+              />
+            ) : (
+              <ImagePlaceholder className="w-[800px] max-w-full h-[600px] rounded-lg" />
+            )}
             <button
               onClick={closeModal}
               className="absolute top-2 right-2 text-white text-2xl font-bold bg-black bg-opacity-50 rounded-full w-8 h-8 flex items-center justify-center hover:bg-opacity-75"

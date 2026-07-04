@@ -16,10 +16,7 @@ const PrivacyPolicyPage: React.FC = () => {
           <div
             className="relative flex flex-col w-full h-[400px] rounded-xl overflow-hidden mb-12"
             style={{
-              background:
-                'linear-gradient(90deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.5) 100%), url(/placeholder.svg?height=400&width=1200)',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
+              background: 'linear-gradient(135deg, #0FBD66 0%, #05603A 100%)',
             }}
           >
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-4">

@@ -6,8 +6,10 @@ import Link from 'next/link';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import Pagination from '@/components/ui/Pagination';
+import ImagePlaceholder from '@/components/ui/ImagePlaceholder';
 import { getAllMountains } from '@/lib/mountain-data';
 import ProvinceFilter from '../ui/ProvinceFilter';
+import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const MountainDiscoveryPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -88,10 +90,7 @@ const MountainDiscoveryPage: React.FC = () => {
           <div
             className="relative flex flex-col w-full h-[480px] rounded-xl overflow-hidden mb-8"
             style={{
-              background:
-                'linear-gradient(90deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.4) 100%), url(/placeholder.svg?height=480&width=1200)',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
+              background: 'linear-gradient(135deg, #0FBD66 0%, #05603A 100%)',
             }}
           >
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
@@ -106,12 +105,7 @@ const MountainDiscoveryPage: React.FC = () => {
               {/* Search Bar */}
               <div className="flex flex-row w-full max-w-[480px] h-16 mt-12">
                 <div className="flex items-center justify-center w-16 h-16 bg-global-1 border border-[#cee8db] rounded-l-xl">
-                  <Image
-                    src="/placeholder.svg?height=20&width=20"
-                    alt="Search"
-                    width={20}
-                    height={20}
-                  />
+                  <Search className="w-5 h-5 text-global-2" />
                 </div>
                 <input
                   type="text"
@@ -160,13 +154,17 @@ const MountainDiscoveryPage: React.FC = () => {
                 <Link key={mountain.id} href={`/mountain/${mountain.id}`}>
                   <div className="flex flex-col items-center w-full cursor-pointer hover:transform hover:scale-105 transition-transform">
                     <div className="w-full h-[156px]">
-                      <Image
-                        src={mountain.image || '/placeholder.svg'}
-                        alt={mountain.name}
-                        width={176}
-                        height={99}
-                        className="w-full h-[99px] object-cover rounded-xl"
-                      />
+                      {mountain.image ? (
+                        <Image
+                          src={mountain.image}
+                          alt={mountain.name}
+                          width={176}
+                          height={99}
+                          className="w-full h-[99px] object-cover rounded-xl"
+                        />
+                      ) : (
+                        <ImagePlaceholder className="w-full h-[99px] rounded-xl" />
+                      )}
                       <h3 className="mt-3 text-base font-medium leading-[21px] text-global-1 font-plus-jakarta text-center">
                         {mountain.name}
                       </h3>
@@ -199,13 +197,7 @@ const MountainDiscoveryPage: React.FC = () => {
                 disabled={currentPage === 1}
                 className="disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Image
-                  src="/placeholder.svg?height=40&width=40"
-                  alt="Previous"
-                  width={40}
-                  height={40}
-                  className="cursor-pointer"
-                />
+                <ChevronLeft className="w-10 h-10 cursor-pointer" />
               </button>
               <Pagination
                 currentPage={currentPage}
@@ -217,13 +209,7 @@ const MountainDiscoveryPage: React.FC = () => {
                 disabled={currentPage === totalPages}
                 className="disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Image
-                  src="/placeholder.svg?height=40&width=40"
-                  alt="Next"
-                  width={40}
-                  height={40}
-                  className="cursor-pointer"
-                />
+                <ChevronRight className="w-10 h-10 cursor-pointer" />
               </button>
             </div>
           )}

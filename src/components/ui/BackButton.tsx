@@ -1,6 +1,6 @@
 "use client"
 import { useRouter } from "next/navigation"
-import Image from "next/image"
+import { ArrowLeft } from "lucide-react"
 
 const BackButton = () => {
   const router = useRouter()
@@ -14,7 +14,7 @@ const BackButton = () => {
       onClick={handleBack}
       className="flex items-center gap-2 px-4 py-2 text-global-1 hover:text-global-2 transition-colors"
     >
-      <Image src="/placeholder.svg?height=20&width=20" alt="Back" width={20} height={20} className="rotate-180" />
+      <ArrowLeft className="w-5 h-5" />
       <span className="text-sm font-medium font-plus-jakarta">Kembali</span>
     </button>
   )

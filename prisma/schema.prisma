@@ -65,4 +65,47 @@ model AnggotaPemesan {
   fileKtp         String?    // Path file KTP (opsional)
 }
 
+model TripPlan {
+  id           String          @id @default(uuid())
+  mountainId   String
+  mountainName String
+  startDate    DateTime
+  endDate      DateTime
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  members      TripMember[]
+  groupItems   TripGroupItem[]
+}
+
+model TripMember {
+  id         String             @id @default(uuid())
+  tripPlanId String
+  tripPlan   TripPlan           @relation(fields: [tripPlanId], references: [id], onDelete: Cascade)
+  name       String
+  order      Int
+
+  personalItems TripPersonalItem[]
+}
+
+model TripGroupItem {
+  id         String   @id @default(uuid())
+  tripPlanId String
+  tripPlan   TripPlan @relation(fields: [tripPlanId], references: [id], onDelete: Cascade)
+  name       String
+  price      Int
+  imageUrl   String?  @db.Text
+  createdAt  DateTime @default(now())
+}
+
+model TripPersonalItem {
+  id        String     @id @default(uuid())
+  memberId  String
+  member    TripMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  name      String
+  checked   Boolean    @default(false)
+  imageUrl  String?    @db.Text
+  createdAt DateTime   @default(now())
+}
+
 

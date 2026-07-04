@@ -1,8 +1,9 @@
 'use client';
 import type React from 'react';
-import Image from 'next/image';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
+import ImagePlaceholder from '@/components/ui/ImagePlaceholder';
+import { Eye, Target, Shield, HeartHandshake, Leaf } from 'lucide-react';
 
 const AboutPage: React.FC = () => {
   return (
@@ -17,10 +18,7 @@ const AboutPage: React.FC = () => {
           <div
             className="relative flex flex-col w-full h-[400px] rounded-xl overflow-hidden mb-12"
             style={{
-              background:
-                'linear-gradient(90deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.5) 100%), url(/placeholder.svg?height=400&width=1200)',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
+              background: 'linear-gradient(135deg, #0FBD66 0%, #05603A 100%)',
             }}
           >
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
@@ -64,13 +62,7 @@ const AboutPage: React.FC = () => {
                 </p>
               </div>
               <div className="order-1 lg:order-2 flex justify-center">
-                <Image
-                  src="/placeholder.svg?height=400&width=500"
-                  alt="Mountain Story"
-                  width={500}
-                  height={400}
-                  className="rounded-xl shadow-lg"
-                />
+                <ImagePlaceholder className="w-full max-w-[500px] h-[400px] rounded-xl shadow-lg" />
               </div>
             </div>
           </div>
@@ -81,12 +73,7 @@ const AboutPage: React.FC = () => {
               {/* Vision */}
               <div className="bg-global-4 p-8 rounded-xl shadow-lg">
                 <div className="flex items-center justify-center w-16 h-16 bg-global-3 rounded-full mb-6 mx-auto">
-                  <Image
-                    src="/placeholder.svg?height=32&width=32"
-                    alt="Vision Icon"
-                    width={32}
-                    height={32}
-                  />
+                  <Eye className="w-8 h-8 text-global-4" />
                 </div>
                 <h3 className="text-2xl font-bold leading-[31px] text-global-4   font-plus-jakarta mb-4 text-center">
                   Visi Kami
@@ -101,12 +88,7 @@ const AboutPage: React.FC = () => {
               {/* Mission */}
               <div className="bg-global-4 p-8 rounded-xl shadow-lg">
                 <div className="flex items-center justify-center w-16 h-16 bg-global-3 rounded-full mb-6 mx-auto">
-                  <Image
-                    src="/placeholder.svg?height=32&width=32"
-                    alt="Mission Icon"
-                    width={32}
-                    height={32}
-                  />
+                  <Target className="w-8 h-8 text-global-4" />
                 </div>
                 <h3 className="text-2xl font-bold leading-[31px] text-global-4 font-plus-jakarta mb-4 text-center">
                   Misi Kami
@@ -133,12 +115,7 @@ const AboutPage: React.FC = () => {
               {/* Keamanan */}
               <div className="text-center">
                 <div className="flex items-center justify-center w-20 h-20 bg-global-3 rounded-full mb-6 mx-auto">
-                  <Image
-                    src="/placeholder.svg?height=40&width=40"
-                    alt="Safety Icon"
-                    width={40}
-                    height={40}
-                  />
+                  <Shield className="w-10 h-10 text-global-4" />
                 </div>
                 <h3 className="text-xl font-bold leading-[26px] text-global-1 font-plus-jakarta mb-4">
                   Keamanan
@@ -152,12 +129,7 @@ const AboutPage: React.FC = () => {
               {/* Kepercayaan */}
               <div className="text-center">
                 <div className="flex items-center justify-center w-20 h-20 bg-global-3 rounded-full mb-6 mx-auto">
-                  <Image
-                    src="/placeholder.svg?height=40&width=40"
-                    alt="Trust Icon"
-                    width={40}
-                    height={40}
-                  />
+                  <HeartHandshake className="w-10 h-10 text-global-4" />
                 </div>
                 <h3 className="text-xl font-bold leading-[26px] text-global-1 font-plus-jakarta mb-4">
                   Kepercayaan
@@ -171,12 +143,7 @@ const AboutPage: React.FC = () => {
               {/* Keberlanjutan */}
               <div className="text-center">
                 <div className="flex items-center justify-center w-20 h-20 bg-global-3 rounded-full mb-6 mx-auto">
-                  <Image
-                    src="/placeholder.svg?height=40&width=40"
-                    alt="Sustainability Icon"
-                    width={40}
-                    height={40}
-                  />
+                  <Leaf className="w-10 h-10 text-global-4" />
                 </div>
                 <h3 className="text-xl font-bold leading-[26px] text-global-1 font-plus-jakarta mb-4">
                   Keberlanjutan

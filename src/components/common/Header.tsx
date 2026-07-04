@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import Image from 'next/image';
+import { Mountain } from 'lucide-react';
 
 const Header = () => {
   return (
@@ -10,16 +10,16 @@ const Header = () => {
         <div className="flex items-center gap-6">
           {/* Logo Munggahwae */}
           <Link href="/" className="flex items-center gap-2">
-            <Image
-              src="/placeholder.svg?height=16&width=16"
-              alt="Logo"
-              width={16}
-              height={16}
-              className="w-4 h-4"
-            />
+            <Mountain className="w-4 h-4 text-green-600" />
             <span className="text-lg font-bold leading-[23px] text-global-1 font-plus-jakarta">
               Munggahwae
             </span>
+          </Link>
+          <Link
+            href="/trip-planner"
+            className="text-sm font-medium text-global-1 font-plus-jakarta hover:text-global-2 transition-colors"
+          >
+            Rencana Pendakian
           </Link>
         </div>
 

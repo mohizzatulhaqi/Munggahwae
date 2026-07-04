@@ -17,7 +17,6 @@ export interface Mountain {
 export interface TrailInfo {
   name: string
   description: string
-  icon: string
 }
 
 export const mountainsData: Mountain[] = [
@@ -26,8 +25,8 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Agung",
     location: "Karangasem",
     province: "Bali",
-    image: "/placeholder.svg?height=99&width=176",
-    heroImage: "/placeholder.svg?height=320&width=928",
+    image: "",
+    heroImage: "",
     description:
       "Gunung Agung adalah gunung berapi aktif di Bali yang merupakan titik tertinggi di pulau tersebut dengan ketinggian 3.031 mdpl. Gunung ini dianggap suci oleh masyarakat Hindu Bali dan menawarkan pemandangan sunrise yang spektakuler.",
     quota: "75 pendaki/hari",
@@ -38,23 +37,20 @@ export const mountainsData: Mountain[] = [
         name: "Jalur Pasar Agung",
         description:
           "Jalur paling populer dengan akses mudah dari Pasar Agung Temple. Perjalanan memakan waktu 4-5 jam dengan pemandangan pura dan hutan.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur Besakih",
         description: "Jalur yang dimulai dari Pura Besakih, lebih menantang dengan medan yang curam dan berbatu.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur Sebudi",
         description: "Jalur alternatif yang lebih sepi dengan pemandangan alam yang masih asri dan udara yang sejuk.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
     ],
     galleryImages: [
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
+      "",
+      "",
+      "",
     ],
     bookingTerms: [
       "Pendakian hanya diperbolehkan melalui jalur resmi yang telah ditetapkan: Pasar Agung, Besakih, dan Sebudi.",
@@ -73,8 +69,8 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Rinjani",
     location: "Lombok",
     province: "Nusa Tenggara Barat",
-    image: "/placeholder.svg?height=99&width=176",
-    heroImage: "/placeholder.svg?height=320&width=928",
+    image: "",
+    heroImage: "",
     description:
       "Gunung Rinjani adalah gunung yang berlokasi di Pulau Lombok, Nusa Tenggara Barat. Gunung yang merupakan gunung berapi kedua tertinggi di Indonesia dengan ketinggian 3.726 mdpl serta terletak pada lintang 8º25' LS dan 116º28' BT ini merupakan gunung favorit bagi pendaki Indonesia karena keindahan pemandangannya.",
     quota: "100 pendaki/hari",
@@ -85,31 +81,27 @@ export const mountainsData: Mountain[] = [
         name: "Jalur Senaru",
         description:
           "Terletak di Desa Senaru, Kecamatan Bayan. Jalur ini adalah jalur paling populer yang menawarkan pemandangan indah dan tanjakan bertahap.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur Sembalun",
         description:
           "Terletak di Desa Sembalun Lawang, Kecamatan Sembalun. Ini merupakan jalur terpendek tetapi juga paling curam.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur Torean",
         description:
           "Terletak di Desa Torean, Kecamatan Bayan. Merupakan jalur yang menantang dengan jalur melewati hutan lebat dan menyusuri sungai.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur Timbanuh",
         description:
           "Terletak di Desa Timbanuh, Kecamatan Pringgasela. Jalur ini juga menantang, melewati hutan lebat dan sungai.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
     ],
     galleryImages: [
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
+      "",
+      "",
+      "",
     ],
     bookingTerms: [
       "Pendakian hanya diperbolehkan melalui jalur resmi yang telah ditetapkan, seperti Senaru, Sembalun, Torean, dan Timbanuh. Pendaki wajib mengikuti seluruh prosedur dan instruksi dari petugas di pintu masuk jalur pendakian.",
@@ -131,8 +123,8 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Bromo",
     location: "Probolinggo",
     province: "Jawa Timur",
-    image: "/placeholder.svg?height=99&width=176",
-    heroImage: "/placeholder.svg?height=320&width=928",
+    image: "",
+    heroImage: "",
     description:
       "Gunung Bromo adalah gunung berapi aktif di Jawa Timur dengan ketinggian 2.329 mdpl. Terkenal dengan pemandangan sunrise yang menakjubkan dan lautan pasir yang luas, Bromo menjadi salah satu destinasi wisata paling populer di Indonesia.",
     quota: "200 pendaki/hari",
@@ -143,18 +135,16 @@ export const mountainsData: Mountain[] = [
         name: "Jalur Cemoro Lawang",
         description:
           "Jalur utama yang paling mudah diakses dengan kendaraan hingga area parkir, dilanjutkan trekking ringan ke kawah.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur Wonokitri",
         description: "Jalur alternatif yang lebih menantang dengan pemandangan savana dan hutan yang indah.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
     ],
     galleryImages: [
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
+      "",
+      "",
+      "",
     ],
     bookingTerms: [
       "Pendakian hanya diperbolehkan melalui jalur resmi Cemoro Lawang dan Wonokitri.",
@@ -172,8 +162,8 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Semeru",
     location: "Lumajang",
     province: "Jawa Timur",
-    image: "/placeholder.svg?height=99&width=176",
-    heroImage: "/placeholder.svg?height=320&width=928",
+    image: "",
+    heroImage: "",
     description:
       "Gunung Semeru adalah gunung tertinggi di Pulau Jawa dengan ketinggian 3.676 mdpl. Dikenal sebagai Mahameru, gunung ini menawarkan tantangan pendakian yang menantang dengan pemandangan yang luar biasa indah.",
     quota: "80 pendaki/hari",
@@ -183,18 +173,16 @@ export const mountainsData: Mountain[] = [
       {
         name: "Jalur Ranu Pani",
         description: "Jalur utama yang dimulai dari Ranu Pani dengan pemandangan danau dan savana yang indah.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur Watu Rejeng",
         description: "Jalur alternatif yang lebih menantang dengan medan berbatu dan tanjakan curam.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
     ],
     galleryImages: [
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
+      "",
+      "",
+      "",
     ],
     bookingTerms: [
       "Pendakian hanya diperbolehkan melalui jalur resmi Ranu Pani dan Watu Rejeng.",
@@ -212,8 +200,8 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Merbabu",
     location: "Magelang",
     province: "Jawa Tengah",
-    image: "/placeholder.svg?height=99&width=176",
-    heroImage: "/placeholder.svg?height=320&width=928",
+    image: "",
+    heroImage: "",
     description:
       "Gunung Merbabu adalah gunung berapi yang sudah tidak aktif dengan ketinggian 3.145 mdpl. Terkenal dengan savana yang luas dan pemandangan sunrise yang memukau, cocok untuk pendaki pemula hingga berpengalaman.",
     quota: "150 pendaki/hari",
@@ -223,28 +211,24 @@ export const mountainsData: Mountain[] = [
       {
         name: "Jalur Selo",
         description: "Jalur paling populer dengan akses mudah dan pemandangan savana yang indah.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur Wekas",
         description: "Jalur yang lebih menantang dengan hutan pinus dan pemandangan yang eksotis.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur Thekelan",
         description: "Jalur alternatif dengan medan yang bervariasi dan pemandangan Gunung Merapi.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur Cunthel",
         description: "Jalur yang jarang digunakan dengan tantangan lebih berat namun pemandangan yang menawan.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
     ],
     galleryImages: [
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
+      "",
+      "",
+      "",
     ],
     bookingTerms: [
       "Pendakian diperbolehkan melalui jalur Selo, Wekas, Thekelan, dan Cunthel.",
@@ -262,8 +246,8 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Prau",
     location: "Wonosobo",
     province: "Jawa Tengah",
-    image: "/placeholder.svg?height=99&width=176",
-    heroImage: "/placeholder.svg?height=320&width=928",
+    image: "",
+    heroImage: "",
     description:
       "Gunung Prau adalah gunung dengan ketinggian 2.565 mdpl yang terkenal dengan hamparan bunga edelweis dan pemandangan sunrise yang spektakuler. Cocok untuk pendaki pemula dengan jalur yang relatif mudah.",
     quota: "200 pendaki/hari",
@@ -273,23 +257,20 @@ export const mountainsData: Mountain[] = [
       {
         name: "Jalur Dieng",
         description: "Jalur paling populer dan mudah dengan pemandangan Telaga Warna dan hamparan edelweis.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur Patak Banteng",
         description: "Jalur alternatif dengan medan yang lebih menantang dan pemandangan yang berbeda.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur Igirmranak",
         description: "Jalur yang jarang digunakan dengan akses melalui desa dan hutan pinus.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
     ],
     galleryImages: [
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
+      "",
+      "",
+      "",
     ],
     bookingTerms: [
       "Pendakian diperbolehkan melalui jalur Dieng, Patak Banteng, dan Igirmranak.",
@@ -307,8 +288,8 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Merapi",
     location: "Sleman",
     province: "DI Yogyakarta",
-    image: "/placeholder.svg?height=99&width=176",
-    heroImage: "/placeholder.svg?height=320&width=928",
+    image: "",
+    heroImage: "",
     description:
       "Gunung Merapi adalah gunung berapi paling aktif di Indonesia dengan ketinggian 2.930 mdpl. Menawarkan tantangan pendakian yang menantang dengan pemandangan kawah aktif dan lava dome yang menakjubkan.",
     quota: "50 pendaki/hari",
@@ -318,18 +299,16 @@ export const mountainsData: Mountain[] = [
       {
         name: "Jalur Selo",
         description: "Jalur utama yang paling aman dengan pemandangan kawah dan monitoring ketat aktivitas vulkanik.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur New Selo",
         description: "Jalur alternatif yang dibuka setelah erupsi dengan medan yang lebih menantang.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
     ],
     galleryImages: [
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
+      "",
+      "",
+      "",
     ],
     bookingTerms: [
       "Pendakian hanya diperbolehkan saat status normal atau waspada level 1.",
@@ -347,8 +326,8 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Lawu",
     location: "Karanganyar",
     province: "Jawa Tengah",
-    image: "/placeholder.svg?height=99&width=176",
-    heroImage: "/placeholder.svg?height=320&width=928",
+    image: "",
+    heroImage: "",
     description:
       "Gunung Lawu adalah gunung berapi yang sudah tidak aktif dengan ketinggian 3.265 mdpl. Terkenal dengan situs sejarah Candi Cetho dan Sukuh, serta pemandangan sunrise yang memukau dari puncak Hargo Dumilah.",
     quota: "120 pendaki/hari",
@@ -358,23 +337,20 @@ export const mountainsData: Mountain[] = [
       {
         name: "Jalur Cemoro Sewu",
         description: "Jalur paling populer dengan akses mudah dan pemandangan hutan cemara yang indah.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur Cemoro Kandang",
         description: "Jalur alternatif dengan medan yang lebih menantang dan pemandangan yang berbeda.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur Candi Cetho",
         description: "Jalur yang melewati situs bersejarah dengan nilai budaya dan spiritual yang tinggi.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
     ],
     galleryImages: [
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
+      "",
+      "",
+      "",
     ],
     bookingTerms: [
       "Pendakian diperbolehkan melalui jalur Cemoro Sewu, Cemoro Kandang, dan Candi Cetho.",
@@ -392,8 +368,8 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Ijen",
     location: "Banyuwangi",
     province: "Jawa Timur",
-    image: "/placeholder.svg?height=99&width=176",
-    heroImage: "/placeholder.svg?height=320&width=928",
+    image: "",
+    heroImage: "",
     description:
       "Gunung Ijen adalah gunung berapi dengan ketinggian 2.443 mdpl yang terkenal dengan fenomena blue fire dan danau kawah belerang terbesar di dunia. Menawarkan pengalaman pendakian yang unik dan menakjubkan.",
     quota: "100 pendaki/hari",
@@ -403,18 +379,16 @@ export const mountainsData: Mountain[] = [
       {
         name: "Jalur Paltuding",
         description: "Jalur utama yang paling mudah diakses dengan pemandangan kawah belerang yang spektakuler.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur Sempol",
         description: "Jalur alternatif yang lebih panjang dengan pemandangan perkebunan kopi dan hutan.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
     ],
     galleryImages: [
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
+      "",
+      "",
+      "",
     ],
     bookingTerms: [
       "Pendakian diperbolehkan melalui jalur Paltuding dan Sempol.",
@@ -432,8 +406,8 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Kerinci",
     location: "Kerinci",
     province: "Jambi",
-    image: "/placeholder.svg?height=99&width=176",
-    heroImage: "/placeholder.svg?height=320&width=928",
+    image: "",
+    heroImage: "",
     description:
       "Gunung Kerinci adalah gunung tertinggi di Sumatera dengan ketinggian 3.805 mdpl. Terletak di Taman Nasional Kerinci Seblat, menawarkan keanekaragaman hayati yang luar biasa dan tantangan pendakian yang menantang.",
     quota: "60 pendaki/hari",
@@ -444,18 +418,16 @@ export const mountainsData: Mountain[] = [
         name: "Jalur Kersik Tuo",
         description:
           "Jalur utama yang paling populer dengan akses melalui Desa Kersik Tuo dan pemandangan hutan tropis.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur Pelompek",
         description: "Jalur alternatif yang lebih menantang dengan medan yang berat dan pemandangan yang eksotis.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
     ],
     galleryImages: [
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
+      "",
+      "",
+      "",
     ],
     bookingTerms: [
       "Pendakian hanya diperbolehkan dengan izin dari TNKS (Taman Nasional Kerinci Seblat).",
@@ -473,8 +445,8 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Batur",
     location: "Bangli",
     province: "Bali",
-    image: "/placeholder.svg?height=99&width=176",
-    heroImage: "/placeholder.svg?height=320&width=928",
+    image: "",
+    heroImage: "",
     description:
       "Gunung Batur adalah gunung berapi aktif dengan ketinggian 1.717 mdpl yang terkenal dengan pemandangan sunrise di atas Danau Batur. Pendakian yang relatif mudah dan cocok untuk pemula.",
     quota: "300 pendaki/hari",
@@ -484,23 +456,20 @@ export const mountainsData: Mountain[] = [
       {
         name: "Jalur Toya Bungkah",
         description: "Jalur paling populer dan mudah dengan pemandangan danau dan sunrise yang spektakuler.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur Pura Jati",
         description: "Jalur alternatif yang melewati pura dengan nilai spiritual dan pemandangan yang indah.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur Songan",
         description: "Jalur yang jarang digunakan dengan akses melalui desa dan pemandangan yang berbeda.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
     ],
     galleryImages: [
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
+      "",
+      "",
+      "",
     ],
     bookingTerms: [
       "Pendakian diperbolehkan melalui jalur Toya Bungkah, Pura Jati, dan Songan.",
@@ -518,8 +487,8 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Papandayan",
     location: "Garut",
     province: "Jawa Barat",
-    image: "/placeholder.svg?height=99&width=176",
-    heroImage: "/placeholder.svg?height=320&width=928",
+    image: "",
+    heroImage: "",
     description:
       "Gunung Papandayan adalah gunung berapi dengan ketinggian 2.665 mdpl yang terkenal dengan kawah aktif dan fenomena geothermal. Menawarkan pemandangan alam yang unik dengan aktivitas vulkanik yang masih aktif.",
     quota: "150 pendaki/hari",
@@ -529,18 +498,16 @@ export const mountainsData: Mountain[] = [
       {
         name: "Jalur Pondok Salada",
         description: "Jalur utama yang mudah diakses dengan pemandangan kawah dan aktivitas geothermal.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur Cisurupan",
         description: "Jalur alternatif yang lebih menantang dengan pemandangan hutan dan perkebunan teh.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
     ],
     galleryImages: [
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
+      "",
+      "",
+      "",
     ],
     bookingTerms: [
       "Pendakian diperbolehkan melalui jalur Pondok Salada dan Cisurupan.",
@@ -558,8 +525,8 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Gede Pangrango",
     location: "Bogor",
     province: "Jawa Barat",
-    image: "/placeholder.svg?height=99&width=176",
-    heroImage: "/placeholder.svg?height=320&width=928",
+    image: "",
+    heroImage: "",
     description:
       "Gunung Gede Pangrango adalah kompleks gunung kembar dengan ketinggian 2.958 mdpl (Gede) dan 3.019 mdpl (Pangrango). Terletak di Taman Nasional Gede Pangrango dengan keanekaragaman hayati yang tinggi.",
     quota: "100 pendaki/hari",
@@ -569,23 +536,20 @@ export const mountainsData: Mountain[] = [
       {
         name: "Jalur Gunung Putri",
         description: "Jalur paling populer dengan akses mudah dan pemandangan air terjun Cibeureum.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur Salabintana",
         description: "Jalur yang lebih menantang dengan medan yang berat dan pemandangan hutan yang lebat.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur Putri",
         description: "Jalur alternatif dengan akses melalui Sukabumi dan pemandangan yang berbeda.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
     ],
     galleryImages: [
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
+      "",
+      "",
+      "",
     ],
     bookingTerms: [
       "Pendakian hanya diperbolehkan dengan izin dari Taman Nasional Gede Pangrango.",
@@ -603,8 +567,8 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Ciremai",
     location: "Cirebon",
     province: "Jawa Barat",
-    image: "/placeholder.svg?height=99&width=176",
-    heroImage: "/placeholder.svg?height=320&width=928",
+    image: "",
+    heroImage: "",
     description:
       "Gunung Ciremai adalah gunung tertinggi di Jawa Barat dengan ketinggian 3.078 mdpl. Terletak di Taman Nasional Gunung Ciremai, menawarkan keanekaragaman hayati dan pemandangan yang menakjubkan.",
     quota: "80 pendaki/hari",
@@ -614,28 +578,24 @@ export const mountainsData: Mountain[] = [
       {
         name: "Jalur Linggarjati",
         description: "Jalur paling populer dengan akses mudah dan pemandangan hutan yang indah.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur Apuy",
         description: "Jalur yang lebih menantang dengan medan yang berat dan pemandangan yang eksotis.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur Palutungan",
         description: "Jalur alternatif dengan akses melalui Kuningan dan pemandangan perkebunan.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur Cigugur",
         description: "Jalur yang jarang digunakan dengan tantangan lebih berat namun pemandangan yang menawan.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
     ],
     galleryImages: [
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
+      "",
+      "",
+      "",
     ],
     bookingTerms: [
       "Pendakian hanya diperbolehkan dengan izin dari Taman Nasional Gunung Ciremai.",
@@ -653,8 +613,8 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Raung",
     location: "Banyuwangi",
     province: "Jawa Timur",
-    image: "/placeholder.svg?height=99&width=176",
-    heroImage: "/placeholder.svg?height=320&width=928",
+    image: "",
+    heroImage: "",
     description:
       "Gunung Raung adalah gunung berapi dengan ketinggian 3.344 mdpl yang terkenal dengan kawah terbesar di Jawa Timur. Menawarkan tantangan pendakian yang berat dengan pemandangan kawah yang spektakuler.",
     quota: "50 pendaki/hari",
@@ -664,18 +624,16 @@ export const mountainsData: Mountain[] = [
       {
         name: "Jalur Sumberwringin",
         description: "Jalur utama yang paling populer dengan akses melalui perkebunan kopi dan hutan.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur Kalibaru",
         description: "Jalur alternatif yang lebih menantang dengan medan yang berat dan pemandangan yang berbeda.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
     ],
     galleryImages: [
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
+      "",
+      "",
+      "",
     ],
     bookingTerms: [
       "Pendakian hanya diperbolehkan saat status normal atau waspada level 1.",
@@ -693,8 +651,8 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Buthak",
     location: "Malang",
     province: "Jawa Timur",
-    image: "/placeholder.svg?height=99&width=176",
-    heroImage: "/placeholder.svg?height=320&width=928",
+    image: "",
+    heroImage: "",
     description:
       "Gunung Butak adalah sebuah gunung berapi kerucut yang terletak di perbatasan Kabupaten Malang dan Kabupaten Blitar dalam wilayah Provinsi Jawa Timur, Indonesia.",
     quota: "300 pendaki/hari",
@@ -704,18 +662,16 @@ export const mountainsData: Mountain[] = [
       {
         name: "Jalur Panderman",
         description: "Jalur yang paling populer dengan pemandangan sabana yang indah.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
       {
         name: "Jalur Sirah Kencong",
         description: "Jalur yang di mulai perkebunan teh sirah kencong.",
-        icon: "/placeholder.svg?height=24&width=24",
       },
     ],
     galleryImages: [
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
-      "/placeholder.svg?height=169&width=301",
+      "",
+      "",
+      "",
     ],
     bookingTerms: [
       "Pendakian hanya diperbolehkan saat status normal atau waspada level 1.",
