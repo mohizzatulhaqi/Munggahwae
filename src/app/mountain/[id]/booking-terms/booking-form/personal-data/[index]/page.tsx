@@ -1,6 +1,6 @@
 "use client"
 import { useRouter, useParams } from "next/navigation"
-import { getGlobalBookingData, PersonalData, updateGlobalBookingData } from "../../page"
+import { getGlobalBookingData, PersonalData, updateGlobalBookingData } from "@/lib/booking-store"
 import PersonalDataForm from "@/components/pages/personal-data-form"
 
 export default function PersonalDataPage() {
@@ -38,6 +38,7 @@ export default function PersonalDataPage() {
     <div className="min-h-screen bg-gray-50">
       <PersonalDataForm
         onSubmit={handlePersonalDataSubmit}
+        onBack={() => router.push(`/mountain/${params.id}/booking-terms/booking-form`)}
         onNext={() =>
           router.push(`/mountain/${params.id}/booking-terms/booking-form/personal-data/${bookerIndex + 1}`)
         }

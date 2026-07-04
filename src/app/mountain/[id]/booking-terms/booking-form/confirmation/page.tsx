@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Check } from "lucide-react"
-import { getGlobalBookingData } from "../page"
+import { getGlobalBookingData } from "@/lib/booking-store"
 import Header from "@/components/common/Header"
 import Footer from "@/components/common/Footer"
 

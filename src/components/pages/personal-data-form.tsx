@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ArrowLeft, Upload, FileText, Check, ChevronLeft, ChevronRight, AlertTriangle } from "lucide-react"
-import { PersonalData } from "@/app/mountain/[id]/booking-terms/booking-form/page"
+import { PersonalData } from "@/lib/booking-store"
 
 interface PersonalDataFormProps {
   onSubmit: (data: PersonalData) => void
@@ -181,7 +181,6 @@ export default function PersonalDataForm({
       formPayload.append('birthPlace', formData.birthPlace);
       formPayload.append('isCompanion', String(formData.isCompanion));
       if (uploadedFile) formPayload.append('idCardFile', uploadedFile);
-      if (healthCertificateFile) formPayload.append('healthCertificateFile', healthCertificateFile);
 
       try {
         const res = await fetch('/api/personal-data', {
@@ -191,13 +190,9 @@ export default function PersonalDataForm({
         const result = await res.json();
         if (!res.ok) throw new Error(result.error || 'Gagal menyimpan data');
         alert('Data berhasil disimpan!');
-        if (isLastBooker) {
-          router.push(`/mountain/${mountainId}/booking-terms/booking-form/payment`);
-        } else {
-          onNext();
-        }
       } catch (err: any) {
         alert(err.message || 'Terjadi kesalahan saat menyimpan data');
+        return;
       }
 
       onSubmit({ ...formData, idCardFile: uploadedFile || undefined })

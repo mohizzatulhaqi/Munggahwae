@@ -6,7 +6,7 @@ import Link from "next/link"
 import { Mountain, Eye, EyeOff } from "lucide-react"
 import Header from "@/components/common/Header"
 import Footer from "@/components/common/Footer"
-import { supabase } from "@/app/api/supabaseClient"
+import { createClient } from "@/utils/supabase/client"
 import { createUser } from "@/models/user/controller/createUser"
 
 const RegisterPage = () => {
@@ -34,6 +34,7 @@ const RegisterPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    const supabase = createClient()
 
     if (formData.password !== formData.confirmPassword) {
       alert("Password dan konfirmasi password tidak cocok!")
