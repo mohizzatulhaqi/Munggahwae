@@ -1,4 +1,5 @@
 export interface BookingData {
+  pemesananId?: string
   entryDate: string
   exitDate: string
   numberOfBookers: number

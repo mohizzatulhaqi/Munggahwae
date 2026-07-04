@@ -3,13 +3,14 @@ import { useState } from "react"
 import type React from "react"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Mountain, Eye, EyeOff } from "lucide-react"
 import Header from "@/components/common/Header"
 import Footer from "@/components/common/Footer"
-import { createClient } from "@/utils/supabase/client"
 import { createUser } from "@/models/user/controller/createUser"
 
 const RegisterPage = () => {
+  const router = useRouter()
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -34,7 +35,6 @@ const RegisterPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const supabase = createClient()
 
     if (formData.password !== formData.confirmPassword) {
       alert("Password dan konfirmasi password tidak cocok!")
@@ -46,41 +46,23 @@ const RegisterPage = () => {
       return
     }
 
-    console.log(formData.email, formData.fullName, formData.confirmPassword, formData.agreeToTerms, formData.password, formData.phone)
-
     setIsLoading(true)
 
-    const { data, error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          data: {
-            full_name: formData.fullName,
-          },
-    },
-  })
+    const res = await createUser({
+      namaLengkap: formData.fullName,
+      email: formData.email,
+      password: formData.password,
+    })
 
-  if (error) {
-    alert(`Gagal daftar: ${error.message}`)
-  } else {
-    alert("Pendaftaran berhasil! Silakan cek login.")
-    try {
-      const res = await createUser({  
-        id: data.user?.id ?? "",
-        namaLengkap: formData.fullName,
-        email: formData.email,
-        password: formData.password, // opsional
-      })
+    if (!res?.isCreated) {
+      alert(res?.message ? `Gagal daftar: ${res.message}` : "Gagal daftar. Silakan coba lagi.")
+      setIsLoading(false)
+      return
+    }
 
-      console.log(res);
-    } catch (e: any) {
-      console.error("Gagal simpan data user:", e)
-      alert("Akun berhasil dibuat, tapi gagal menyimpan data tambahan.")
-    }  
+    alert("Pendaftaran berhasil! Silakan login.")
+    router.push("/login")
   }
-
-  setIsLoading(false)
-}
 
 
   return (

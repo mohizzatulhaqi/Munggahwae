@@ -43,9 +43,11 @@ model Peraturan {
 
 model Pemesanan {
   id              String           @id @default(uuid())
+  mountainId      String
   tanggalMasuk    DateTime
   tanggalKeluar   DateTime
   jumlahPemesan   Int
+  createdAt       DateTime         @default(now())
 
   anggotaPemesan  AnggotaPemesan[] // Relasi one-to-many
 }
@@ -53,16 +55,17 @@ model Pemesanan {
 model AnggotaPemesan {
   id              String     @id @default(uuid())
   pemesananId     String
-  pemesanan       Pemesanan  @relation(fields: [pemesananId], references: [id])
+  pemesanan       Pemesanan  @relation(fields: [pemesananId], references: [id], onDelete: Cascade)
 
   email           String
   nama            String
   noIdentitas     String
-  kewarganegaraan String
+  nomorTelepon    String
   jenisKelamin    String     // Misal: "Laki-laki", "Perempuan"
   tempatLahir     String?
   tanggalLahir    DateTime?
-  fileKtp         String?    // Path file KTP (opsional)
+  isCompanion     Boolean    @default(false)
+  fileKtp         String?    @db.Text // data URL foto/scan KTP (opsional)
 }
 
 model TripPlan {

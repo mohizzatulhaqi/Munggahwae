@@ -12,7 +12,7 @@ export default function HomePage() {
   const mountainId = params?.id as string;
   const mountain = mountainsData.find((m) => m.id === mountainId);
 
-  const handleDateSubmit = (dates: {
+  const handleDateSubmit = async (dates: {
     entryDate: string;
     exitDate: string;
     numberOfBookers: number;
@@ -28,8 +28,22 @@ export default function HomePage() {
       birthPlace: "",
     }))
 
+    const res = await fetch('/api/bookings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mountainId, ...dates }),
+    })
+
+    if (!res.ok) {
+      alert('Gagal membuat pemesanan. Silakan coba lagi.')
+      return
+    }
+
+    const { id: pemesananId } = await res.json()
+
     // Update global state
     updateGlobalBookingData({
+      pemesananId,
       ...dates,
       bookers: emptyBookers,
     });

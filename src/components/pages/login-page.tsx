@@ -3,12 +3,14 @@ import { useState } from "react"
 import type React from "react"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Mountain, Eye, EyeOff } from "lucide-react"
 import Header from "@/components/common/Header"
 import Footer from "@/components/common/Footer"
-import { createClient } from "@/utils/supabase/client"
+import { loginUser } from "@/models/user/controller/login"
 
 const LoginPage = () => {
+  const router = useRouter()
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -25,28 +27,19 @@ const LoginPage = () => {
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    const supabase = await createClient()
-
     e.preventDefault()
     setIsLoading(true)
 
-    const { email, password } = formData
+    const res = await loginUser(formData)
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-
-    if (error) {
-      alert("Login gagal: " + error.message)
-      console.error("Supabase error:", error)
-    } else {
-      alert("Login berhasil!")
-      console.log("User data:", data)
-      // TODO: simpan session/token bila perlu
+    if (!res?.isLoggedIn) {
+      alert(res?.message ? `Login gagal: ${res.message}` : "Login gagal. Silakan coba lagi.")
+      setIsLoading(false)
+      return
     }
 
-    setIsLoading(false)
+    alert("Login berhasil!")
+    router.push("/")
   }
 
   return (

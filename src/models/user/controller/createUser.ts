@@ -1,19 +1,17 @@
 export const createUser = async ({
-  id,
   namaLengkap,
   email,
   password,
 }: {
-  id: string
   namaLengkap: string
   email: string
-  password?: string
+  password: string
 }) => {
   try {
     const response = await fetch("/api/user/create-user", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, namaLengkap, email, password }),
+      body: JSON.stringify({ namaLengkap, email, password }),
     })
 
     return await response.json()

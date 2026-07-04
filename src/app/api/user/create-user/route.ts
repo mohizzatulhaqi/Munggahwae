@@ -1,30 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server'
+import bcrypt from 'bcryptjs'
 import prisma from '@/app/api/prisma'
 
 export async function POST(req: NextRequest) {
   try {
-    const { id, namaLengkap, email, password } = await req.json()
+    const { namaLengkap, email, password } = await req.json()
 
-    // Optional: Validasi input
-    if (!id || !namaLengkap || !email) {
+    if (!namaLengkap || !email || !password) {
       return NextResponse.json(
         { isCreated: false, message: "Data tidak lengkap" },
         { status: 400 }
       )
     }
 
+    const existing = await prisma.user.findUnique({ where: { email } })
+    if (existing) {
+      return NextResponse.json(
+        { isCreated: false, message: "Email sudah terdaftar" },
+        { status: 409 }
+      )
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10)
+
     const created = await prisma.user.create({
       data: {
-        id,
         namaLengkap,
         email,
-        password,
-         // ⚠️ sebaiknya tidak disimpan kalau pakai Supabase Auth
+        password: hashedPassword,
       },
     })
 
     return NextResponse.json(
-      { isCreated: true, user: created },
+      { isCreated: true, user: { id: created.id, namaLengkap: created.namaLengkap, email: created.email } },
       { status: 200 }
     )
   } catch (error) {

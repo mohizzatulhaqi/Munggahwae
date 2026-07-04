@@ -24,6 +24,7 @@ interface PersonalDataFormProps {
   canGoPrevious: boolean
   isLastBooker: boolean
   allBookersData: PersonalData[]
+  pemesananId?: string
 }
 
 export default function PersonalDataForm({
@@ -38,6 +39,7 @@ export default function PersonalDataForm({
   canGoPrevious,
   isLastBooker,
   allBookersData,
+  pemesananId,
 }: PersonalDataFormProps) {
   const [formData, setFormData] = useState<PersonalData>(
     initialData || {
@@ -172,6 +174,7 @@ export default function PersonalDataForm({
       }
       // Integrasi API personal-data
       const formPayload = new FormData();
+      formPayload.append('pemesananId', pemesananId ?? '');
       formPayload.append('email', formData.email);
       formPayload.append('fullName', formData.fullName);
       formPayload.append('idNumber', formData.idNumber);
