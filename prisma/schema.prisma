@@ -72,6 +72,8 @@ model TripPlan {
   id           String          @id @default(uuid())
   mountainId   String
   mountainName String
+  ascentTrail  String?
+  descentTrail String?
   startDate    DateTime
   endDate      DateTime
   createdAt    DateTime        @default(now())
@@ -87,6 +89,7 @@ model TripMember {
   tripPlan   TripPlan           @relation(fields: [tripPlanId], references: [id], onDelete: Cascade)
   name       String
   order      Int
+  hasPaid    Boolean            @default(false)
 
   personalItems TripPersonalItem[]
 }

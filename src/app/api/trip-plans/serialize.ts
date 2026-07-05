@@ -19,12 +19,15 @@ export async function getTripPlanDTO(id: string): Promise<TripPlanDTO | null> {
     id: plan.id,
     mountainId: plan.mountainId,
     mountainName: plan.mountainName,
+    ascentTrail: plan.ascentTrail,
+    descentTrail: plan.descentTrail,
     startDate: plan.startDate.toISOString().slice(0, 10),
     endDate: plan.endDate.toISOString().slice(0, 10),
     members: plan.members.map((member) => ({
       id: member.id,
       name: member.name,
       order: member.order,
+      hasPaid: member.hasPaid,
       personalItems: member.personalItems.map((item) => ({
         id: item.id,
         name: item.name,
@@ -56,12 +59,16 @@ export async function listTripPlanSummaries(): Promise<TripPlanSummaryDTO[]> {
       id: plan.id,
       mountainId: plan.mountainId,
       mountainName: plan.mountainName,
+      ascentTrail: plan.ascentTrail,
+      descentTrail: plan.descentTrail,
       startDate: plan.startDate.toISOString().slice(0, 10),
       endDate: plan.endDate.toISOString().slice(0, 10),
       memberNames: plan.members.map((m) => m.name),
       totalGroupPrice: plan.groupItems.reduce((sum, item) => sum + item.price, 0),
       packedCount: allItems.filter((i) => i.checked).length,
       totalItemCount: allItems.length,
+      paidCount: plan.members.filter((m) => m.hasPaid).length,
+      memberCount: plan.members.length,
     };
   });
 }

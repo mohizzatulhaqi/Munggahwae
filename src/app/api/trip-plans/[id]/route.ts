@@ -16,9 +16,11 @@ export async function GET(request: Request, { params }: Params) {
 
 export async function PATCH(request: Request, { params }: Params) {
   const body = await request.json();
-  const { mountainId, mountainName, startDate, endDate, members } = body as {
+  const { mountainId, mountainName, ascentTrail, descentTrail, startDate, endDate, members } = body as {
     mountainId?: string;
     mountainName?: string;
+    ascentTrail?: string;
+    descentTrail?: string;
     startDate?: string;
     endDate?: string;
     members?: { id?: string; name: string }[];
@@ -54,6 +56,8 @@ export async function PATCH(request: Request, { params }: Params) {
       data: {
         mountainId,
         mountainName,
+        ascentTrail: ascentTrail || null,
+        descentTrail: descentTrail || null,
         startDate: new Date(startDate),
         endDate: new Date(endDate),
       },
@@ -80,4 +84,9 @@ export async function PATCH(request: Request, { params }: Params) {
 
   const dto = await getTripPlanDTO(params.id);
   return NextResponse.json(dto);
+}
+
+export async function DELETE(request: Request, { params }: Params) {
+  await prisma.tripPlan.deleteMany({ where: { id: params.id } });
+  return NextResponse.json({ success: true });
 }

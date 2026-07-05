@@ -3,6 +3,7 @@ export interface Mountain {
   name: string
   location: string
   province: string
+  coordinates: { lat: number; lng: number }
   image: string
   heroImage: string
   description: string
@@ -17,6 +18,7 @@ export interface Mountain {
 export interface TrailInfo {
   name: string
   description: string
+  coordinates?: { lat: number; lng: number }
 }
 
 export const mountainsData: Mountain[] = [
@@ -25,6 +27,7 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Agung",
     location: "Karangasem",
     province: "Bali",
+    coordinates: { lat: -8.343, lng: 115.508 },
     image: "",
     heroImage: "",
     description:
@@ -37,14 +40,17 @@ export const mountainsData: Mountain[] = [
         name: "Jalur Pasar Agung",
         description:
           "Jalur paling populer dengan akses mudah dari Pasar Agung Temple. Perjalanan memakan waktu 4-5 jam dengan pemandangan pura dan hutan.",
+        coordinates: { lat: -8.360, lng: 115.480 },
       },
       {
         name: "Jalur Besakih",
         description: "Jalur yang dimulai dari Pura Besakih, lebih menantang dengan medan yang curam dan berbatu.",
+        coordinates: { lat: -8.374, lng: 115.452 },
       },
       {
         name: "Jalur Sebudi",
         description: "Jalur alternatif yang lebih sepi dengan pemandangan alam yang masih asri dan udara yang sejuk.",
+        coordinates: { lat: -8.360, lng: 115.490 },
       },
     ],
     galleryImages: [
@@ -69,6 +75,7 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Rinjani",
     location: "Lombok",
     province: "Nusa Tenggara Barat",
+    coordinates: { lat: -8.411, lng: 116.457 },
     image: "",
     heroImage: "",
     description:
@@ -81,21 +88,25 @@ export const mountainsData: Mountain[] = [
         name: "Jalur Senaru",
         description:
           "Terletak di Desa Senaru, Kecamatan Bayan. Jalur ini adalah jalur paling populer yang menawarkan pemandangan indah dan tanjakan bertahap.",
+        coordinates: { lat: -8.312, lng: 116.427 },
       },
       {
         name: "Jalur Sembalun",
         description:
           "Terletak di Desa Sembalun Lawang, Kecamatan Sembalun. Ini merupakan jalur terpendek tetapi juga paling curam.",
+        coordinates: { lat: -8.351, lng: 116.539 },
       },
       {
         name: "Jalur Torean",
         description:
           "Terletak di Desa Torean, Kecamatan Bayan. Merupakan jalur yang menantang dengan jalur melewati hutan lebat dan menyusuri sungai.",
+        coordinates: { lat: -8.336, lng: 116.462 },
       },
       {
         name: "Jalur Timbanuh",
         description:
           "Terletak di Desa Timbanuh, Kecamatan Pringgasela. Jalur ini juga menantang, melewati hutan lebat dan sungai.",
+        coordinates: { lat: -8.459, lng: 116.539 },
       },
     ],
     galleryImages: [
@@ -123,6 +134,7 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Bromo",
     location: "Probolinggo",
     province: "Jawa Timur",
+    coordinates: { lat: -7.942, lng: 112.953 },
     image: "",
     heroImage: "",
     description:
@@ -135,10 +147,12 @@ export const mountainsData: Mountain[] = [
         name: "Jalur Cemoro Lawang",
         description:
           "Jalur utama yang paling mudah diakses dengan kendaraan hingga area parkir, dilanjutkan trekking ringan ke kawah.",
+        coordinates: { lat: -7.938, lng: 112.950 },
       },
       {
         name: "Jalur Wonokitri",
         description: "Jalur alternatif yang lebih menantang dengan pemandangan savana dan hutan yang indah.",
+        coordinates: { lat: -7.897, lng: 112.850 },
       },
     ],
     galleryImages: [
@@ -162,6 +176,7 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Semeru",
     location: "Lumajang",
     province: "Jawa Timur",
+    coordinates: { lat: -8.108, lng: 112.922 },
     image: "",
     heroImage: "",
     description:
@@ -173,10 +188,12 @@ export const mountainsData: Mountain[] = [
       {
         name: "Jalur Ranu Pani",
         description: "Jalur utama yang dimulai dari Ranu Pani dengan pemandangan danau dan savana yang indah.",
+        coordinates: { lat: -8.033, lng: 112.921 },
       },
       {
         name: "Jalur Watu Rejeng",
         description: "Jalur alternatif yang lebih menantang dengan medan berbatu dan tanjakan curam.",
+        coordinates: { lat: -8.060, lng: 112.930 },
       },
     ],
     galleryImages: [
@@ -200,6 +217,7 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Merbabu",
     location: "Magelang",
     province: "Jawa Tengah",
+    coordinates: { lat: -7.454, lng: 110.440 },
     image: "",
     heroImage: "",
     description:
@@ -211,18 +229,22 @@ export const mountainsData: Mountain[] = [
       {
         name: "Jalur Selo",
         description: "Jalur paling populer dengan akses mudah dan pemandangan savana yang indah.",
+        coordinates: { lat: -7.457, lng: 110.434 },
       },
       {
         name: "Jalur Wekas",
         description: "Jalur yang lebih menantang dengan hutan pinus dan pemandangan yang eksotis.",
+        coordinates: { lat: -7.457, lng: 110.400 },
       },
       {
         name: "Jalur Thekelan",
         description: "Jalur alternatif dengan medan yang bervariasi dan pemandangan Gunung Merapi.",
+        coordinates: { lat: -7.450, lng: 110.410 },
       },
       {
         name: "Jalur Cunthel",
         description: "Jalur yang jarang digunakan dengan tantangan lebih berat namun pemandangan yang menawan.",
+        coordinates: { lat: -7.440, lng: 110.410 },
       },
     ],
     galleryImages: [
@@ -246,6 +268,7 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Prau",
     location: "Wonosobo",
     province: "Jawa Tengah",
+    coordinates: { lat: -7.183, lng: 109.916 },
     image: "",
     heroImage: "",
     description:
@@ -257,14 +280,17 @@ export const mountainsData: Mountain[] = [
       {
         name: "Jalur Dieng",
         description: "Jalur paling populer dan mudah dengan pemandangan Telaga Warna dan hamparan edelweis.",
+        coordinates: { lat: -7.200, lng: 109.907 },
       },
       {
         name: "Jalur Patak Banteng",
         description: "Jalur alternatif dengan medan yang lebih menantang dan pemandangan yang berbeda.",
+        coordinates: { lat: -7.211, lng: 109.913 },
       },
       {
         name: "Jalur Igirmranak",
         description: "Jalur yang jarang digunakan dengan akses melalui desa dan hutan pinus.",
+        coordinates: { lat: -7.190, lng: 109.880 },
       },
     ],
     galleryImages: [
@@ -288,6 +314,7 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Merapi",
     location: "Sleman",
     province: "DI Yogyakarta",
+    coordinates: { lat: -7.540, lng: 110.446 },
     image: "",
     heroImage: "",
     description:
@@ -299,10 +326,12 @@ export const mountainsData: Mountain[] = [
       {
         name: "Jalur Selo",
         description: "Jalur utama yang paling aman dengan pemandangan kawah dan monitoring ketat aktivitas vulkanik.",
+        coordinates: { lat: -7.482, lng: 110.433 },
       },
       {
         name: "Jalur New Selo",
         description: "Jalur alternatif yang dibuka setelah erupsi dengan medan yang lebih menantang.",
+        coordinates: { lat: -7.485, lng: 110.435 },
       },
     ],
     galleryImages: [
@@ -326,6 +355,7 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Lawu",
     location: "Karanganyar",
     province: "Jawa Tengah",
+    coordinates: { lat: -7.625, lng: 111.192 },
     image: "",
     heroImage: "",
     description:
@@ -337,14 +367,17 @@ export const mountainsData: Mountain[] = [
       {
         name: "Jalur Cemoro Sewu",
         description: "Jalur paling populer dengan akses mudah dan pemandangan hutan cemara yang indah.",
+        coordinates: { lat: -7.625, lng: 111.204 },
       },
       {
         name: "Jalur Cemoro Kandang",
         description: "Jalur alternatif dengan medan yang lebih menantang dan pemandangan yang berbeda.",
+        coordinates: { lat: -7.624, lng: 111.199 },
       },
       {
         name: "Jalur Candi Cetho",
         description: "Jalur yang melewati situs bersejarah dengan nilai budaya dan spiritual yang tinggi.",
+        coordinates: { lat: -7.612, lng: 111.163 },
       },
     ],
     galleryImages: [
@@ -368,6 +401,7 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Ijen",
     location: "Banyuwangi",
     province: "Jawa Timur",
+    coordinates: { lat: -8.058, lng: 114.242 },
     image: "",
     heroImage: "",
     description:
@@ -379,10 +413,12 @@ export const mountainsData: Mountain[] = [
       {
         name: "Jalur Paltuding",
         description: "Jalur utama yang paling mudah diakses dengan pemandangan kawah belerang yang spektakuler.",
+        coordinates: { lat: -8.069, lng: 114.234 },
       },
       {
         name: "Jalur Sempol",
         description: "Jalur alternatif yang lebih panjang dengan pemandangan perkebunan kopi dan hutan.",
+        coordinates: { lat: -8.026, lng: 114.199 },
       },
     ],
     galleryImages: [
@@ -406,6 +442,7 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Kerinci",
     location: "Kerinci",
     province: "Jambi",
+    coordinates: { lat: -1.697, lng: 101.264 },
     image: "",
     heroImage: "",
     description:
@@ -418,10 +455,12 @@ export const mountainsData: Mountain[] = [
         name: "Jalur Kersik Tuo",
         description:
           "Jalur utama yang paling populer dengan akses melalui Desa Kersik Tuo dan pemandangan hutan tropis.",
+        coordinates: { lat: -1.767, lng: 101.281 },
       },
       {
         name: "Jalur Pelompek",
         description: "Jalur alternatif yang lebih menantang dengan medan yang berat dan pemandangan yang eksotis.",
+        coordinates: { lat: -1.757, lng: 101.290 },
       },
     ],
     galleryImages: [
@@ -445,6 +484,7 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Batur",
     location: "Bangli",
     province: "Bali",
+    coordinates: { lat: -8.242, lng: 115.375 },
     image: "",
     heroImage: "",
     description:
@@ -456,14 +496,17 @@ export const mountainsData: Mountain[] = [
       {
         name: "Jalur Toya Bungkah",
         description: "Jalur paling populer dan mudah dengan pemandangan danau dan sunrise yang spektakuler.",
+        coordinates: { lat: -8.238, lng: 115.396 },
       },
       {
         name: "Jalur Pura Jati",
         description: "Jalur alternatif yang melewati pura dengan nilai spiritual dan pemandangan yang indah.",
+        coordinates: { lat: -8.253, lng: 115.390 },
       },
       {
         name: "Jalur Songan",
         description: "Jalur yang jarang digunakan dengan akses melalui desa dan pemandangan yang berbeda.",
+        coordinates: { lat: -8.219, lng: 115.386 },
       },
     ],
     galleryImages: [
@@ -487,6 +530,7 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Papandayan",
     location: "Garut",
     province: "Jawa Barat",
+    coordinates: { lat: -7.319, lng: 107.733 },
     image: "",
     heroImage: "",
     description:
@@ -498,10 +542,12 @@ export const mountainsData: Mountain[] = [
       {
         name: "Jalur Pondok Salada",
         description: "Jalur utama yang mudah diakses dengan pemandangan kawah dan aktivitas geothermal.",
+        coordinates: { lat: -7.324, lng: 107.730 },
       },
       {
         name: "Jalur Cisurupan",
         description: "Jalur alternatif yang lebih menantang dengan pemandangan hutan dan perkebunan teh.",
+        coordinates: { lat: -7.340, lng: 107.730 },
       },
     ],
     galleryImages: [
@@ -525,6 +571,7 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Gede Pangrango",
     location: "Bogor",
     province: "Jawa Barat",
+    coordinates: { lat: -6.789, lng: 106.980 },
     image: "",
     heroImage: "",
     description:
@@ -536,14 +583,17 @@ export const mountainsData: Mountain[] = [
       {
         name: "Jalur Gunung Putri",
         description: "Jalur paling populer dengan akses mudah dan pemandangan air terjun Cibeureum.",
+        coordinates: { lat: -6.760, lng: 106.990 },
       },
       {
         name: "Jalur Salabintana",
         description: "Jalur yang lebih menantang dengan medan yang berat dan pemandangan hutan yang lebat.",
+        coordinates: { lat: -6.820, lng: 106.950 },
       },
       {
         name: "Jalur Putri",
         description: "Jalur alternatif dengan akses melalui Sukabumi dan pemandangan yang berbeda.",
+        coordinates: { lat: -6.750, lng: 107.020 },
       },
     ],
     galleryImages: [
@@ -567,6 +617,7 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Ciremai",
     location: "Cirebon",
     province: "Jawa Barat",
+    coordinates: { lat: -6.892, lng: 108.408 },
     image: "",
     heroImage: "",
     description:
@@ -578,18 +629,22 @@ export const mountainsData: Mountain[] = [
       {
         name: "Jalur Linggarjati",
         description: "Jalur paling populer dengan akses mudah dan pemandangan hutan yang indah.",
+        coordinates: { lat: -6.840, lng: 108.420 },
       },
       {
         name: "Jalur Apuy",
         description: "Jalur yang lebih menantang dengan medan yang berat dan pemandangan yang eksotis.",
+        coordinates: { lat: -6.890, lng: 108.360 },
       },
       {
         name: "Jalur Palutungan",
         description: "Jalur alternatif dengan akses melalui Kuningan dan pemandangan perkebunan.",
+        coordinates: { lat: -6.925, lng: 108.440 },
       },
       {
         name: "Jalur Cigugur",
         description: "Jalur yang jarang digunakan dengan tantangan lebih berat namun pemandangan yang menawan.",
+        coordinates: { lat: -6.930, lng: 108.430 },
       },
     ],
     galleryImages: [
@@ -613,6 +668,7 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Raung",
     location: "Banyuwangi",
     province: "Jawa Timur",
+    coordinates: { lat: -8.125, lng: 114.042 },
     image: "",
     heroImage: "",
     description:
@@ -624,10 +680,12 @@ export const mountainsData: Mountain[] = [
       {
         name: "Jalur Sumberwringin",
         description: "Jalur utama yang paling populer dengan akses melalui perkebunan kopi dan hutan.",
+        coordinates: { lat: -8.050, lng: 114.030 },
       },
       {
         name: "Jalur Kalibaru",
         description: "Jalur alternatif yang lebih menantang dengan medan yang berat dan pemandangan yang berbeda.",
+        coordinates: { lat: -8.130, lng: 113.980 },
       },
     ],
     galleryImages: [
@@ -651,6 +709,7 @@ export const mountainsData: Mountain[] = [
     name: "Gunung Buthak",
     location: "Malang",
     province: "Jawa Timur",
+    coordinates: { lat: -7.867, lng: 112.517 },
     image: "",
     heroImage: "",
     description:
@@ -662,10 +721,12 @@ export const mountainsData: Mountain[] = [
       {
         name: "Jalur Panderman",
         description: "Jalur yang paling populer dengan pemandangan sabana yang indah.",
+        coordinates: { lat: -7.870, lng: 112.510 },
       },
       {
         name: "Jalur Sirah Kencong",
         description: "Jalur yang di mulai perkebunan teh sirah kencong.",
+        coordinates: { lat: -7.950, lng: 112.530 },
       },
     ],
     galleryImages: [

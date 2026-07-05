@@ -49,7 +49,7 @@ const Footer = () => {
 
         {/* Copyright */}
         <p className="text-center text-base font-normal leading-[21px] text-global-2 font-plus-jakarta">
-          © 2025 Munggahwae. All rights reserved.
+          © {new Date().getFullYear()} Munggahwae. All rights reserved.
         </p>
       </div>
     </footer>

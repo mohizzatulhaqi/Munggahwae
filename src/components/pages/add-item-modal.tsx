@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type React from 'react';
 import Modal from '@/components/ui/Modal';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,8 @@ interface AddItemModalProps {
   title: string;
   namePlaceholder: string;
   showPrice?: boolean;
+  submitLabel?: string;
+  initialValues?: { name: string; price?: number; imageUrl?: string | null };
   onSubmit: (values: { name: string; price?: number; imageUrl?: string }) => Promise<void>;
 }
 
@@ -24,6 +26,8 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
   title,
   namePlaceholder,
   showPrice,
+  submitLabel,
+  initialValues,
   onSubmit,
 }) => {
   const [name, setName] = useState('');
@@ -38,6 +42,17 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
     setImagePreview(null);
     setError('');
   };
+
+  useEffect(() => {
+    if (open) {
+      setName(initialValues?.name ?? '');
+      setPrice(initialValues?.price != null ? String(initialValues.price) : '');
+      setImagePreview(initialValues?.imageUrl ?? null);
+      setError('');
+    }
+    // Only re-sync when the modal opens, not on every parent re-render while it's open
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   const handleClose = () => {
     reset();
@@ -77,7 +92,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
       reset();
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Gagal menambahkan barang');
+      setError(err instanceof Error ? err.message : 'Gagal menyimpan barang');
     } finally {
       setIsSubmitting(false);
     }
@@ -143,7 +158,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
             Batal
           </Button>
           <Button type="submit" disabled={isSubmitting} className="flex-1 h-11 rounded-xl bg-green-600 hover:bg-green-700">
-            {isSubmitting ? 'Menyimpan...' : 'Tambah'}
+            {isSubmitting ? 'Menyimpan...' : submitLabel ?? 'Tambah'}
           </Button>
         </div>
       </form>

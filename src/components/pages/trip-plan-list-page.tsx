@@ -5,8 +5,9 @@ import type React from 'react';
 import Link from 'next/link';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
+import Modal from '@/components/ui/Modal';
 import { Button } from '@/components/ui/button';
-import { Calendar, MapPin, Users, Wallet, Plus, Loader2, Mountain } from 'lucide-react';
+import { Calendar, MapPin, Users, Wallet, Plus, Loader2, Mountain, Route, Trash2 } from 'lucide-react';
 import { mountainsData } from '@/lib/mountain-data';
 import type { TripPlanSummaryDTO } from '@/lib/trip-plan-types';
 import { avatarStyle, initials } from '@/components/pages/trip-plan-form';
@@ -21,6 +22,8 @@ function formatRupiah(value: number) {
 
 const TripPlanListPage: React.FC = () => {
   const [plans, setPlans] = useState<TripPlanSummaryDTO[] | null>(null);
+  const [deletingPlan, setDeletingPlan] = useState<TripPlanSummaryDTO | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetch('/api/trip-plans')
@@ -28,6 +31,15 @@ const TripPlanListPage: React.FC = () => {
       .then((data: TripPlanSummaryDTO[]) => setPlans(data))
       .catch(() => setPlans([]));
   }, []);
+
+  const handleDelete = async () => {
+    if (!deletingPlan) return;
+    setIsDeleting(true);
+    await fetch(`/api/trip-plans/${deletingPlan.id}`, { method: 'DELETE' });
+    setPlans((prev) => (prev ? prev.filter((p) => p.id !== deletingPlan.id) : prev));
+    setIsDeleting(false);
+    setDeletingPlan(null);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -86,12 +98,22 @@ const TripPlanListPage: React.FC = () => {
               const progress = plan.totalItemCount > 0 ? Math.round((plan.packedCount / plan.totalItemCount) * 100) : 0;
 
               return (
-                <Link
-                  key={plan.id}
-                  href={`/trip-planner/${plan.id}`}
-                  className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl hover:-translate-y-0.5 transition-all"
-                >
-                  <h3 className="text-lg font-bold text-global-1 font-plus-jakarta mb-1 truncate">
+                <div key={plan.id} className="relative">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setDeletingPlan(plan);
+                    }}
+                    className="absolute top-4 right-4 z-10 w-9 h-9 flex items-center justify-center rounded-lg bg-white text-gray-400 hover:text-red-600 hover:bg-red-50 shadow-sm border border-gray-100 transition-colors"
+                    aria-label={`Hapus rencana ${plan.mountainName}`}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                  <Link
+                    href={`/trip-planner/${plan.id}`}
+                    className="block bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                  >
+                  <h3 className="text-lg font-bold text-global-1 font-plus-jakarta mb-1 truncate pr-10">
                     {plan.mountainName}
                   </h3>
                   {mountain && (
@@ -108,6 +130,14 @@ const TripPlanListPage: React.FC = () => {
                     <p className="flex items-center gap-1.5">
                       <Wallet className="w-3.5 h-3.5" /> {formatRupiah(plan.totalGroupPrice)} perlengkapan kelompok
                     </p>
+                    {(plan.ascentTrail || plan.descentTrail) && (
+                      <p className="flex items-center gap-1.5">
+                        <Route className="w-3.5 h-3.5" />
+                        {plan.ascentTrail && `Naik ${plan.ascentTrail}`}
+                        {plan.ascentTrail && plan.descentTrail && ' · '}
+                        {plan.descentTrail && `Turun ${plan.descentTrail}`}
+                      </p>
+                    )}
                   </div>
 
                   <div className="flex items-center justify-between mb-3">
@@ -132,7 +162,7 @@ const TripPlanListPage: React.FC = () => {
                     </span>
                   </div>
 
-                  <div>
+                  <div className="mb-3">
                     <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
                       <span>Perlengkapan pribadi dikemas</span>
                       <span>
@@ -146,12 +176,56 @@ const TripPlanListPage: React.FC = () => {
                       />
                     </div>
                   </div>
-                </Link>
+
+                  <div>
+                    <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+                      <span>Status patungan</span>
+                      <span>
+                        {plan.paidCount}/{plan.memberCount}
+                      </span>
+                    </div>
+                    <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-amber-500 rounded-full transition-all"
+                        style={{
+                          width: `${plan.memberCount > 0 ? Math.round((plan.paidCount / plan.memberCount) * 100) : 0}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                  </Link>
+                </div>
               );
             })}
           </div>
         )}
       </main>
+
+      <Modal open={!!deletingPlan} onClose={() => setDeletingPlan(null)} title="Hapus Rencana Pendakian">
+        <p className="text-sm text-gray-600 mb-6">
+          Yakin ingin menghapus rencana pendakian <span className="font-semibold">{deletingPlan?.mountainName}</span>?
+          Semua data anggota, perlengkapan, dan checklist di dalamnya akan ikut terhapus dan tidak bisa dikembalikan.
+        </p>
+        <div className="flex gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setDeletingPlan(null)}
+            className="flex-1 h-11 rounded-xl"
+          >
+            Batal
+          </Button>
+          <Button
+            type="button"
+            onClick={handleDelete}
+            disabled={isDeleting}
+            className="flex-1 h-11 rounded-xl bg-red-600 hover:bg-red-700"
+          >
+            {isDeleting ? 'Menghapus...' : 'Hapus'}
+          </Button>
+        </div>
+      </Modal>
+
       <Footer />
     </div>
   );

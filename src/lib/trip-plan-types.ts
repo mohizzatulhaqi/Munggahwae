@@ -9,6 +9,7 @@ export interface MemberDTO {
   id: string;
   name: string;
   order: number;
+  hasPaid: boolean;
   personalItems: PersonalItemDTO[];
 }
 
@@ -23,6 +24,8 @@ export interface TripPlanDTO {
   id: string;
   mountainId: string;
   mountainName: string;
+  ascentTrail: string | null;
+  descentTrail: string | null;
   startDate: string;
   endDate: string;
   members: MemberDTO[];
@@ -33,10 +36,14 @@ export interface TripPlanSummaryDTO {
   id: string;
   mountainId: string;
   mountainName: string;
+  ascentTrail: string | null;
+  descentTrail: string | null;
   startDate: string;
   endDate: string;
   memberNames: string[];
   totalGroupPrice: number;
   packedCount: number;
   totalItemCount: number;
+  paidCount: number;
+  memberCount: number;
 }

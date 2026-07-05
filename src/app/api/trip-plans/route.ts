@@ -9,9 +9,11 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { mountainId, mountainName, startDate, endDate, memberNames } = body as {
+  const { mountainId, mountainName, ascentTrail, descentTrail, startDate, endDate, memberNames } = body as {
     mountainId?: string;
     mountainName?: string;
+    ascentTrail?: string;
+    descentTrail?: string;
     startDate?: string;
     endDate?: string;
     memberNames?: string[];
@@ -30,6 +32,8 @@ export async function POST(request: Request) {
     data: {
       mountainId,
       mountainName,
+      ascentTrail: ascentTrail || null,
+      descentTrail: descentTrail || null,
       startDate: new Date(startDate),
       endDate: new Date(endDate),
       members: {

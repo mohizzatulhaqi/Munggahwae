@@ -24,6 +24,8 @@ const TripPlannerPage: React.FC = () => {
         body: JSON.stringify({
           mountainId: values.mountainId,
           mountainName: values.mountainName,
+          ascentTrail: values.ascentTrail,
+          descentTrail: values.descentTrail,
           startDate: values.startDate,
           endDate: values.endDate,
           memberNames: values.members.map((m) => m.name),

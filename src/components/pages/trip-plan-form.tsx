@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Calendar, MapPin, Users, Plus, X } from 'lucide-react';
+import { Calendar, MapPin, Users, Plus, X, Route } from 'lucide-react';
 import { mountainsData } from '@/lib/mountain-data';
 
 const AVATAR_STYLES = [
@@ -45,6 +45,8 @@ export interface FormMember {
 
 export interface TripPlanFormValues {
   mountainId: string;
+  ascentTrail?: string | null;
+  descentTrail?: string | null;
   startDate: string;
   endDate: string;
   members: FormMember[];
@@ -53,6 +55,8 @@ export interface TripPlanFormValues {
 export interface TripPlanSubmitValues {
   mountainId: string;
   mountainName: string;
+  ascentTrail?: string;
+  descentTrail?: string;
   startDate: string;
   endDate: string;
   members: { id?: string; name: string }[];
@@ -76,6 +80,8 @@ const TripPlanForm: React.FC<TripPlanFormProps> = ({
   errorMessage,
 }) => {
   const [mountainId, setMountainId] = useState(initialValues?.mountainId ?? '');
+  const [ascentTrail, setAscentTrail] = useState(initialValues?.ascentTrail ?? '');
+  const [descentTrail, setDescentTrail] = useState(initialValues?.descentTrail ?? '');
   const [startDate, setStartDate] = useState(initialValues?.startDate ?? '');
   const [endDate, setEndDate] = useState(initialValues?.endDate ?? '');
   const [members, setMembers] = useState<FormMember[]>(
@@ -87,6 +93,14 @@ const TripPlanForm: React.FC<TripPlanFormProps> = ({
     endDate?: string;
     members?: string;
   }>({});
+
+  const selectedMountain = mountainsData.find((m) => m.id === mountainId);
+
+  const handleMountainChange = (newMountainId: string) => {
+    setMountainId(newMountainId);
+    setAscentTrail('');
+    setDescentTrail('');
+  };
 
   const addMember = () => {
     setMembers((prev) => [...prev, { key: createLocalKey(), name: '' }]);
@@ -127,6 +141,8 @@ const TripPlanForm: React.FC<TripPlanFormProps> = ({
     await onSubmit({
       mountainId,
       mountainName: mountain?.name ?? '',
+      ascentTrail: ascentTrail || undefined,
+      descentTrail: descentTrail || undefined,
       startDate,
       endDate,
       members: members.map((m) => ({ id: m.id, name: m.name.trim() })),
@@ -144,7 +160,7 @@ const TripPlanForm: React.FC<TripPlanFormProps> = ({
               <MapPin className="w-4 h-4 text-green-600" />
               Gunung Tujuan
             </Label>
-            <Select value={mountainId} onValueChange={setMountainId}>
+            <Select value={mountainId} onValueChange={handleMountainChange}>
               <SelectTrigger className={`h-12 rounded-xl ${errors.mountainId ? 'border-red-500' : ''}`}>
                 <SelectValue placeholder="Pilih gunung" />
               </SelectTrigger>
@@ -158,6 +174,48 @@ const TripPlanForm: React.FC<TripPlanFormProps> = ({
             </Select>
             {errors.mountainId && <p className="text-sm text-red-600">{errors.mountainId}</p>}
           </div>
+
+          {selectedMountain && selectedMountain.trailDetails.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                  <Route className="w-4 h-4 text-green-600" />
+                  Jalur Naik
+                </Label>
+                <Select value={ascentTrail} onValueChange={setAscentTrail}>
+                  <SelectTrigger className="h-12 rounded-xl">
+                    <SelectValue placeholder="Pilih jalur naik" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {selectedMountain.trailDetails.map((trail) => (
+                      <SelectItem key={trail.name} value={trail.name}>
+                        {trail.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                  <Route className="w-4 h-4 text-green-600" />
+                  Jalur Turun
+                </Label>
+                <Select value={descentTrail} onValueChange={setDescentTrail}>
+                  <SelectTrigger className="h-12 rounded-xl">
+                    <SelectValue placeholder="Pilih jalur turun" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {selectedMountain.trailDetails.map((trail) => (
+                      <SelectItem key={trail.name} value={trail.name}>
+                        {trail.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
