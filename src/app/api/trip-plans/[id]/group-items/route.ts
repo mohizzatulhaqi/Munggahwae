@@ -12,12 +12,12 @@ export async function POST(request: Request, { params }: Params) {
     imageUrl?: string | null;
   };
 
-  if (!name?.trim() || typeof price !== 'number' || Number.isNaN(price) || price < 0) {
+  if (!name?.trim() || (price !== undefined && (typeof price !== 'number' || Number.isNaN(price) || price < 0))) {
     return NextResponse.json({ error: 'Nama dan harga barang harus valid' }, { status: 400 });
   }
 
   const item = await prisma.tripGroupItem.create({
-    data: { tripPlanId: params.id, name: name.trim(), price, imageUrl: imageUrl || null },
+    data: { tripPlanId: params.id, name: name.trim(), price: price ?? 0, imageUrl: imageUrl || null },
   });
 
   return NextResponse.json(

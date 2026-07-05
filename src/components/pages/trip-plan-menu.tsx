@@ -29,11 +29,13 @@ import {
   Route,
   Map,
   CloudSun,
+  Sparkles,
 } from 'lucide-react';
 import { mountainsData } from '@/lib/mountain-data';
 import type { GroupItemDTO, PersonalItemDTO, TripPlanDTO } from '@/lib/trip-plan-types';
 import TripPlanForm, { avatarStyle, initials, type TripPlanSubmitValues } from '@/components/pages/trip-plan-form';
 import AddItemModal from '@/components/pages/add-item-modal';
+import AiSuggestionsModal from '@/components/pages/ai-suggestions-modal';
 
 function formatRupiah(value: number) {
   return new Intl.NumberFormat('id-ID', {
@@ -63,6 +65,7 @@ const TripPlanMenu: React.FC<TripPlanMenuProps> = ({ id }) => {
   const [viewingImage, setViewingImage] = useState<string | null>(null);
   const [isDeletePlanModalOpen, setIsDeletePlanModalOpen] = useState(false);
   const [isDeletingPlan, setIsDeletingPlan] = useState(false);
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
 
   const fetchPlan = async () => {
     const res = await fetch(`/api/trip-plans/${id}`);
@@ -209,6 +212,30 @@ const TripPlanMenu: React.FC<TripPlanMenuProps> = ({ id }) => {
           }
         : prev,
     );
+  };
+
+  const addPersonalItemForMember = async (memberId: string, name: string) => {
+    const res = await fetch(`/api/trip-plans/${id}/members/${memberId}/items`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name }),
+    });
+    if (!res.ok) return;
+    const item = await res.json();
+    setPlan((prev) =>
+      prev
+        ? {
+            ...prev,
+            members: prev.members.map((m) =>
+              m.id === memberId ? { ...m, personalItems: [...m.personalItems, item] } : m,
+            ),
+          }
+        : prev,
+    );
+  };
+
+  const addGroupItemSimple = async (name: string) => {
+    await addGroupItem({ name });
   };
 
   const updatePersonalItem = async (itemId: string, values: { name: string; imageUrl?: string }) => {
@@ -452,6 +479,24 @@ const TripPlanMenu: React.FC<TripPlanMenuProps> = ({ id }) => {
               </div>
             </div>
           )}
+
+          {/* AI suggestions trigger */}
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl border border-green-100 p-6 sm:p-8 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 shrink-0 rounded-xl bg-white text-green-600 flex items-center justify-center shadow-sm">
+                <Sparkles className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="font-bold text-global-1">Saran AI untuk Perlengkapan</h2>
+                <p className="text-sm text-gray-600">
+                  Dapatkan saran barang berdasarkan gunung, jalur, cuaca, dan durasi rencana ini
+                </p>
+              </div>
+            </div>
+            <Button onClick={() => setIsAiModalOpen(true)} className="h-11 rounded-xl bg-green-600 hover:bg-green-700 shrink-0">
+              <Sparkles className="w-4 h-4" /> Dapatkan Saran
+            </Button>
+          </div>
 
           {/* Group equipment */}
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
@@ -761,6 +806,15 @@ const TripPlanMenu: React.FC<TripPlanMenuProps> = ({ id }) => {
           </Button>
         </div>
       </Modal>
+
+      <AiSuggestionsModal
+        open={isAiModalOpen}
+        onClose={() => setIsAiModalOpen(false)}
+        planId={id}
+        members={plan.members.map((m) => ({ id: m.id, name: m.name }))}
+        onAddGroupItem={addGroupItemSimple}
+        onAddPersonalItem={addPersonalItemForMember}
+      />
 
       <Footer />
     </div>
