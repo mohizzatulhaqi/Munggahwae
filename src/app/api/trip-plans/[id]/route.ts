@@ -16,7 +16,17 @@ export async function GET(request: Request, { params }: Params) {
 
 export async function PATCH(request: Request, { params }: Params) {
   const body = await request.json();
-  const { mountainId, mountainName, ascentTrail, descentTrail, startDate, endDate, members } = body as {
+  const {
+    mountainId,
+    mountainName,
+    ascentTrail,
+    descentTrail,
+    startDate,
+    endDate,
+    members,
+    emergencyContactName,
+    emergencyContactPhone,
+  } = body as {
     mountainId?: string;
     mountainName?: string;
     ascentTrail?: string;
@@ -24,6 +34,8 @@ export async function PATCH(request: Request, { params }: Params) {
     startDate?: string;
     endDate?: string;
     members?: { id?: string; name: string }[];
+    emergencyContactName?: string;
+    emergencyContactPhone?: string;
   };
 
   if (!mountainId || !mountainName || !startDate || !endDate) {
@@ -60,6 +72,8 @@ export async function PATCH(request: Request, { params }: Params) {
         descentTrail: descentTrail || null,
         startDate: new Date(startDate),
         endDate: new Date(endDate),
+        emergencyContactName: emergencyContactName || null,
+        emergencyContactPhone: emergencyContactPhone || null,
       },
     }),
     ...(removedIds.length

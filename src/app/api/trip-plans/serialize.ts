@@ -1,4 +1,4 @@
-import type { TripPlanDTO, TripPlanSummaryDTO } from '@/lib/trip-plan-types';
+import type { ItineraryDay, TripPlanDTO, TripPlanSummaryDTO } from '@/lib/trip-plan-types';
 import prisma from '@/app/api/prisma';
 
 export async function getTripPlanDTO(id: string): Promise<TripPlanDTO | null> {
@@ -10,6 +10,7 @@ export async function getTripPlanDTO(id: string): Promise<TripPlanDTO | null> {
         include: { personalItems: { orderBy: { createdAt: 'asc' } } },
       },
       groupItems: { orderBy: { createdAt: 'asc' } },
+      journalEntries: { orderBy: [{ entryDate: 'asc' }, { createdAt: 'asc' }] },
     },
   });
 
@@ -23,6 +24,9 @@ export async function getTripPlanDTO(id: string): Promise<TripPlanDTO | null> {
     descentTrail: plan.descentTrail,
     startDate: plan.startDate.toISOString().slice(0, 10),
     endDate: plan.endDate.toISOString().slice(0, 10),
+    emergencyContactName: plan.emergencyContactName,
+    emergencyContactPhone: plan.emergencyContactPhone,
+    itineraryDays: (plan.itineraryDays as unknown as ItineraryDay[] | null) ?? null,
     members: plan.members.map((member) => ({
       id: member.id,
       name: member.name,
@@ -40,6 +44,14 @@ export async function getTripPlanDTO(id: string): Promise<TripPlanDTO | null> {
       name: item.name,
       price: item.price,
       imageUrl: item.imageUrl,
+    })),
+    journalEntries: plan.journalEntries.map((entry) => ({
+      id: entry.id,
+      entryDate: entry.entryDate.toISOString().slice(0, 10),
+      note: entry.note,
+      imageUrl: entry.imageUrl,
+      authorName: entry.authorName,
+      createdAt: entry.createdAt.toISOString(),
     })),
   };
 }

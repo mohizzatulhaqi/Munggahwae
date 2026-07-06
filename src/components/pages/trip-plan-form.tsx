@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Calendar, MapPin, Users, Plus, X, Route } from 'lucide-react';
+import { Calendar, MapPin, Users, Plus, X, Route, ShieldAlert } from 'lucide-react';
 import { mountainsData } from '@/lib/mountain-data';
 
 const AVATAR_STYLES = [
@@ -50,6 +50,8 @@ export interface TripPlanFormValues {
   startDate: string;
   endDate: string;
   members: FormMember[];
+  emergencyContactName?: string | null;
+  emergencyContactPhone?: string | null;
 }
 
 export interface TripPlanSubmitValues {
@@ -60,6 +62,8 @@ export interface TripPlanSubmitValues {
   startDate: string;
   endDate: string;
   members: { id?: string; name: string }[];
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
 }
 
 interface TripPlanFormProps {
@@ -87,6 +91,8 @@ const TripPlanForm: React.FC<TripPlanFormProps> = ({
   const [members, setMembers] = useState<FormMember[]>(
     initialValues?.members ?? [{ key: createLocalKey(), name: '' }],
   );
+  const [emergencyContactName, setEmergencyContactName] = useState(initialValues?.emergencyContactName ?? '');
+  const [emergencyContactPhone, setEmergencyContactPhone] = useState(initialValues?.emergencyContactPhone ?? '');
   const [errors, setErrors] = useState<{
     mountainId?: string;
     startDate?: string;
@@ -146,6 +152,8 @@ const TripPlanForm: React.FC<TripPlanFormProps> = ({
       startDate,
       endDate,
       members: members.map((m) => ({ id: m.id, name: m.name.trim() })),
+      emergencyContactName: emergencyContactName.trim() || undefined,
+      emergencyContactPhone: emergencyContactPhone.trim() || undefined,
     });
   };
 
@@ -302,6 +310,37 @@ const TripPlanForm: React.FC<TripPlanFormProps> = ({
         >
           <Plus className="w-4 h-4" /> Tambah Anggota
         </button>
+      </div>
+
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 sm:p-8">
+        <h2 className="text-lg font-bold font-plus-jakarta text-global-1 flex items-center gap-2 mb-1">
+          <ShieldAlert className="w-5 h-5 text-red-600" />
+          Kontak Darurat
+        </h2>
+        <p className="text-sm text-gray-500 mb-4">
+          Diisi opsional, dipakai untuk tombol SOS jika terjadi keadaan darurat saat mendaki
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label className="text-sm font-medium text-gray-700">Nama Kontak</Label>
+            <Input
+              value={emergencyContactName}
+              onChange={(e) => setEmergencyContactName(e.target.value)}
+              placeholder="mis. Orangtua / Basecamp"
+              className="h-12 rounded-xl"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label className="text-sm font-medium text-gray-700">Nomor WhatsApp</Label>
+            <Input
+              type="tel"
+              value={emergencyContactPhone}
+              onChange={(e) => setEmergencyContactPhone(e.target.value)}
+              placeholder="mis. 08123456789"
+              className="h-12 rounded-xl"
+            />
+          </div>
+        </div>
       </div>
 
       {errorMessage && (

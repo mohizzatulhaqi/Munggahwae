@@ -29,6 +29,8 @@ const TripPlannerPage: React.FC = () => {
           startDate: values.startDate,
           endDate: values.endDate,
           memberNames: values.members.map((m) => m.name),
+          emergencyContactName: values.emergencyContactName,
+          emergencyContactPhone: values.emergencyContactPhone,
         }),
       });
       if (!res.ok) {

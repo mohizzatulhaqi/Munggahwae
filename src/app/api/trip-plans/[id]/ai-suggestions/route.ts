@@ -2,33 +2,10 @@ import { NextResponse } from 'next/server';
 import { GoogleGenAI, Type } from '@google/genai';
 import { mountainsData } from '@/lib/mountain-data';
 import { getTripPlanDTO } from '../../serialize';
+import { fetchWeatherSummary } from '../../weather-summary';
 
 interface Params {
   params: { id: string };
-}
-
-async function fetchWeatherSummary(lat: number, lng: number, startDate: string, endDate: string) {
-  try {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=16`;
-    const res = await fetch(url);
-    if (!res.ok) return null;
-    const data = await res.json();
-    const days: string[] = data.daily.time;
-    const matched = days
-      .map((date: string, i: number) => ({
-        date,
-        tempMax: Math.round(data.daily.temperature_2m_max[i]),
-        tempMin: Math.round(data.daily.temperature_2m_min[i]),
-        precipitationChance: data.daily.precipitation_probability_max[i],
-      }))
-      .filter((d) => d.date >= startDate && d.date <= endDate);
-    if (matched.length === 0) return null;
-    return matched
-      .map((d) => `${d.date}: ${d.tempMin}-${d.tempMax}°C, peluang hujan ${d.precipitationChance}%`)
-      .join('; ');
-  } catch {
-    return null;
-  }
 }
 
 export async function POST(request: Request, { params }: Params) {
@@ -56,6 +33,16 @@ export async function POST(request: Request, { params }: Params) {
     .map((m) => `- ${m.name}: sudah punya [${m.personalItems.map((i) => i.name).join(', ') || 'belum ada barang'}]`)
     .join('\n');
 
+  const itineraryContext =
+    plan.itineraryDays && plan.itineraryDays.length > 0
+      ? plan.itineraryDays
+          .map(
+            (d) =>
+              `Hari ${d.day} (${d.date}) - ${d.title}:\n${d.checkpoints.map((c) => `  - ${c.name}: ${c.note}`).join('\n')}`,
+          )
+          .join('\n')
+      : null;
+
   const prompt = `Kamu adalah asisten pendakian gunung berpengalaman di Indonesia. Berikan saran perlengkapan tambahan yang BELUM ada di daftar, berdasarkan konteks berikut. Jangan mengulang barang yang sudah ada di daftar.
 
 Gunung: ${plan.mountainName}${mountain ? ` (${mountain.description})` : ''}
@@ -64,13 +51,13 @@ Jalur turun: ${plan.descentTrail ?? 'belum ditentukan'}
 Durasi pendakian: ${duration} hari
 Jumlah anggota kelompok: ${plan.members.length}
 Prakiraan cuaca selama pendakian: ${weatherSummary ?? 'tidak tersedia (di luar jangkauan 16 hari)'}
-
+${itineraryContext ? `\nItinerary harian yang sudah direncanakan:\n${itineraryContext}\n` : ''}
 Perlengkapan kelompok yang sudah ada: [${groupItemNames.join(', ') || 'belum ada'}]
 
 Perlengkapan pribadi tiap anggota:
 ${membersContext}
 
-Berikan maksimal 6 saran perlengkapan kelompok dan maksimal 4 saran perlengkapan pribadi PER ANGGOTA yang benar-benar relevan dan belum ada. Setiap saran harus punya alasan singkat (1 kalimat) yang mengaitkan ke gunung/jalur/cuaca/durasi di atas. Jika sebuah kategori sudah lengkap, boleh kembalikan array kosong untuk kategori itu.`;
+Berikan maksimal 6 saran perlengkapan kelompok dan maksimal 4 saran perlengkapan pribadi PER ANGGOTA yang benar-benar relevan dan belum ada. Setiap saran harus punya alasan singkat (1 kalimat) yang mengaitkan ke gunung/jalur/cuaca/durasi${itineraryContext ? '/itinerary' : ''} di atas.${itineraryContext ? ' Gunakan itinerary untuk memperkirakan jumlah malam berkemah, lokasi bermalam dan ketinggiannya, kebutuhan air/logistik per etape, serta perlengkapan khusus summit attack (mis. headlamp, sarung tangan, jaket tebal untuk berangkat dini hari).' : ''} Jika sebuah kategori sudah lengkap, boleh kembalikan array kosong untuk kategori itu.`;
 
   try {
     const ai = new GoogleGenAI({ apiKey });

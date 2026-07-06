@@ -9,7 +9,17 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { mountainId, mountainName, ascentTrail, descentTrail, startDate, endDate, memberNames } = body as {
+  const {
+    mountainId,
+    mountainName,
+    ascentTrail,
+    descentTrail,
+    startDate,
+    endDate,
+    memberNames,
+    emergencyContactName,
+    emergencyContactPhone,
+  } = body as {
     mountainId?: string;
     mountainName?: string;
     ascentTrail?: string;
@@ -17,6 +27,8 @@ export async function POST(request: Request) {
     startDate?: string;
     endDate?: string;
     memberNames?: string[];
+    emergencyContactName?: string;
+    emergencyContactPhone?: string;
   };
 
   if (!mountainId || !mountainName || !startDate || !endDate) {
@@ -36,6 +48,8 @@ export async function POST(request: Request) {
       descentTrail: descentTrail || null,
       startDate: new Date(startDate),
       endDate: new Date(endDate),
+      emergencyContactName: emergencyContactName || null,
+      emergencyContactPhone: emergencyContactPhone || null,
       members: {
         create: names.map((name, index) => ({ name, order: index })),
       },

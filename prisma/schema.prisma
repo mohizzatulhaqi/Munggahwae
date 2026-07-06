@@ -69,18 +69,22 @@ model AnggotaPemesan {
 }
 
 model TripPlan {
-  id           String          @id @default(uuid())
-  mountainId   String
-  mountainName String
-  ascentTrail  String?
-  descentTrail String?
-  startDate    DateTime
-  endDate      DateTime
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
+  id                     String          @id @default(uuid())
+  mountainId             String
+  mountainName           String
+  ascentTrail            String?
+  descentTrail           String?
+  startDate              DateTime
+  endDate                DateTime
+  emergencyContactName   String?
+  emergencyContactPhone  String?
+  itineraryDays          Json?
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
 
-  members      TripMember[]
-  groupItems   TripGroupItem[]
+  members        TripMember[]
+  groupItems     TripGroupItem[]
+  journalEntries TripJournalEntry[]
 }
 
 model TripMember {
@@ -101,6 +105,17 @@ model TripGroupItem {
   name       String
   price      Int
   imageUrl   String?  @db.Text
+  createdAt  DateTime @default(now())
+}
+
+model TripJournalEntry {
+  id         String   @id @default(uuid())
+  tripPlanId String
+  tripPlan   TripPlan @relation(fields: [tripPlanId], references: [id], onDelete: Cascade)
+  entryDate  DateTime
+  note       String
+  imageUrl   String?  @db.Text
+  authorName String?
   createdAt  DateTime @default(now())
 }
 

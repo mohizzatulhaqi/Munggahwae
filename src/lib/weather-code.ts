@@ -50,3 +50,15 @@ const WEATHER_CODES: Record<number, WeatherCodeInfo> = {
 export function getWeatherCodeInfo(code: number): WeatherCodeInfo {
   return WEATHER_CODES[code] ?? { label: 'Tidak diketahui', icon: Cloud };
 }
+
+const SEVERE_CODES = new Set([65, 66, 67, 81, 82, 75, 86, 95, 96, 99]);
+const MODERATE_CODES = new Set([61, 63, 71, 73, 77, 85]);
+const MILD_CODES = new Set([45, 48, 51, 53, 55, 56, 57, 80]);
+
+/** 0 = cerah/berawan, 1 = gerimis/kabut ringan, 2 = hujan sedang, 3 = hujan lebat/badai */
+export function getWeatherSeverity(code: number): number {
+  if (SEVERE_CODES.has(code)) return 3;
+  if (MODERATE_CODES.has(code)) return 2;
+  if (MILD_CODES.has(code)) return 1;
+  return 0;
+}

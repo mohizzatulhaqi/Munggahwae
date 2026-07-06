@@ -1,12 +1,12 @@
 'use client';
 import type React from 'react';
 import { useState, useMemo } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import Pagination from '@/components/ui/Pagination';
 import ImagePlaceholder from '@/components/ui/ImagePlaceholder';
+import ImageWithSkeleton from '@/components/ui/ImageWithSkeleton';
 import { getAllMountains } from '@/lib/mountain-data';
 import ProvinceFilter from '../ui/ProvinceFilter';
 import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -155,12 +155,11 @@ const MountainDiscoveryPage: React.FC = () => {
                   <div className="flex flex-col items-center w-full cursor-pointer hover:transform hover:scale-105 transition-transform">
                     <div className="w-full h-[156px]">
                       {mountain.image ? (
-                        <Image
+                        <ImageWithSkeleton
                           src={mountain.image}
                           alt={mountain.name}
-                          width={176}
-                          height={99}
-                          className="w-full h-[99px] object-cover rounded-xl"
+                          unoptimized
+                          wrapperClassName="w-full h-[99px] rounded-xl"
                         />
                       ) : (
                         <ImagePlaceholder className="w-full h-[99px] rounded-xl" />

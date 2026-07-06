@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Loader2, CalendarClock, Droplets } from 'lucide-react';
-import { getWeatherCodeInfo } from '@/lib/weather-code';
+import { Loader2, CalendarClock, Droplets, AlertTriangle } from 'lucide-react';
+import { getWeatherCodeInfo, getWeatherSeverity } from '@/lib/weather-code';
 
 interface DailyForecast {
   date: string;
@@ -12,17 +12,51 @@ interface DailyForecast {
   precipitationChance: number;
 }
 
+interface WeatherSnapshotEntry {
+  weatherCode: number;
+  precipitationChance: number;
+}
+
 interface WeatherForecastProps {
+  planId: string;
   lat: number;
   lng: number;
   startDate: string;
   endDate: string;
 }
 
-const WeatherForecast: React.FC<WeatherForecastProps> = ({ lat, lng, startDate, endDate }) => {
+const PRECIPITATION_JUMP_THRESHOLD = 25;
+
+function snapshotKey(planId: string) {
+  return `munggahwae:weather-snapshot:${planId}`;
+}
+
+function readSnapshot(planId: string): Record<string, WeatherSnapshotEntry> {
+  try {
+    const raw = localStorage.getItem(snapshotKey(planId));
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+function writeSnapshot(planId: string, days: DailyForecast[]) {
+  try {
+    const snapshot: Record<string, WeatherSnapshotEntry> = {};
+    days.forEach((d) => {
+      snapshot[d.date] = { weatherCode: d.weatherCode, precipitationChance: d.precipitationChance };
+    });
+    localStorage.setItem(snapshotKey(planId), JSON.stringify(snapshot));
+  } catch {
+    // ignore write failures (private browsing / storage disabled)
+  }
+}
+
+const WeatherForecast: React.FC<WeatherForecastProps> = ({ planId, lat, lng, startDate, endDate }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [days, setDays] = useState<DailyForecast[] | null>(null);
   const [error, setError] = useState('');
+  const [worsenedDates, setWorsenedDates] = useState<string[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -45,7 +79,23 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ lat, lng, startDate, 
         }));
 
         const matched = daily.filter((d) => d.date >= startDate && d.date <= endDate);
-        if (!cancelled) setDays(matched);
+        if (cancelled) return;
+
+        const previous = readSnapshot(planId);
+        const worsened = matched
+          .filter((d) => {
+            const prev = previous[d.date];
+            if (!prev) return false;
+            const severityRose = getWeatherSeverity(d.weatherCode) > getWeatherSeverity(prev.weatherCode);
+            const precipitationJumped =
+              d.precipitationChance - prev.precipitationChance >= PRECIPITATION_JUMP_THRESHOLD;
+            return severityRose || precipitationJumped;
+          })
+          .map((d) => d.date);
+
+        setWorsenedDates(worsened);
+        setDays(matched);
+        writeSnapshot(planId, matched);
       } catch (err) {
         if (!cancelled) setError(err instanceof Error ? err.message : 'Gagal memuat data cuaca');
       } finally {
@@ -57,7 +107,7 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ lat, lng, startDate, 
     return () => {
       cancelled = true;
     };
-  }, [lat, lng, startDate, endDate]);
+  }, [planId, lat, lng, startDate, endDate]);
 
   if (isLoading) {
     return (
@@ -81,31 +131,50 @@ const WeatherForecast: React.FC<WeatherForecastProps> = ({ lat, lng, startDate, 
   }
 
   return (
-    <div className="flex gap-3 overflow-x-auto pb-1">
-      {days.map((day) => {
-        const { label, icon: Icon } = getWeatherCodeInfo(day.weatherCode);
-        const dateLabel = new Date(day.date).toLocaleDateString('id-ID', {
-          weekday: 'short',
-          day: 'numeric',
-          month: 'short',
-        });
-        return (
-          <div
-            key={day.date}
-            className="shrink-0 w-32 rounded-xl border border-gray-100 p-4 text-center bg-gray-50"
-          >
-            <p className="text-xs font-medium text-gray-500 mb-2">{dateLabel}</p>
-            <Icon className="w-8 h-8 mx-auto text-green-600 mb-2" />
-            <p className="text-xs text-gray-600 mb-2">{label}</p>
-            <p className="text-sm font-semibold text-global-1">
-              {day.tempMax}° / {day.tempMin}°
-            </p>
-            <p className="flex items-center justify-center gap-1 text-xs text-blue-600 mt-1">
-              <Droplets className="w-3 h-3" /> {day.precipitationChance}%
-            </p>
-          </div>
-        );
-      })}
+    <div className="space-y-3">
+      {worsenedDates.length > 0 && (
+        <div className="flex items-start gap-2 text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+          <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+          <span>
+            Prakiraan cuaca memburuk sejak terakhir kali dicek untuk tanggal{' '}
+            {worsenedDates
+              .map((date) =>
+                new Date(date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }),
+              )
+              .join(', ')}
+            . Periksa kembali perlengkapan hujan/jas hujan.
+          </span>
+        </div>
+      )}
+      <div className="flex gap-3 overflow-x-auto pb-1">
+        {days.map((day) => {
+          const { label, icon: Icon } = getWeatherCodeInfo(day.weatherCode);
+          const isWorsened = worsenedDates.includes(day.date);
+          const dateLabel = new Date(day.date).toLocaleDateString('id-ID', {
+            weekday: 'short',
+            day: 'numeric',
+            month: 'short',
+          });
+          return (
+            <div
+              key={day.date}
+              className={`shrink-0 w-32 rounded-xl border p-4 text-center ${
+                isWorsened ? 'border-amber-300 bg-amber-50' : 'border-gray-100 bg-gray-50'
+              }`}
+            >
+              <p className="text-xs font-medium text-gray-500 mb-2">{dateLabel}</p>
+              <Icon className={`w-8 h-8 mx-auto mb-2 ${isWorsened ? 'text-amber-600' : 'text-green-600'}`} />
+              <p className="text-xs text-gray-600 mb-2">{label}</p>
+              <p className="text-sm font-semibold text-global-1">
+                {day.tempMax}° / {day.tempMin}°
+              </p>
+              <p className="flex items-center justify-center gap-1 text-xs text-blue-600 mt-1">
+                <Droplets className="w-3 h-3" /> {day.precipitationChance}%
+              </p>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

@@ -28,8 +28,8 @@ export const mountainsData: Mountain[] = [
     location: "Karangasem",
     province: "Bali",
     coordinates: { lat: -8.343, lng: 115.508 },
-    image: "",
-    heroImage: "",
+    image: "https://upload.wikimedia.org/wikipedia/commons/7/78/Gunung_Agung_1.jpg",
+    heroImage: "https://upload.wikimedia.org/wikipedia/commons/f/f6/Gunung_Agung_Amed.jpg",
     description:
       "Gunung Agung adalah gunung berapi aktif di Bali yang merupakan titik tertinggi di pulau tersebut dengan ketinggian 3.031 mdpl. Gunung ini dianggap suci oleh masyarakat Hindu Bali dan menawarkan pemandangan sunrise yang spektakuler.",
     quota: "75 pendaki/hari",
@@ -54,9 +54,10 @@ export const mountainsData: Mountain[] = [
       },
     ],
     galleryImages: [
-      "",
-      "",
-      "",
+      "https://upload.wikimedia.org/wikipedia/commons/7/78/Gunung_Agung_1.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/f/f6/Gunung_Agung_Amed.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/b/b0/Gunung_Agung_Descension.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/d/dd/Mount_Agung_June_2025.jpg",
     ],
     bookingTerms: [
       "Pendakian hanya diperbolehkan melalui jalur resmi yang telah ditetapkan: Pasar Agung, Besakih, dan Sebudi.",
@@ -76,8 +77,8 @@ export const mountainsData: Mountain[] = [
     location: "Lombok",
     province: "Nusa Tenggara Barat",
     coordinates: { lat: -8.411, lng: 116.457 },
-    image: "",
-    heroImage: "",
+    image: "https://upload.wikimedia.org/wikipedia/commons/4/44/Gunung_Rinjani_dan_danau_Segara_Anak.jpg",
+    heroImage: "https://upload.wikimedia.org/wikipedia/commons/a/a0/Mount_Rinjani_Panorama.jpg",
     description:
       "Gunung Rinjani adalah gunung yang berlokasi di Pulau Lombok, Nusa Tenggara Barat. Gunung yang merupakan gunung berapi kedua tertinggi di Indonesia dengan ketinggian 3.726 mdpl serta terletak pada lintang 8º25' LS dan 116º28' BT ini merupakan gunung favorit bagi pendaki Indonesia karena keindahan pemandangannya.",
     quota: "100 pendaki/hari",
@@ -110,9 +111,10 @@ export const mountainsData: Mountain[] = [
       },
     ],
     galleryImages: [
-      "",
-      "",
-      "",
+      "https://upload.wikimedia.org/wikipedia/commons/4/44/Gunung_Rinjani_dan_danau_Segara_Anak.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/2/2f/Gunung_Rinjani_dari_Jalur_Sembalun.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/a/a0/Mount_Rinjani_Panorama.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/6/6b/Mt._Barujari_descending_Mt._Rinjani_to_Plawangan_II.JPG",
     ],
     bookingTerms: [
       "Pendakian hanya diperbolehkan melalui jalur resmi yang telah ditetapkan, seperti Senaru, Sembalun, Torean, dan Timbanuh. Pendaki wajib mengikuti seluruh prosedur dan instruksi dari petugas di pintu masuk jalur pendakian.",
@@ -135,8 +137,8 @@ export const mountainsData: Mountain[] = [
     location: "Probolinggo",
     province: "Jawa Timur",
     coordinates: { lat: -7.942, lng: 112.953 },
-    image: "",
-    heroImage: "",
+    image: "https://upload.wikimedia.org/wikipedia/commons/4/47/Crater_of_Mount_Bromo%2C_Java%2C_Indonesia%2C_20220820_0540_9412.jpg",
+    heroImage: "https://upload.wikimedia.org/wikipedia/commons/0/04/Bromo_and_Semeru_volcanoes%2C_Java%2C_Indonesia%2C_20220820_0717_9517.jpg",
     description:
       "Gunung Bromo adalah gunung berapi aktif di Jawa Timur dengan ketinggian 2.329 mdpl. Terkenal dengan pemandangan sunrise yang menakjubkan dan lautan pasir yang luas, Bromo menjadi salah satu destinasi wisata paling populer di Indonesia.",
     quota: "200 pendaki/hari",
@@ -156,9 +158,10 @@ export const mountainsData: Mountain[] = [
       },
     ],
     galleryImages: [
-      "",
-      "",
-      "",
+      "https://upload.wikimedia.org/wikipedia/commons/e/eb/Bromo%2C_Java%2C_Indonesia%2C_20220820_0636_9502.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/4/47/Crater_of_Mount_Bromo%2C_Java%2C_Indonesia%2C_20220820_0540_9412.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/0/04/Bromo_and_Semeru_volcanoes%2C_Java%2C_Indonesia%2C_20220820_0717_9517.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/5/5c/Crater_of_Mount_Bromo%2C_Java%2C_Indonesia%2C_20220820_0600_9460.jpg",
     ],
     bookingTerms: [
       "Pendakian hanya diperbolehkan melalui jalur resmi Cemoro Lawang dan Wonokitri.",
@@ -177,8 +180,8 @@ export const mountainsData: Mountain[] = [
     location: "Lumajang",
     province: "Jawa Timur",
     coordinates: { lat: -8.108, lng: 112.922 },
-    image: "",
-    heroImage: "",
+    image: "https://upload.wikimedia.org/wikipedia/commons/9/95/Bromo%2C_Semeru%2C_Batok_-_view_of_Tengger_caldera%2C_East_Java%2C_Indonesia%2C_20220820_0709_9507.jpg",
+    heroImage: "https://upload.wikimedia.org/wikipedia/commons/a/a7/Bromo_and_Semeru_volcanoes%2C_Java%2C_Indonesia%2C_20220820_0718_9524.jpg",
     description:
       "Gunung Semeru adalah gunung tertinggi di Pulau Jawa dengan ketinggian 3.676 mdpl. Dikenal sebagai Mahameru, gunung ini menawarkan tantangan pendakian yang menantang dengan pemandangan yang luar biasa indah.",
     quota: "80 pendaki/hari",
@@ -197,9 +200,10 @@ export const mountainsData: Mountain[] = [
       },
     ],
     galleryImages: [
-      "",
-      "",
-      "",
+      "https://upload.wikimedia.org/wikipedia/commons/9/95/Bromo%2C_Semeru%2C_Batok_-_view_of_Tengger_caldera%2C_East_Java%2C_Indonesia%2C_20220820_0709_9507.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/a/a7/Bromo_and_Semeru_volcanoes%2C_Java%2C_Indonesia%2C_20220820_0718_9524.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/7/7d/Mount_Bromo_at_sunrise%2C_showing_its_volcanoes_and_Mount_Semeru_%28background%29.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/c/c0/Bromo_and_Semeru_volcanoes%2C_Java%2C_Indonesia%2C_20220820_0754_9543.jpg",
     ],
     bookingTerms: [
       "Pendakian hanya diperbolehkan melalui jalur resmi Ranu Pani dan Watu Rejeng.",
@@ -218,8 +222,8 @@ export const mountainsData: Mountain[] = [
     location: "Magelang",
     province: "Jawa Tengah",
     coordinates: { lat: -7.454, lng: 110.440 },
-    image: "",
-    heroImage: "",
+    image: "https://upload.wikimedia.org/wikipedia/commons/5/59/Gunung_Merbabu_view.jpg",
+    heroImage: "https://upload.wikimedia.org/wikipedia/commons/6/6a/Keindahan_di_antara_Gunung_Merbabu_dan_Gunung_Merapi.jpg",
     description:
       "Gunung Merbabu adalah gunung berapi yang sudah tidak aktif dengan ketinggian 3.145 mdpl. Terkenal dengan savana yang luas dan pemandangan sunrise yang memukau, cocok untuk pendaki pemula hingga berpengalaman.",
     quota: "150 pendaki/hari",
@@ -248,9 +252,10 @@ export const mountainsData: Mountain[] = [
       },
     ],
     galleryImages: [
-      "",
-      "",
-      "",
+      "https://upload.wikimedia.org/wikipedia/commons/5/59/Gunung_Merbabu_view.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/6/6a/Keindahan_di_antara_Gunung_Merbabu_dan_Gunung_Merapi.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/8/85/Great_nature_green_at_Merbabu_Mount_-_1.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/9/9e/Gunung_Merbabu_via_Suwanting.jpg",
     ],
     bookingTerms: [
       "Pendakian diperbolehkan melalui jalur Selo, Wekas, Thekelan, dan Cunthel.",
@@ -269,8 +274,8 @@ export const mountainsData: Mountain[] = [
     location: "Wonosobo",
     province: "Jawa Tengah",
     coordinates: { lat: -7.183, lng: 109.916 },
-    image: "",
-    heroImage: "",
+    image: "https://upload.wikimedia.org/wikipedia/commons/c/c7/Gunung_Prau%2C_Dieng%2C_Wonosobo%2C_05062017.jpg",
+    heroImage: "https://upload.wikimedia.org/wikipedia/commons/7/7a/Pemandangan_dari_puncak_gunung_prau%2C_Dieng%2C_Wonosobo%2C_Jawa_Tengah%2C_04072015.jpg",
     description:
       "Gunung Prau adalah gunung dengan ketinggian 2.565 mdpl yang terkenal dengan hamparan bunga edelweis dan pemandangan sunrise yang spektakuler. Cocok untuk pendaki pemula dengan jalur yang relatif mudah.",
     quota: "200 pendaki/hari",
@@ -294,9 +299,10 @@ export const mountainsData: Mountain[] = [
       },
     ],
     galleryImages: [
-      "",
-      "",
-      "",
+      "https://upload.wikimedia.org/wikipedia/commons/c/c7/Gunung_Prau%2C_Dieng%2C_Wonosobo%2C_05062017.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/7/7a/Pemandangan_dari_puncak_gunung_prau%2C_Dieng%2C_Wonosobo%2C_Jawa_Tengah%2C_04072015.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/f/ff/Pagi_Hari_Di_Gunung_Prau.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/d/d5/Ombak_diatas_awan_dari_puncak_gunung_prau%2C_Dieng%2C_Wonosobo%2C_Jawa_Tengah%2C_04072015.jpg",
     ],
     bookingTerms: [
       "Pendakian diperbolehkan melalui jalur Dieng, Patak Banteng, dan Igirmranak.",
@@ -315,8 +321,8 @@ export const mountainsData: Mountain[] = [
     location: "Sleman",
     province: "DI Yogyakarta",
     coordinates: { lat: -7.540, lng: 110.446 },
-    image: "",
-    heroImage: "",
+    image: "https://upload.wikimedia.org/wikipedia/commons/f/f2/Gunung_Merapi%2C_Yogyakarta.jpg",
+    heroImage: "https://upload.wikimedia.org/wikipedia/commons/c/c4/Gunung_Merapi_-_Sawah_-_Perumahan.jpg",
     description:
       "Gunung Merapi adalah gunung berapi paling aktif di Indonesia dengan ketinggian 2.930 mdpl. Menawarkan tantangan pendakian yang menantang dengan pemandangan kawah aktif dan lava dome yang menakjubkan.",
     quota: "50 pendaki/hari",
@@ -335,9 +341,10 @@ export const mountainsData: Mountain[] = [
       },
     ],
     galleryImages: [
-      "",
-      "",
-      "",
+      "https://upload.wikimedia.org/wikipedia/commons/f/f2/Gunung_Merapi%2C_Yogyakarta.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/c/c4/Gunung_Merapi_-_Sawah_-_Perumahan.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/c/cc/Gunung_Merapi_2025.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/8/8e/Merapi_and_Cloud.jpg",
     ],
     bookingTerms: [
       "Pendakian hanya diperbolehkan saat status normal atau waspada level 1.",
@@ -356,8 +363,8 @@ export const mountainsData: Mountain[] = [
     location: "Karanganyar",
     province: "Jawa Tengah",
     coordinates: { lat: -7.625, lng: 111.192 },
-    image: "",
-    heroImage: "",
+    image: "https://upload.wikimedia.org/wikipedia/commons/a/a5/Langit_Puncak_Gunung_Lawu.jpg",
+    heroImage: "https://upload.wikimedia.org/wikipedia/commons/5/5c/Mount_Lawu_viewed_from_Ngawi%2C_East_Java%2C_Indonesia%2C_Jun_14.jpg",
     description:
       "Gunung Lawu adalah gunung berapi yang sudah tidak aktif dengan ketinggian 3.265 mdpl. Terkenal dengan situs sejarah Candi Cetho dan Sukuh, serta pemandangan sunrise yang memukau dari puncak Hargo Dumilah.",
     quota: "120 pendaki/hari",
@@ -381,9 +388,10 @@ export const mountainsData: Mountain[] = [
       },
     ],
     galleryImages: [
-      "",
-      "",
-      "",
+      "https://upload.wikimedia.org/wikipedia/commons/a/a5/Langit_Puncak_Gunung_Lawu.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/5/5c/Mount_Lawu_viewed_from_Ngawi%2C_East_Java%2C_Indonesia%2C_Jun_14.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/4/47/Gunung_Lawu_dari_jauh.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/4/48/Menapak_Kontur_Lereng_Gunung_Lawu-.jpg",
     ],
     bookingTerms: [
       "Pendakian diperbolehkan melalui jalur Cemoro Sewu, Cemoro Kandang, dan Candi Cetho.",
@@ -402,8 +410,8 @@ export const mountainsData: Mountain[] = [
     location: "Banyuwangi",
     province: "Jawa Timur",
     coordinates: { lat: -8.058, lng: 114.242 },
-    image: "",
-    heroImage: "",
+    image: "https://upload.wikimedia.org/wikipedia/commons/9/96/Kawah_Ijen%2C_Java%2C_Indonesia%2C_20220821_0608_9712.jpg",
+    heroImage: "https://upload.wikimedia.org/wikipedia/commons/0/05/Crater_of_Kawah_Ijen_volcano%2C_East_Java%2C_Indonesia%2C_20220821_0611_9726.jpg",
     description:
       "Gunung Ijen adalah gunung berapi dengan ketinggian 2.443 mdpl yang terkenal dengan fenomena blue fire dan danau kawah belerang terbesar di dunia. Menawarkan pengalaman pendakian yang unik dan menakjubkan.",
     quota: "100 pendaki/hari",
@@ -422,9 +430,10 @@ export const mountainsData: Mountain[] = [
       },
     ],
     galleryImages: [
-      "",
-      "",
-      "",
+      "https://upload.wikimedia.org/wikipedia/commons/9/96/Kawah_Ijen%2C_Java%2C_Indonesia%2C_20220821_0608_9712.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/0/05/Crater_of_Kawah_Ijen_volcano%2C_East_Java%2C_Indonesia%2C_20220821_0611_9726.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/f/f5/Kawah-Ijen_Indonesia_Acidious-Lake-at_the-floor-of-the-crater-01.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/2/26/Interior_of_Kawah_Ijen_volcano_crater%2C_20220821_0547_9699.jpg",
     ],
     bookingTerms: [
       "Pendakian diperbolehkan melalui jalur Paltuding dan Sempol.",
@@ -443,8 +452,8 @@ export const mountainsData: Mountain[] = [
     location: "Kerinci",
     province: "Jambi",
     coordinates: { lat: -1.697, lng: 101.264 },
-    image: "",
-    heroImage: "",
+    image: "https://upload.wikimedia.org/wikipedia/commons/e/ee/Gunung_Kerinci_dari_kebun_teh.jpg",
+    heroImage: "https://upload.wikimedia.org/wikipedia/commons/e/e1/Gunung_Kerinci_dari_tempat_wisata_Swarga_4.jpg",
     description:
       "Gunung Kerinci adalah gunung tertinggi di Sumatera dengan ketinggian 3.805 mdpl. Terletak di Taman Nasional Kerinci Seblat, menawarkan keanekaragaman hayati yang luar biasa dan tantangan pendakian yang menantang.",
     quota: "60 pendaki/hari",
@@ -464,9 +473,10 @@ export const mountainsData: Mountain[] = [
       },
     ],
     galleryImages: [
-      "",
-      "",
-      "",
+      "https://upload.wikimedia.org/wikipedia/commons/e/ee/Gunung_Kerinci_dari_kebun_teh.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/e/e1/Gunung_Kerinci_dari_tempat_wisata_Swarga_4.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/f/fc/Gunung_Kerinci_dari_kebun_teh_2.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/f/f8/Kerinci_smoke.jpg",
     ],
     bookingTerms: [
       "Pendakian hanya diperbolehkan dengan izin dari TNKS (Taman Nasional Kerinci Seblat).",
@@ -485,8 +495,8 @@ export const mountainsData: Mountain[] = [
     location: "Bangli",
     province: "Bali",
     coordinates: { lat: -8.242, lng: 115.375 },
-    image: "",
-    heroImage: "",
+    image: "https://upload.wikimedia.org/wikipedia/commons/f/fb/Gunung_Batur%2C_Kintamani_MWD_15.jpg",
+    heroImage: "https://upload.wikimedia.org/wikipedia/commons/b/b4/Bangly-Regency_Bali_Indonesia_Lake-Batur-01.jpg",
     description:
       "Gunung Batur adalah gunung berapi aktif dengan ketinggian 1.717 mdpl yang terkenal dengan pemandangan sunrise di atas Danau Batur. Pendakian yang relatif mudah dan cocok untuk pemula.",
     quota: "300 pendaki/hari",
@@ -510,9 +520,10 @@ export const mountainsData: Mountain[] = [
       },
     ],
     galleryImages: [
-      "",
-      "",
-      "",
+      "https://upload.wikimedia.org/wikipedia/commons/f/fb/Gunung_Batur%2C_Kintamani_MWD_15.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/b/b4/Bangly-Regency_Bali_Indonesia_Lake-Batur-01.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/8/82/Gunung_Batur_Kintamani_Bali.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/e/e7/Kintamani_-_Gunung_Batur_-_49817610343.jpg",
     ],
     bookingTerms: [
       "Pendakian diperbolehkan melalui jalur Toya Bungkah, Pura Jati, dan Songan.",
@@ -531,8 +542,8 @@ export const mountainsData: Mountain[] = [
     location: "Garut",
     province: "Jawa Barat",
     coordinates: { lat: -7.319, lng: 107.733 },
-    image: "",
-    heroImage: "",
+    image: "https://upload.wikimedia.org/wikipedia/commons/3/3a/Kawah_Mas%2C_Gunung_Papandayan%2C_Garut.jpg",
+    heroImage: "https://upload.wikimedia.org/wikipedia/commons/1/15/Kabut_dan_Savana_Tegal_Alun%2C_Gunung_Papandayan%2C_Garut.jpg",
     description:
       "Gunung Papandayan adalah gunung berapi dengan ketinggian 2.665 mdpl yang terkenal dengan kawah aktif dan fenomena geothermal. Menawarkan pemandangan alam yang unik dengan aktivitas vulkanik yang masih aktif.",
     quota: "150 pendaki/hari",
@@ -551,9 +562,10 @@ export const mountainsData: Mountain[] = [
       },
     ],
     galleryImages: [
-      "",
-      "",
-      "",
+      "https://upload.wikimedia.org/wikipedia/commons/3/3a/Kawah_Mas%2C_Gunung_Papandayan%2C_Garut.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/1/15/Kabut_dan_Savana_Tegal_Alun%2C_Gunung_Papandayan%2C_Garut.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/8/84/Istirahat_di_antara_Rerumputan_Tegal_Alun%2C_Gunung_Papandayan%2C_Garut.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/8/8f/Papandayan_Volcano.jpg",
     ],
     bookingTerms: [
       "Pendakian diperbolehkan melalui jalur Pondok Salada dan Cisurupan.",
@@ -572,8 +584,8 @@ export const mountainsData: Mountain[] = [
     location: "Bogor",
     province: "Jawa Barat",
     coordinates: { lat: -6.789, lng: 106.980 },
-    image: "",
-    heroImage: "",
+    image: "https://upload.wikimedia.org/wikipedia/commons/6/6d/Gunung_Gede_Pangrango.jpg",
+    heroImage: "https://upload.wikimedia.org/wikipedia/commons/3/34/Mount_Gede-Pangrango_Aerial.jpg",
     description:
       "Gunung Gede Pangrango adalah kompleks gunung kembar dengan ketinggian 2.958 mdpl (Gede) dan 3.019 mdpl (Pangrango). Terletak di Taman Nasional Gede Pangrango dengan keanekaragaman hayati yang tinggi.",
     quota: "100 pendaki/hari",
@@ -597,9 +609,10 @@ export const mountainsData: Mountain[] = [
       },
     ],
     galleryImages: [
-      "",
-      "",
-      "",
+      "https://upload.wikimedia.org/wikipedia/commons/6/6d/Gunung_Gede_Pangrango.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/3/34/Mount_Gede-Pangrango_Aerial.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/4/42/Gede-Pangrango_seen_from_Cibadak.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/3/3d/Gunung_Pangrango_Terlihat_Dari_Puncak_Gunung_Gede_di_Taman_Nasional_Gunung_Gede_Pangrango.jpg",
     ],
     bookingTerms: [
       "Pendakian hanya diperbolehkan dengan izin dari Taman Nasional Gede Pangrango.",
@@ -618,8 +631,8 @@ export const mountainsData: Mountain[] = [
     location: "Cirebon",
     province: "Jawa Barat",
     coordinates: { lat: -6.892, lng: 108.408 },
-    image: "",
-    heroImage: "",
+    image: "https://upload.wikimedia.org/wikipedia/commons/3/36/Gunung_Ciremai_pada_sore_hari.jpg",
+    heroImage: "https://upload.wikimedia.org/wikipedia/commons/c/c5/Mount_Ciremai%2C_West_Java%2C_Indonesia.jpg",
     description:
       "Gunung Ciremai adalah gunung tertinggi di Jawa Barat dengan ketinggian 3.078 mdpl. Terletak di Taman Nasional Gunung Ciremai, menawarkan keanekaragaman hayati dan pemandangan yang menakjubkan.",
     quota: "80 pendaki/hari",
@@ -648,9 +661,10 @@ export const mountainsData: Mountain[] = [
       },
     ],
     galleryImages: [
-      "",
-      "",
-      "",
+      "https://upload.wikimedia.org/wikipedia/commons/3/36/Gunung_Ciremai_pada_sore_hari.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/c/c5/Mount_Ciremai%2C_West_Java%2C_Indonesia.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/d/d1/Mount_Ciremai_from_Cirebon.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/8/81/Ciremai_dari_teduhnya_tabu_buya.jpg",
     ],
     bookingTerms: [
       "Pendakian hanya diperbolehkan dengan izin dari Taman Nasional Gunung Ciremai.",
@@ -669,8 +683,8 @@ export const mountainsData: Mountain[] = [
     location: "Banyuwangi",
     province: "Jawa Timur",
     coordinates: { lat: -8.125, lng: 114.042 },
-    image: "",
-    heroImage: "",
+    image: "https://upload.wikimedia.org/wikipedia/commons/8/83/Raung_Mountain_View.jpg",
+    heroImage: "https://upload.wikimedia.org/wikipedia/commons/d/d7/Raung_-_view_from_Kawah_Ijen%2C_East_Java%2C_Indonesia%2C_20220821_0648_9786.jpg",
     description:
       "Gunung Raung adalah gunung berapi dengan ketinggian 3.344 mdpl yang terkenal dengan kawah terbesar di Jawa Timur. Menawarkan tantangan pendakian yang berat dengan pemandangan kawah yang spektakuler.",
     quota: "50 pendaki/hari",
@@ -689,9 +703,10 @@ export const mountainsData: Mountain[] = [
       },
     ],
     galleryImages: [
-      "",
-      "",
-      "",
+      "https://upload.wikimedia.org/wikipedia/commons/8/83/Raung_Mountain_View.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/d/d7/Raung_-_view_from_Kawah_Ijen%2C_East_Java%2C_Indonesia%2C_20220821_0648_9786.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/6/6e/Raung_-_view_from_Kawah_Ijen%2C_East_Java%2C_Indonesia%2C_20220821_0643_9778.jpg",
+      "https://upload.wikimedia.org/wikipedia/commons/c/c4/Jalur_pendakian_gunung_raung_%285%29.jpg",
     ],
     bookingTerms: [
       "Pendakian hanya diperbolehkan saat status normal atau waspada level 1.",

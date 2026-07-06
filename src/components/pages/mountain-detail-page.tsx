@@ -1,12 +1,12 @@
 'use client';
 import type React from 'react';
 import { useState } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import BackButton from '@/components/ui/BackButton';
 import ImagePlaceholder from '@/components/ui/ImagePlaceholder';
+import ImageWithSkeleton from '@/components/ui/ImageWithSkeleton';
 import { Route } from 'lucide-react';
 import type { Mountain } from '@/lib/mountain-data';
 
@@ -45,12 +45,11 @@ const MountainDetailPage: React.FC<MountainDetailPageProps> = ({ mountain }) => 
         {/* Hero Image */}
         <div className="mb-8">
           {mountain.heroImage ? (
-            <Image
+            <ImageWithSkeleton
               src={mountain.heroImage}
               alt={mountain.name}
-              width={928}
-              height={320}
-              className="w-full h-80 object-cover rounded-lg"
+              unoptimized
+              wrapperClassName="w-full h-80 rounded-lg"
             />
           ) : (
             <ImagePlaceholder className="w-full h-80 rounded-lg" />
@@ -128,12 +127,12 @@ const MountainDetailPage: React.FC<MountainDetailPageProps> = ({ mountain }) => 
                 onClick={() => handleImageClick(image)}
               >
                 {image ? (
-                  <Image
+                  <ImageWithSkeleton
                     src={image}
                     alt={`Gallery image ${index + 1}`}
-                    width={301}
-                    height={169}
-                    className="rounded-lg object-cover hover:opacity-80 transition-opacity"
+                    unoptimized
+                    wrapperClassName="w-[301px] h-[169px] rounded-lg"
+                    imageClassName="object-cover hover:opacity-80 transition-opacity"
                   />
                 ) : (
                   <ImagePlaceholder className="w-[301px] h-[169px] rounded-lg hover:opacity-80 transition-opacity" />
@@ -181,12 +180,12 @@ const MountainDetailPage: React.FC<MountainDetailPageProps> = ({ mountain }) => 
         >
           <div className="relative max-w-4xl max-h-full p-4">
             {selectedImage ? (
-              <Image
+              <ImageWithSkeleton
                 src={selectedImage}
                 alt="Gallery image enlarged"
-                width={800}
-                height={600}
-                className="max-w-full max-h-full object-contain rounded-lg"
+                unoptimized
+                wrapperClassName="w-[800px] max-w-full h-[600px] rounded-lg"
+                imageClassName="object-contain"
               />
             ) : (
               <ImagePlaceholder className="w-[800px] max-w-full h-[600px] rounded-lg" />
