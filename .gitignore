@@ -40,3 +40,7 @@ turbo/
 #env
 .env
 .env.local
+
+# Serwist
+public/sw*
+public/swe-worker*
